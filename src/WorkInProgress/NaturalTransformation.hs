@@ -90,3 +90,17 @@ horizontalComp2 :: Functor g' =>
 horizontalComp2 beta alpha =
    (\(FComp.FCompose x) -> FComp.FCompose $ fmap alpha . beta $ x)
 
+
+----
+
+data Test a = L a | R a | N
+
+instance Functor Test where
+  fmap f (L a) = L $ f a
+  fmap f (R a) = R $ f a
+  fmap f N = N
+
+test :: [] :~> Test
+test [] = N
+test (x:[]) = L x
+test (x1:x2:xs) = R x2

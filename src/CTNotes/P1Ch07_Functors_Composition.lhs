@@ -18,7 +18,7 @@ Short recap to set the stage:
 ----------------------------
 Functors are structure preseverning mappings between categories. Functors themselves are morphism
 in a 'higher' categpry like Cat.
-Functors in haskell are really endofunctors on Hask category. They map types to types (a to f a)
+Functors in Haskell are really endofunctors on Hask category. They map types to types (a to f a)
 and functions to functions (fmap:: (a -> b) -> f a -> f b).  They are supposed to be structure preseving but
 Haskell leaves it to the programmer to prove that aspect.
 Hask is a category in which objects are types and morphisms are regular functions between these types.
