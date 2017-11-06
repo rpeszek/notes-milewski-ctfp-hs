@@ -15,7 +15,7 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     CTNotes.P1Ch07_Functors
+  exposed-modules:     CTNotes.P1Ch07_Functors_Composition
                      , CTNotes.P1Ch10_NaturalTransformations
                      , WorkInProgress.NaturalTransformation
                      , WorkInProgress.Functor.Composition

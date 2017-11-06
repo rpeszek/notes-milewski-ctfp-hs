@@ -22,5 +22,9 @@ cabal.project.local
 .HTF/
 
 .idea/
+*.iml
+
+temp*.md
+
 
 

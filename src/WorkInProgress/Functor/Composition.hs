@@ -20,8 +20,27 @@ module WorkInProgress.Functor.Composition where
 newtype FCompose f g a = FCompose { getFComp :: f (g a) }
 instance (Functor f, Functor g) => Functor (FCompose f g) where
     fmap f (FCompose x) = FCompose (fmap (fmap f) x)
+
+-- infixr 0 :.
 type f :. g = FCompose f g
 
+{-
+   (f :. g) :. h a ==
+   FCompose (f :. g (h a)) ==
+   FCompose (FCompose f (g (h x)))
+
+   f :. (g :. h) x ==
+   FCompose (f ((g :. h) x)) ==
+   FCompose (f (FCompose (g (h x))))
+-}
+
+iso1 :: Functor f => ((f :. g) :. h) a -> (f :. (g :. h)) a
+iso1 (FCompose (FCompose fgh_x)) = FCompose (fmap FCompose fgh_x)
+
+iso2 :: Functor f => (f :. (g :. h)) a -> ((f :. g) :. h) a
+iso2 (FCompose f_comp_ghx) =  FCompose (FCompose $ fmap getFComp f_comp_ghx)
+
+-- iso1 x = x
 
 newtype Identity a = Identity a
 instance Functor Identity where
@@ -83,3 +102,17 @@ instance KCategory CatInHaskell where
 --  id = undefined
   -- (.) = undefined
 --  (FComposeAsCat bc) . (FComposeAsCat ab) = FComposeAsCat $ FCompose (getFComp bc . getFComp ab)
+
+{-
+this polykinds does not do it
+we need type equality constraints
+
+> class K2Category cat where
+>    type K2Id cat :: k -> k
+>    type K2Comp cat :: (k2 -> k3) -> (k1 -> k2) -> k1 -> k1
+
+> instance K2Category OurCategory where
+>    type K2Id OurCategory = Identity
+>    type K2Comp OurCategory = FCompose
+
+-}
