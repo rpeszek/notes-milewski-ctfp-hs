@@ -45,8 +45,8 @@ in two different ways:
 > naturality2 alpha f = alpha . fmap f
 
 CT definition of Natural Transformation says that both approaches need to commute (yield the same result).
-What is amazing is that in programming you get this for FREE!  Compiler can safely replace code like naturality1 with
-code for naturality2 if it feels like it will make thing better or faster.
+What is amazing is that in programming you get this for FREE!  Static code analysis can safely replace one code with
+the other if it feels like it will make thing better or faster.
 I think this can happen if both f and g are functors (but maybe I am wrong and f suffices).
 The actual CT formula should be
 ```
@@ -75,7 +75,9 @@ Horizontal composition of NT-ies is NT between composed functors, repeating the 
 In general we would have something like
     G'α_a ∘ β_F a  == β_F'a ∘ G α_a
 
-but parametricity/polymorphism arguments allow us to write simple code.
+β ∘ α is sometimes called Godement product and the above isomorphism Godement interchange law.
+
+Parametricity/polymorphism arguments allow us to write simple code.
 
 > horizontalComp1 :: Functor g =>
 >                     g :~> g' -> f :~> f' -> g :. f :~> g' :. f'
@@ -88,7 +90,7 @@ but parametricity/polymorphism arguments allow us to write simple code.
 >    (\(FComp.FCompose x) -> FComp.FCompose $ fmap alpha . beta $ x)
 
 Note all of these should be Functors but for the implementation we just need one.
-Again, commuting diagrams say that ```horizontalComp1 '==' horizontalComp2```
+Again, since we have ```horizontalComp1 '==' horizontalComp2``` static code analysis can swap one code for the other.
 
 (.) represents Hask morphism
 Note a much simpler implementation
