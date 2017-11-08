@@ -10,7 +10,6 @@ These notes assume familiarty with CTFP upto and including Ch 7.
 
 > {-# LANGUAGE TypeOperators #-}
 > {-# LANGUAGE TypeFamilies #-}
-> {-# LANGUAGE PolyKinds #-}
 >
 > module CTNotes.P1Ch07_Functors_Composition where
 
