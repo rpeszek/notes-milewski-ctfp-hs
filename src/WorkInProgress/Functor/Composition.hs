@@ -6,6 +6,8 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances, TypeFamilies,
                DataKinds #-}
+-- {-# LANGUAGE ScopedTypeVariables #-}
+
 -- {-# LANGUAGE MultiParamTypeClasses #-}
 -- {-# LANGUAGE FlexibleInstances #-}
 -- {-# LANGUAGE UndecidableInstances #-}
@@ -42,7 +44,7 @@ iso2 (FCompose f_comp_ghx) =  FCompose (FCompose $ fmap getFComp f_comp_ghx)
 
 -- iso1 x = x
 
-newtype Identity a = Identity a
+newtype Identity a = Identity { getIdentity :: a }
 instance Functor Identity where
     fmap f (Identity x) = Identity (f x)
 
@@ -116,3 +118,30 @@ we need type equality constraints
 >    type K2Comp OurCategory = FCompose
 
 -}
+
+data Iso a b = IsoProof {
+   isoRight :: a -> b,
+   isoLeft :: b -> a
+}
+
+
+-- with types does not work, ‘TId’ is a type function, and may not be injective
+ -- hom b c -> hom a b -> hom a c
+ -- newtype FCompose f g a = FCompose { getFComp :: f (g a) }
+
+class KCategory2 cat where
+   data KId2 cat :: * -> *
+   data KComp2 cat :: (* -> *) -> (* -> *) -> * -> *
+   idIsoEvidence :: Iso a (KId2 cat a)
+   compIsoEvidence :: (Functor f, Functor g) => Iso (f (g a)) (KComp2 cat f g a)
+
+instance KCategory2 CatInHaskell where
+   data KId2 CatInHaskell x = MkId {getMkId:: Identity x}
+   data KComp2 CatInHaskell f1 f2 x = MkComp {getMkComp:: FCompose f1 f2 x}
+   idIsoEvidence =  IsoProof (MkId . Identity) (getIdentity . getMkId)
+   compIsoEvidence = IsoProof (MkComp . FCompose) (getFComp . getMkComp)
+
+
+-- class Collects ce where
+--  type Elem ce
+--  insert :: Elem ce -> ce -> ce

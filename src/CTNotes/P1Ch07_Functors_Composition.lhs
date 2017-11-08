@@ -32,9 +32,10 @@ Funtor typeclass defined in Data.Functor can be viewed as having kind signature 
 
 Functor Composition
 -------------------
-Indentity functor is introduced in Chapter 8. Here is that definiton repeated:
+Indentity functor is introduced in Chapter 8. Here is that definiton repeated with a slight change of using record syntax
+so it is easy to move in both directions:
 
-> newtype Identity a = Identity a
+> newtype Identity a = Identity { getIdentity :: a }
 > instance Functor Identity where
 >     fmap f (Identity x) = Identity (f x)
 
@@ -122,4 +123,29 @@ Functor domain and co-domain are types of kind *.  We can think of this category
 >    type KId OurCategory = Identity
 >    type KComp OurCategory = FCompose
 
-TODO can we do even better than kind check? PolyKinds?
+Better Type Checking
+--------------------
+We can do better and try to match the level of type checking done by Control.Category.Category.
+Remember, types are no longer equal, they are only isomorphic.  Identity Bool is not the same as Int, but is isomorphic to Bool.
+
+> data Iso a b = IsoProof {
+>     isoRight :: a -> b,
+>     isoLeft :: b -> a
+> }
+
+As before the proof obligation that isoRight and isoLeft are inverse of each other is left to the programmer.
+
+> class KCategory2 cat where
+>   data KId2 cat :: * -> *
+>   data KComp2 cat :: (* -> *) -> (* -> *) -> * -> *
+>   idIsoEvidence :: Iso a (KId2 cat a)
+>   compIsoEvidence :: (Functor f, Functor g) => Iso (f (g a)) (KComp2 cat f g a)
+
+And here is a much more typed check version:
+
+> instance KCategory2 OurCategory where
+>    data KId2 OurCategory x = MkId {getMkId:: Identity x}
+>    data KComp2 OurCategory f1 f2 x = MkComp {getMkComp:: FCompose f1 f2 x}
+>    idIsoEvidence =  IsoProof (MkId . Identity) (getIdentity . getMkId)
+>    compIsoEvidence = IsoProof (MkComp . FCompose) (getFComp . getMkComp)
+
