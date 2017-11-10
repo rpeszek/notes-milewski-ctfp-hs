@@ -3,10 +3,10 @@ WORK IN PROGRESS
 CTFP Part 1 Chapter 7. Functors. Fuctor Compostion.
 =============================================================
 
-Last section of Fuctor chapter talks about compostion of functors and about how functors themselves can be viewed
+The last section of that chapter talks about composition of functors and about how functors themselves can be viewed
 as morphisms in another category.
-This is my attempt to use haskell to describe these concepts.
-These notes assume familiarty with CTFP upto and including Ch 7.
+This is my attempt to use Haskell to describe these concepts.
+These notes assume familiarity with CTFP up to and including Ch 7.
 
 > {-# LANGUAGE TypeOperators #-}
 > {-# LANGUAGE TypeFamilies #-}
@@ -15,23 +15,23 @@ These notes assume familiarty with CTFP upto and including Ch 7.
 
 Short recap to set the stage:
 ----------------------------
-Functors are structure preseverning mappings between categories. Functors themselves are morphism
-in a 'higher' categpry like Cat.
+Functors are structure preserving mappings between categories. Functors themselves are morphism
+in a 'higher' category like Cat.
 Functors in Haskell are really endofunctors on Hask category. They map types to types (a to f a)
-and functions to functions (fmap:: (a -> b) -> f a -> f b).  They are supposed to be structure preseving but
+and functions to functions (fmap:: (a -> b) -> f a -> f b).  They are supposed to be structure preserving but
 Haskell leaves it to the programmer to prove that aspect.
 Hask is a category in which objects are types and morphisms are regular functions between these types.
 For regular functions inputs and outputs are values/terms.
-If you restrict functors to their action on Hask objects (types) only, tbe functor inputs and outputs for functors are types.
+If you restrict functors to their action on Hask objects (types) only, the functor inputs and outputs for functors are types.
 Functors are 'type-level' functions and in practice are type constructors such as List, Maybe, Either r, (r ->), etc.
 
 Type level programming can be type checked, only the types of types are called kinds.
-If we forget about strucure preseving fmap functors have kind * -> *.
-Funtor typeclass defined in Data.Functor can be viewed as having kind signature (* -> *) -> Constraint.
+If we forget about structure preserving fmap functors have kind * -> *.
+Functor typeclass defined in Data.Functor can be viewed as having kind signature (* -> *) -> Constraint.
 
 Functor Composition
 -------------------
-Indentity functor is introduced in Chapter 8. Here is that definiton repeated with a slight change of using record syntax
+Identity functor is introduced in Chapter 8. Here is that definition repeated with a slight change of using record syntax
 so it is easy to move in both directions:
 
 > newtype Identity a = Identity { getIdentity :: a }
@@ -39,7 +39,7 @@ so it is easy to move in both directions:
 >     fmap f (Identity x) = Identity (f x)
 
 we also can use Haskell to define functor composition (book uses G ∘ F notation).
-The trick is simplar to how Indentity functor is defined. We need to construct a type that wraps composed type constructors
+The trick is simplar to how Identity functor is defined. We need to construct a type that wraps composed type constructors
 
 > newtype FCompose f g a = FCompose { getFComp :: f (g a) }
 > instance (Functor f, Functor g) => Functor (FCompose f g) where
@@ -57,7 +57,7 @@ This way ```Maybe :. []``` becomes a functor that maps Int into Maybe [Int].
 
 Category Laws
 -------------
-Thus far we have provided code for indentity and composition. It is not that surprising that these do satisfy category laws.
+Thus far we have provided code for identity and composition. It is not that surprising that these do satisfy category laws.
 The composition is associative (up to isomorphism because FCompose data constructor will need to move around):
 
 > iso1 :: Functor f => ((f :. g) :. h) a -> (f :. (g :. h)) a
@@ -73,12 +73,12 @@ For example:
  iso2 $ FCompose (fmap FCompose fgh_x)                     ==  -- definition of iso2
  FCompose (FCompose $ fmap getFComp (fmap FCompose fgh_x)) ==  -- functors preserve morphism composition
  FCompose (FCompose $ fmap (getFComp . FCompose) fgh_x)    ==  -- getFComp deconstructs FCompose
- FCompose (FCompose $ fmap id fgh_x)                       ==  -- functors presever identity morphims
+ FCompose (FCompose $ fmap id fgh_x)                       ==  -- functors preserve identity morphisms
  FCompose (FCompose fgh_x)
 ```
 
-Left and right identity laws follow from simplar reasoning.
-We have 2 ingeredients needed to a 'higher' category. Can we do a bit more?
+Left and right identity laws follow from similar reasoning.
+We have 2 ingredients needed to a 'higher' category. Can we do a bit more?
 
 Type contract
 ----------------------
@@ -91,7 +91,7 @@ class Category cat where
      (.) :: cat b c -> cat a b -> cat a c
 
 instance Category (->) where ...
-instance Cateogry (:~:) where ...
+instance Category (:~:) where ...
 
 ```
 This is perfect for defining categories when objects are types.
@@ -99,7 +99,7 @@ Besides expressing the fact that something is a category we have the benefit of 
 Proof obligation of checking the laws is left to the programmer.
 
 
-To do something analougus, we need to lift ourselves one level up.
+To do something analogous, we need to lift ourselves one level up.
 If 'normal' categories are about types and functions, out category needs to be about kinds and functors.
 I use KCategory name to indicate that.  Haskell TypeFamilies pragma allows me to define a contract analogous to
 Control.Category.Category.
@@ -109,7 +109,7 @@ Control.Category.Category.
 >    type KComp cat :: (* -> *) -> (* -> *) -> * -> *
 
 With Control.Category.Category typeclass the benefit is typechecking id and composition.  Now the benefit is kind-checking
-of id and composition that act on types instead of values.  Notice that this is less typed then the prvious case.
+of id and composition that act on types instead of values.  Notice that this is less typed then the previous case.
 For example id :: cat a a guarantees that 'a' is the same, we no longer have such guarantee.
 
 Our Category
