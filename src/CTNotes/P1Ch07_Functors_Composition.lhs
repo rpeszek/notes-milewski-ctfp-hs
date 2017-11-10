@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch07_Functors_Composition.md
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch07_Functors_Composition
 
 CTFP Part 1 Chapter 7. Functors, Functor Composition.
 =====================================================
