@@ -1,7 +1,7 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch07_Functors_Composition.md
 
-CTFP Part 1 Chapter 7. Functors. Functor Compostion.
-=============================================================
+CTFP Part 1 Chapter 7. Functors, Functor Composition.
+=====================================================
 
 The last section of chapter 7 talks about composition of functors and about how functors themselves can be viewed
 as morphisms in another 'higher' category.
