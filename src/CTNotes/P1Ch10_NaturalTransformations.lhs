@@ -2,9 +2,9 @@ TODO work in progress
 
 CTFP Part 1 Chapter 10. Natural Transformations
 ===============================================
-If good programming is about composability than we got to study Natrual Tranformations!
+If good programming is about composability than we got to study Natural Transformations!
 They can be composed in more than one way.
-These notes assume familiarty with CTFP Ch 10.
+These notes assume familiarity with CTFP Ch 10.
 
 > {-# LANGUAGE RankNTypes #-}
 > {-# LANGUAGE TypeOperators #-}
@@ -17,7 +17,7 @@ These notes assume familiarty with CTFP Ch 10.
 
 Typically Natural Transformations (NTs) are defined using ~> type operator.
 This is the case for Scalaz and Purescript. To keep with my convention of prefixing
-type operators with (:) I will define as (:~>).  Otherwise this definiton matches the book.
+type operators with (:) I will define as (:~>).  Otherwise this definition matches the book.
 
 > infixr 0 :~>
 > type f :~> g = forall x. f x -> g x
@@ -26,15 +26,15 @@ This means functions from type f x to type g x that are polymorphic in x.  For e
 ```
 safeHead :: [] :~> Maybe  -- typical signature would be [a] -> Maybe a
 ```
-Vertical composition of NT-ies reduces to (.). Compostion of 2 functions that happen to be polymorphic must also be polymorphic.
+Vertical composition of NT-ies reduces to (.). Composition of 2 functions that happen to be polymorphic must also be polymorphic.
 
 > verticalComp :: g :~> h -> f :~> g -> f :~> h
 > verticalComp gh fg = gh . fg
 
 Recap. Naturality condition
 ---------------------------
-We are intersted in functions ```f a -> g b```.
-Natural tranformation allows as to move between functors, fuction a -> b moves us between types.
+We are interested in functions ```f a -> g b```.
+Natural transformation allows as to move between functors, function a -> b moves us between types.
 Combining these to we can change both functor and type.  Having both in our disposal allows us to accomplish what we want
 in two different ways:
 

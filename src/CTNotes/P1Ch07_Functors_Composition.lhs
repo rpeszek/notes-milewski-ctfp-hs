@@ -1,11 +1,9 @@
-WORK IN PROGRESS
-
-CTFP Part 1 Chapter 7. Functors. Fuctor Compostion.
+CTFP Part 1 Chapter 7. Functors. Functor Compostion.
 =============================================================
 
-The last section of that chapter talks about composition of functors and about how functors themselves can be viewed
-as morphisms in another category.
-This is my attempt to use Haskell to describe these concepts.
+The last section of chapter 7 talks about composition of functors and about how functors themselves can be viewed
+as morphisms in another 'higher' category.
+This is my attempt to use Haskell language to describe these concepts.
 These notes assume familiarity with CTFP up to and including Ch 7.
 
 > {-# LANGUAGE TypeOperators #-}
@@ -13,52 +11,46 @@ These notes assume familiarity with CTFP up to and including Ch 7.
 >
 > module CTNotes.P1Ch07_Functors_Composition where
 
-Short recap to set the stage:
-----------------------------
-Functors are structure preserving mappings between categories. Functors themselves are morphism
-in a 'higher' category like Cat.
-Functors in Haskell are really endofunctors on Hask category. They map types to types (a to f a)
-and functions to functions (fmap:: (a -> b) -> f a -> f b).  They are supposed to be structure preserving but
-Haskell leaves it to the programmer to prove that aspect.
-Hask is a category in which objects are types and morphisms are regular functions between these types.
-For regular functions inputs and outputs are values/terms.
-If you restrict functors to their action on Hask objects (types) only, the functor inputs and outputs for functors are types.
-Functors are 'type-level' functions and in practice are type constructors such as List, Maybe, Either r, (r ->), etc.
-
-Type level programming can be type checked, only the types of types are called kinds.
-If we forget about structure preserving fmap functors have kind * -> *.
-Functor typeclass defined in Data.Functor can be viewed as having kind signature (* -> *) -> Constraint.
 
 Functor Composition
 -------------------
-Identity functor is introduced in Chapter 8. Here is that definition repeated with a slight change of using record syntax
-so it is easy to move in both directions:
-
-> newtype Identity a = Identity { getIdentity :: a }
-> instance Functor Identity where
->     fmap f (Identity x) = Identity (f x)
-
-we also can use Haskell to define functor composition (book uses G ∘ F notation).
-The trick is simplar to how Identity functor is defined. We need to construct a type that wraps composed type constructors
+Expressing functor composition is surprisingly doable in Haskell:
 
 > newtype FCompose f g a = FCompose { getFComp :: f (g a) }
 > instance (Functor f, Functor g) => Functor (FCompose f g) where
 >    fmap f (FCompose x) = FCompose (fmap (fmap f) x)
 
-so instead of direct composition like ```Maybe [a]``` we have ```FCompose Maybe [] a``` which is clearly isomorphic
-(by adding and removing FCompose constructor).
-
-Now we can create a type operator (using TypeOperators pragma).  I am using colon (:) prefix to make it clear that this is a type
-level operator.
+Instead of direct composition like ```Maybe [a]``` we have ```FCompose Maybe [] a``` which is clearly isomorphic
+(by adding and removing FCompose constructor) but allows us to actually program with it!
+The book uses G ∘ F notation for function composition. To mimic this we can create a type operator
+(requires TypeOperators pragma). I am using colon (:) to make it clear that this is a type level operator.
 
 > type f :. g = FCompose f g
 
 This way ```Maybe :. []``` becomes a functor that maps Int into Maybe [Int].
+Well, it really maps Int to FCompose Maybe [Int], but that is that up-to isomorphisms limitation we need to accept
+in Category Theory.
+
+
+Identity
+--------
+Identity functor is introduced in the book in Chapter 8. Here is that definition repeated with a slight modification
+of using record syntax:
+
+> newtype Identity a = Identity { getIdentity :: a }
+> instance Functor Identity where
+>     fmap f (Identity x) = Identity (f x)
+
+Again, Identity is up to type isomorphism which amounts to constructing with Identity and deconstructing with getIdentity.
+
 
 Category Laws
 -------------
-Thus far we have provided code for identity and composition. It is not that surprising that these do satisfy category laws.
-The composition is associative (up to isomorphism because FCompose data constructor will need to move around):
+We can compose functors and we also have identity functor.  To have a category in which functors are morphisms
+we need to verify category laws.
+The most interesting of these is the check that composition is associative
+(again, up to isomorphism because FCompose data constructor will need to move around).
+This is done by explicitly defining the isomorphisms:
 
 > iso1 :: Functor f => ((f :. g) :. h) a -> (f :. (g :. h)) a
 > iso1 (FCompose (FCompose fgh_x)) = FCompose (fmap FCompose fgh_x)
@@ -66,8 +58,8 @@ The composition is associative (up to isomorphism because FCompose data construc
 > iso2 :: Functor f => (f :. (g :. h)) a -> ((f :. g) :. h) a
 > iso2 (FCompose f_comp_ghx) =  FCompose (FCompose $ fmap getFComp f_comp_ghx)
 
-Simple equational reasoning shows that iso1 and iso2 are indeed inverses of one another.
-For example:
+Simple equational reasoning shows that iso1 and iso2 are indeed inverses of each other.
+For example, this shows that iso1 . iso2 reduce to identity:
 ```
  iso2 . iso1 $ FCompose (FCompose fgh_x)                   ==  -- definition of iso1
  iso2 $ FCompose (fmap FCompose fgh_x)                     ==  -- definition of iso2
@@ -76,14 +68,13 @@ For example:
  FCompose (FCompose $ fmap id fgh_x)                       ==  -- functors preserve identity morphisms
  FCompose (FCompose fgh_x)
 ```
+Left and right identity laws are equally easy to verify.
 
-Left and right identity laws follow from similar reasoning.
-We have 2 ingredients needed to a 'higher' category. Can we do a bit more?
 
-Type contract
+Typing it
 ----------------------
-Haskell base contains Category typeclass defined in Control.Category module which allows to express what it
-means to be a category:
+Haskell base package Control.Category module contains Category typeclass.
+This typeclass allows to express what it means to be a category:
 
 ```
 class Category cat where
@@ -94,45 +85,66 @@ instance Category (->) where ...
 instance Category (:~:) where ...
 
 ```
-This is perfect for defining categories when objects are types.
-Besides expressing the fact that something is a category we have the benefit of type checking of id and composition.
 Proof obligation of checking the laws is left to the programmer.
 
-
-To do something analogous, we need to lift ourselves one level up.
-If 'normal' categories are about types and functions, out category needs to be about kinds and functors.
-I use KCategory name to indicate that.  Haskell TypeFamilies pragma allows me to define a contract analogous to
-Control.Category.Category.
+This is perfect for defining categories when objects are just types.
+To do something analogous to define a category in which morphisms are functors, we need to lift ourselves one level up
+and deal with kinds.
+If 'normal' categories are about types and functions, out category needs to be about kinds and type level functions.
+I use KCategory name to indicate that (K is for kind).
+Haskell TypeFamilies pragma allows me to define a constraint analogous to Control.Category.Category.
 
 > class KCategory cat where
 >    type KId cat :: * -> *
 >    type KComp cat :: (* -> *) -> (* -> *) -> * -> *
 
-With Control.Category.Category typeclass the benefit is typechecking id and composition.  Now the benefit is kind-checking
-of id and composition that act on types instead of values.  Notice that this is less typed then the previous case.
-For example id :: cat a a guarantees that 'a' is the same, we no longer have such guarantee.
+Notice that this is less typed then the previous case.
+For example id :: cat a a guarantees that 'a' is the same on both sides, we no longer have such guarantee.
 
-Our Category
+
+Short recap to understand KCategory:
+----------------------------
+Functors are structure preserving mappings between categories.
+
+In Haskell functors that are instances of Functor typeclass are really endofunctors
+(they map a category called Hask into itself).
+Hask is a category in which objects are types and morphisms are just regular functions between these types.
+Thus, Haskell functors map types to types (_a_ to _f a_) and functions to functions (_fmap:: (a -> b) -> f a -> f b_).
+They are structure preserving but Haskell does not typecheck this aspect and leaves the proof obigation to the programmer.
+
+If we igore the action of functors on morphisms, we can think of Haskell functors as just 'type-level' functions.
+In practice, functors are type constructors such as List, Maybe, Either r, (r ->), etc.  They map types to types
+the same way regular functions map values to values.
+To type check such a beast we need go up one level and use kinds.
+If we forget about structure preserving fmap, functors have kind * -> *.
+Functor typeclass defined in Data.Functor can be viewed as having kind signature (* -> *) -> Constraint.
+
+
+Monster Category we are looking for
 ------------
-Functor domain and co-domain are types of kind *.  We can think of this category as monoid with one object and lots of morphisms.
+Functor domain and co-domain consist of types of kind *.  We can think of this as one object.
+Category where functors are morphisms is, thus, a monster monoid.  I will just call it Monster.
 
-> data OurCategory = OurCategory
+> data Monster = Monster
 
-> instance KCategory OurCategory where
->    type KId OurCategory = Identity
->    type KComp OurCategory = FCompose
+> instance KCategory Monster where
+>    type KId Monster = Identity
+>    type KComp Monster = FCompose
 
-Better Type Checking
+
+Stronger Type Checking the Monster
 --------------------
-We can do better and try to match the level of type checking done by Control.Category.Category.
-Remember, types are no longer equal, they are only isomorphic.  Identity Bool is not the same as Int, but is isomorphic to Bool.
+We can do better and try to match the level of type checking done by Control.Category.Category?
+Remember, we can only hope for type isomorphism.
+For example, Identity Bool is not the same as Bool, but is isomorphic to Bool.
 
 > data Iso a b = IsoProof {
 >     isoRight :: a -> b,
 >     isoLeft :: b -> a
 > }
 
-As before the proof obligation that isoRight and isoLeft are inverse of each other is left to the programmer.
+Similarly to before, the proof obligation that isoRight and isoLeft will be left to the programmer but in our case
+that proof will be trivial.
 
 > class KCategory2 cat where
 >   data KId2 cat :: * -> *
@@ -140,11 +152,20 @@ As before the proof obligation that isoRight and isoLeft are inverse of each oth
 >   idIsoEvidence :: Iso a (KId2 cat a)
 >   compIsoEvidence :: (Functor f, Functor g) => Iso (f (g a)) (KComp2 cat f g a)
 
-And here is a much more typed check version:
+And here is the improved version:
 
-> instance KCategory2 OurCategory where
->    data KId2 OurCategory x = MkId {getMkId:: Identity x}
->    data KComp2 OurCategory f1 f2 x = MkComp {getMkComp:: FCompose f1 f2 x}
+> instance KCategory2 Monster where
+>    data KId2 Monster x = MkId {getMkId:: Identity x}
+>    data KComp2 Monster f1 f2 x = MkComp {getMkComp:: FCompose f1 f2 x}
 >    idIsoEvidence =  IsoProof (MkId . Identity) (getIdentity . getMkId)
 >    compIsoEvidence = IsoProof (MkComp . FCompose) (getFComp . getMkComp)
 
+The proofs of isomorphisms are trivial and boil down to construction and deconstruction for
+MkComp, FCompose, Identity, and MkId.
+
+Notice that KCategory uses type (is a type synonym family) and KCategory2 uses somewhat more tedious data
+(is a data family). This is because for complex reasons type synonym classes are more permissive and may not be injective.
+GHC compiler would not allow us to define the Iso constraints idIsoEvidence or compIsoEvidence using
+the type synonym approach.
+
+TODO: would would it take to come up with a practical example of polymorphic functor composition?
