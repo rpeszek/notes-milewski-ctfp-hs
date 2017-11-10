@@ -102,5 +102,5 @@ with this error
 this is because fmap acts on x in FCompose a b x leaving a and b unchanged
 
 TODO distribution law
-TODO can we express Category that uses horizontalComp in Haskell?
+TODO can we express Category that uses horizontalComp in Haskell? I doubt. 
 TODO real life examples of NTs
