@@ -108,7 +108,8 @@ For example `id :: cat a a` guarantees that `a` is the same on both sides, we no
 
 
 Short recap to understand KCategory and kind system:
-----------------------------
+----------------------------------------------------
+(TODO is this section even needed?)  
 Functors are structure preserving mappings between categories.
 
 In Haskell, word functor typically means an instance of `Data.Functor` typeclass and really represents an endofunctor
