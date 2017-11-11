@@ -111,18 +111,13 @@ Short recap to understand KCategory and kind system:
 ----------------------------------------------------
 (TODO is this section even needed?)  
 Functors are structure preserving mappings between categories.
-
-In Haskell, word functor typically means an instance of `Data.Functor` typeclass and really represents an endofunctor
-(one that map a category called Hask into itself).  
-Hask is a category in which objects are Haskell types and morphisms are just regular functions between these types.
-Thus, Haskell functors map types to types (`a` to `f a`) and functions to functions (`fmap:: (a -> b) -> f a -> f b`).
+In Haskell, the term functor is almost synonymous with instances of `Data.Functor` typeclass (and this is how I am using it). 
+These functors map functions (Hask category morphisms) to functions (`fmap:: (a -> b) -> f a -> f b`) and 
+types (Hask category objects) to types (`a` tp `f a`).
 They are structure preserving but Haskell does not typecheck this aspect and leaves the proof obligation to the programmer.
 
-If we ignore the action of functors on morphisms, we can think of Haskell functors as just 'type-level' functions.
-In practice, functors are type constructors such as `List`, `Maybe`, `Either r`, `(r ->)`, etc.  They map types to types
-the same way regular functions map values to values.
-To type check such a beast we need go up one level and use kinds.  
-If we forget about structure preserving fmap, functors have kind `* -> *`.  
+If we ignore the action of functors on functions, we can think of Haskell functors as just acting on types.
+With that reduced viewpoint, functors are 'type-level' functions that map types to types and have kind `* -> *`.  
 Functor typeclass defined in `Data.Functor` can be viewed as having kind signature `(* -> *) -> Constraint`.
 
 Note that our `FCompose` does not just compose functors. It can compose more general type expressions of kind `* -> *`.
@@ -176,4 +171,23 @@ GHC compiler would not allow us to define the Iso constraints idIsoEvidence or c
 the type synonym approach.
 
 
-TODO: think about non-theoretical importance
+Polymorphic Composition
+-----------------------
+Edward Kmett's commonad package (`Data.Functor.Composition` module) includes typeclass definition to allow for a more 
+uniform treatment of various implementations of functor composition.  This definition is repeated here: 
+
+> class Composition o where
+>    decompose :: o f g x -> f (g x)
+>    compose :: f (g x) -> o f g x
+
+`FComponse` defined in this document can be easily made to satisfy it:
+
+> instance Composition FCompose where
+>    decompose = getFComp
+>    compose = FCompose
+
+
+TODOs 
+-----
+
+Think about non-theoretical importance

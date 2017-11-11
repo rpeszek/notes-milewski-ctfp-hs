@@ -27,5 +27,7 @@ cabal.project.local
 temp*.md
 Temp*.hs
 
+*.sh
+
 
 

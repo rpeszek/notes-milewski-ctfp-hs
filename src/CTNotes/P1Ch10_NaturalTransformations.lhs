@@ -1,3 +1,5 @@
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch10_NaturalTransformations
+
 TODO work in progress
 
 CTFP Part 1 Chapter 10. Natural Transformations
@@ -125,7 +127,8 @@ GHC infers the same types on both sides:
                  -> FComp.FCompose b2 a2 (b2 (a2 x0))
 ```
 
-
+TODOs
+-----
 
 TODO  interchange law:     
       (β' ⋅ α') ∘ (β ⋅ α) = (β' ∘ β) ⋅ (α' ∘ α)
