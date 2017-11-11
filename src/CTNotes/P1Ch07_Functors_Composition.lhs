@@ -1,12 +1,14 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch07_Functors_Composition
 
-CTFP Part 1 Chapter 7. Functors, Functor Composition.
-=====================================================
+Notes about CTFP Part 1 Chapter 7. Functors - Functor Composition
+=================================================================
 
-The last section of chapter 7 talks about composition of functors and about how functors themselves can be viewed
-as morphisms in another 'higher' category.
+The last section of [chapter 7](https://bartoszmilewski.com/2015/01/20/functors/) talks about composition of functors 
+and about how functors themselves can be viewed as morphisms in another 'higher' category.
 This is my attempt to use Haskell language to describe these concepts.
-These notes assume familiarity with CTFP up to and including Ch 7.
+These notes assume familiarity with 
+[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
+up to and including Ch 7.
 
 > {-# LANGUAGE TypeOperators #-}
 > {-# LANGUAGE TypeFamilies #-}
@@ -22,14 +24,14 @@ Expressing functor composition is surprisingly doable in Haskell:
 > instance (Functor f, Functor g) => Functor (FCompose f g) where
 >    fmap f (FCompose x) = FCompose (fmap (fmap f) x)
 
-Instead of direct composition like `Maybe [a]` we have `FCompose Maybe [] a` which is clearly isomorphic
-(by adding and removing FCompose constructor) but allows us to actually program with it!  
+Instead of direct composition like `Maybe [a]` this creates an isomorphic type `FCompose Maybe [] a`.
+Using this nominal typing trick allows us to actually program with with type level composition!  
 The book uses `G ∘ F` notation for function composition. To mimic this we can create a type operator
-(requires TypeOperators pragma). I am using colon (:) to make it clear that this is a type level operator.
+(requires `TypeOperators` pragma). I am using colon `:` to make it clear that this is a type level operator.
 
 > type f :. g = FCompose f g
 
-This way `Maybe :. []` becomes a functor that maps `Int` into `Maybe [Int]`.
+This way `Maybe :. []` becomes a functor that maps type `Int` into `Maybe [Int]`.
 Well, it really maps `Int` to `FCompose Maybe [Int]`, but that is that up-to isomorphisms limitation we need to accept
 in Category Theory.
 
@@ -75,7 +77,7 @@ Left and right identity laws are equally easy to verify.
 
 Typing it
 ----------------------
-Haskell base package `Control.Category` module contains Category typeclass.
+Haskell base package `Control.Category` module contains `Category` typeclass.
 This typeclass allows to express what it means to be a category:
 
 ```
@@ -90,28 +92,28 @@ instance Category (:~:) where ...
 Proof obligation of checking the laws is left to the programmer.
 
 This is perfect for defining categories when objects are just types.
-To do something analogous to define a category in which morphisms are functors, we need to lift ourselves one level up
+To do something analogous and define a category in which morphisms are functors, we need to lift ourselves one level up
 and deal with kinds.  
 (Kinds are a way for compiler to check type level expressions.  Kinds are 'types of types'.)  
 If 'normal' categories are about types and functions, out category needs to be about kinds and type level functions.
 I use `KCategory` name to indicate that (using K for kind).
-Haskell TypeFamilies pragma allows me to define a constraint analogous to `Control.Category.Category`.
+Haskell `TypeFamilies` pragma allows me to define a constraint analogous to `Control.Category.Category`.
 
 > class KCategory cat where
 >    type KId cat :: * -> *
 >    type KComp cat :: (* -> *) -> (* -> *) -> * -> *
 
-Notice that this is less typed then the previous case.
-For example `id :: cat a a` guarantees that `a` is the same on both sides, we no longer have such guarantee.
+Notice that this is less typed then what we get with `Control.Category.Category` typeclass.
+For example `id :: cat a a` guarantees that `a` is the same on both sides, we no longer have such a guarantee.
 
 
 Short recap to understand KCategory and kind system:
 ----------------------------
 Functors are structure preserving mappings between categories.
 
-In Haskell functors that are instances of Functor typeclass are really endofunctors
-(they map a category called Hask into itself).  
-Hask is a category in which objects are types and morphisms are just regular functions between these types.
+In Haskell, word functor typically means an instance of `Data.Functor` typeclass and really represents an endofunctor
+(one that map a category called Hask into itself).  
+Hask is a category in which objects are Haskell types and morphisms are just regular functions between these types.
 Thus, Haskell functors map types to types (`a` to `f a`) and functions to functions (`fmap:: (a -> b) -> f a -> f b`).
 They are structure preserving but Haskell does not typecheck this aspect and leaves the proof obligation to the programmer.
 
@@ -120,14 +122,14 @@ In practice, functors are type constructors such as `List`, `Maybe`, `Either r`,
 the same way regular functions map values to values.
 To type check such a beast we need go up one level and use kinds.  
 If we forget about structure preserving fmap, functors have kind `* -> *`.  
-Functor typeclass defined in Data.Functor can be viewed as having kind signature `(* -> *) -> Constraint`.
+Functor typeclass defined in `Data.Functor` can be viewed as having kind signature `(* -> *) -> Constraint`.
 
 Note that our `FCompose` does not just compose functors. It can compose more general type expressions of kind `* -> *`.
 
 Monster Category we are looking for
 -----------------------------------
 Functor domain and co-domain consist of types of kind `*`.  We can think of this as one object.
-Category where functors are morphisms is, thus, a monster monoid.  I will just call it Monster.
+Category where morphisms are Haskell functors is, thus, a monster monoid.  I will just call it Monster.
 
 > data Monster = Monster
 
@@ -138,9 +140,9 @@ Category where functors are morphisms is, thus, a monster monoid.  I will just c
 
 Stronger Type Checking the Monster
 --------------------
-We can do better and try to match the level of type checking done by `Control.Category.Category`?
+We can do better and try to match the level of type checking done by `Control.Category.Category.
 Remember, we can only hope for type isomorphism.
-For example, Identity Bool is not the same as `Bool`, but is isomorphic to `Bool`.
+For example, `Identity Bool` is not the same as `Bool`, but is isomorphic to `Bool`.
 
 > data Iso a b = IsoProof {
 >     isoRight :: a -> b,
@@ -167,9 +169,10 @@ And here is the improved version:
 The proofs of isomorphisms are trivial and boil down to construction and deconstruction for
 `MkComp`, `FCompose`, `Identity`, and `MkId`.
 
-Notice that `KCategory` uses type (is a type synonym family) and `KCategory2` uses somewhat more tedious data
-(is a data family). This is because for complex reasons type synonym classes are more permissive and may not be injective.
+Notice that `KCategory` uses `type` keyword (is a type synonym family) and `KCategory2` uses a somewhat more tedious `data`
+(is a data family). This is because, for complex reasons, type synonym classes are more permissive and may not be injective.
 GHC compiler would not allow us to define the Iso constraints idIsoEvidence or compIsoEvidence using
 the type synonym approach.
+
 
 TODO: think about non-theoretical importance

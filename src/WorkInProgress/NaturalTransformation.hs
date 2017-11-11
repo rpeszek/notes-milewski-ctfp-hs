@@ -104,3 +104,8 @@ test :: [] :~> Test
 test [] = N
 test (x:[]) = L x
 test (x1:x2:xs) = R x2
+
+
+safeHead :: [] :~> Maybe  
+safeHead [] = Nothing
+safeHead (x:xs) = Just x
