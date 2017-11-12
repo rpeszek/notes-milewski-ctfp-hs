@@ -1,6 +1,6 @@
 # notes-milewski-ctfp-hs
 
-I am re-reading Bartosz Milewski's excellent book 
+I am rereading Bartosz Milewski's excellent book 
 [Category Theory for Programmers](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/).
 
 This project will contain code examples and (incomplete but focused) notes from reading this book in 
