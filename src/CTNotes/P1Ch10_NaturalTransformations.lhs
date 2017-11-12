@@ -18,7 +18,7 @@ These notes assume familiarity with
 >
 > import qualified Control.Category as Cat
 > import CTNotes.P1Ch07_Functors_Composition ((:.))
-> import qualified CTNotes.P1Ch07_Functors_Composition as FComp
+> import qualified Data.Functor.Compose as FComp
 
 Typically Natural Transformations (NTs) are defined using `~>` type operator.
 This is the case for Scalaz and Purescript. To keep with my convention of prefixing
@@ -105,12 +105,12 @@ Parametricity/polymorphism arguments make horizontal composition simpler in Hask
 > horizontalComp1 :: Functor g =>
 >                     g :~> g' -> f :~> f' -> g :. f :~> g' :. f'
 > horizontalComp1 beta alpha =
->    (\(FComp.FCompose x) -> FComp.FCompose $ beta . fmap alpha $ x)
+>    (\(FComp.Compose x) -> FComp.Compose $ beta . fmap alpha $ x)
 >
 > horizontalComp2 :: Functor g' =>
 >                    g :~> g' -> f :~> f' -> g :. f :~> g' :. f'
 > horizontalComp2 beta alpha =
->    (\(FComp.FCompose x) -> FComp.FCompose $ fmap alpha . beta $ x)
+>    (\(FComp.Compose x) -> FComp.Compose $ fmap alpha . beta $ x)
 
 Again, since we have `horizontalComp1 '==' horizontalComp2` static code analysis can swap one code for the other.  
 This is really nice!
@@ -123,8 +123,8 @@ Note 3: a much simpler implementation `fmap (beta . fmap alpha)` does not compil
 GHC infers the same types on both sides:
 ```  
  Expected type: (:.:) b1 a1 x -> (:.:) b2 a2 x  
-    Actual type: FComp.FCompose b2 a2 (b1 (a1 x0))
-                 -> FComp.FCompose b2 a2 (b2 (a2 x0))
+    Actual type: FComp.Compose b2 a2 (b1 (a1 x0))
+                 -> FComp.Compose b2 a2 (b2 (a2 x0))
 ```
 
 TODOs
