@@ -5,7 +5,9 @@ Notes about CTFP Part 1 Chapter 7. Functors - Functor Composition
 
 The last section of [chapter 7](https://bartoszmilewski.com/2015/01/20/functors/) talks about composition of functors 
 and about how functors themselves can be viewed as morphisms in another 'higher' category.
-This is my attempt to use Haskell language to describe these concepts.
+This is my attempt to use Haskell language to describe these concepts. In my opinion, these topics are foundational to 
+understanding of even basic types like nested lists `[[a]]` or something like `Maybe [a]`.
+
 These notes assume familiarity with 
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 up to and including [Ch 7](https://bartoszmilewski.com/2015/01/20/functors/).
@@ -19,8 +21,8 @@ up to and including [Ch 7](https://bartoszmilewski.com/2015/01/20/functors/).
 
 Functor Composition
 -------------------
-Expressing functor composition is surprisingly doable in Haskell and it has been implemented in the `base` in 
-imported `Data.Functor.Compose` module.  I am quoting abreviated definition for documentation purposes:
+Expressing functor composition is surprisingly doable in Haskell and it has been implemented in the `base` package in 
+imported `Data.Functor.Compose` module.  I am quoting abbreviated definition for documentation purposes:
 
 ```
 newtype Compose f g a = Compose { getCompose :: f (g a) }
@@ -29,7 +31,8 @@ instance (Functor f, Functor g) => Functor (Compose f g) where
 ```
 
 Instead of direct composition like `Maybe [a]` this creates an isomorphic type `Compose Maybe [] a`.  
-Using this nominal typing trick allows us to actually program with type level composition!   
+Haskell has no problem with writing types like `(a -> b) -> f (g a) -> f (g b)` but
+using this nominal typing trick allows us to get a hook to actually program with type level composition!   
 The book uses `G ∘ F` notation for function composition. To mimic this we can create a type operator
 (requires `TypeOperators` pragma). I am using colon `:` to make it clear that this is a type level operator.
 
@@ -48,7 +51,7 @@ in Category Theory.
 Identity
 --------
 Identity functor is introduced in the book in Chapter 8.  I will use definition from the `base` package `Data.Functor.Identity` module. 
-Here is a completely equivalent definition (it is a quote not actuall code since I am importing it):
+Here is an equivalent definition (it is a quote not actual code since I am importing it):
 
 ```
 newtype Identity a = Identity { runIdentity :: a }
@@ -56,7 +59,7 @@ instance Functor Identity where
    fmap f (Identity x) = Identity (f x)
 ```
 
-As before, `Identity` is up to type isomorphism which amounts to constructing with `Identity` and deconstructing with `runIdentity`.
+As before, `Identity` is only up to isomorphism, which amounts to constructing with `Identity` and deconstructing with `runIdentity`.
 
 
 Category Laws
@@ -120,7 +123,7 @@ For example `id :: cat a a` guarantees that `a` is the same on both sides, we no
 
 Short recap to understand KCategory and kind system:
 ----------------------------------------------------
-(TODO is this section even needed?)  
+(TODO does this section add anything?)  
 Functors are structure preserving mappings between categories.
 In Haskell, the term functor is almost synonymous with instances of `Data.Functor` typeclass (and this is how I am using it). 
 These functors map functions (Hask category morphisms) to functions (`fmap:: (a -> b) -> f a -> f b`) and 
@@ -141,7 +144,6 @@ Functor domain and co-domain consist of types of kind `*`.  We can think of set 
 Category where morphisms are Haskell functors is, thus, a monster monoid.  I will just call it Monster.
 
 > data Monster = Monster
-
 > instance KCategory Monster where
 >    type KId Monster = Identity
 >    type KComp Monster = Compose
@@ -158,8 +160,8 @@ For example, `Identity Bool` is not the same as `Bool`, but is isomorphic to `Bo
 >     isoLeft :: b -> a
 > }
 
-As usual, the proof obligation that `isoRight` and `isoLeft` will be left to the programmer but in our case
-that proof will be trivial.
+As usual, the proof obligation that `isoRight` and `isoLeft` are inverses of one another will be left to the programmer 
+but in our case that proof will be trivial.
 
 > class KCategory2 cat where
 >   data KId2 cat :: * -> *
@@ -186,7 +188,7 @@ the type synonym approach.
 
 Polymorphic Composition
 -----------------------
-Edward Kmett's commonad package (`Data.Functor.Composition` module) includes typeclass definition to allow for a more 
+Edward Kmett's `comonad` package (`Data.Functor.Composition` module) includes typeclass definition to allow for a more 
 uniform treatment of various implementations of functor composition.  This definition is repeated (quoted) here: 
 
 ```
@@ -203,25 +205,38 @@ instance Composition Compose where
    compose = Compose
 ```
 
-Practial examples
+
+Practical examples
 -----------------
-How is polymorphic, programmable compsition of type construtors useful?  
-Typically in day to day coding we are dealing with 'hardcoded' types like `[[Int]]` or `Maybe [Int]`.  
-Here is one fun example
+Functor composition provides a theoretical framework for working with and understanding nested types. 
+Typically, in day-to-day work we are dealing with 'hardcoded' types like `[[Int]]` or `Maybe [Int]` and do not think 
+much about their theoretical properties.
+Is there any direct benefit of polymorphic, programmable composition of type constructors?  
+Here is one fun example:
 
 > nestedList :: ([] :. []) Int
 > nestedList = Compose [[1,2,3], [4,5,6]]
 > adjustedList = fmap (+1) nestedList
 
-`adjustedList` contains `Compose [[2,3,4],[5,6,7]]`.  How cool!
-
+Look ma, only one `fmap`! (no `fmap` == no teeth)  
+`adjustedList` contains `Compose [[2,3,4],[5,6,7]]`.  How cool!  
 Another example:
 
-> nestedList2 :: (Maybe :. []) Int
-> nestedList2 = Compose $ Just [1,2,3]
-> adjustedList2 = fmap (+1) nestedList2
+> maybeList :: (Maybe :. []) Int
+> maybeList =  Compose $ Just [1,2,3]
+> adjustedList2 = fmap (+1) maybeList
 
-I can write polymorphic code against nested types.  Even cooler!
+I can write polymorphic code (here `fmap (+1)`) against nested types.  Even cooler!
 
 But it gets better and more interesting.  `Compose` (`Data.Functor.Compose`) has instances of `Foldable`, 
-`Traversable`, `Applicative` allowing for far more intersting polymorphic access when programming nested types.
+`Traversable`, `Applicative` allowing for interesting polymorphic access when programming with nested types.
+
+
+Monad Limitation 
+----------------
+Notice that instance of `Applicative` is implemented in `Data.Functor.Compose` code, instance of `Monad` is not. 
+The composition of (applicative) functors is always (applicative) functor, but the composition of monads is not 
+always a monad.  It turns out that there is a natural monad structure on the composite functor m :. n 
+if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . (n :. m) a -> (m :. n) a`).  
+
+TODO provide code for this when implementing notes about Monads.
