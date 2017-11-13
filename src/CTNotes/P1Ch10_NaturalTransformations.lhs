@@ -64,7 +64,8 @@ However, we can accomplish that in two different ways:
 (Read this as: if I have an NT `f :~> g` and a function `(a -> b)`, I can change both: `f a -> g b`.)   
 Category Theoretical definition of Natural Transformation says that both approaches need to commute (yield the same result).
 What is amazing is that in programming you get this for FREE!  If both `f` and `g` are functors, 
-static code analysis can safely replace one code with the other if it feels like it will make thing better or faster.   
+static code analysis can safely replace one code with the other if it feels like it will make thing better or faster. 
+Interchange laws like this one are also very useful in equational reasoning on code.
 
 The actual formula in Category Theory repeated from the book is:
 ```
@@ -113,7 +114,8 @@ Parametricity/polymorphism arguments make horizontal composition simpler in Hask
 > horizontalComp2 beta alpha =
 >    (\(FComp.Compose x) -> FComp.Compose $ fmap alpha . beta $ x)
 
-Again, we get `horizontalComp1 '==' horizontalComp2` and static code analysis can swap one code for the other.  
+Again, we get `horizontalComp1 '==' horizontalComp2` and static code analysis can swap one code for the other. 
+We have another tool for equational reasoning too.  
 This is really nice!
 
 Note 1: In the above formulas (from the CT point of view) (.) represents Hask morphism so it should be viewed as 
@@ -134,7 +136,8 @@ We have two types of compositions and they enjoy this nice distribution formula:
      (β' ⋅ α') ∘ (β ⋅ α) = (β' ∘ β) ⋅ (α' ∘ α)
 
 In this formula (.) is vertical and (∘) is horizontal composition 
-(not that it would look much different if the notation was swapped). 
+(not that it would look much different if the notation was swapped).   
+Another perfect tool to have for static analysis swaps or equational reasoning.
 
 I will quote Milewski quoting Mac Lane:
 "I will quote Saunders Mac Lane here: The reader may enjoy writing down the evident diagrams needed to prove this fact."
@@ -154,9 +157,9 @@ Here is the swapped version under new name `rhs`:
 > rhs beta2 alpha2 beta1 alpha1 = (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp2` alpha1)
 
 (I also used one horizontalComp1 and one horizontalComp2 just because I am allowed!)
-It typechecks! That is good news, GHC compiler does not have a problem with the intechange law and accepted my blind swap.
+It typechecks! That is good news, GHC compiler does not have a problem with the interchange law and accepted my blind swap.
 
-Equational reasoning that prooves lhs == rhs is somewhat complex, starting at `rhs`:
+Equational reasoning that shows lhs == rhs is somewhat complex, starting at `rhs`:
 ```
   rhs                                                                              ==
   (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp1` alpha1) ==  -- definition of verticalComp
