@@ -5,7 +5,7 @@ TODO work in progress
 CTFP Part 1 Chapter 10. Natural Transformations
 ===============================================
 
-If good programming is about composability than we got to study Natural Transformations (NTs for short).
+If good programming is about composability than we got to study Natural Transformations (here NTs for short).
 NTs can be composed in more than one way.
 These notes assume familiarity with 
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
@@ -20,9 +20,10 @@ These notes assume familiarity with
 > import CTNotes.P1Ch07_Functors_Composition ((:.))
 > import qualified Data.Functor.Compose as FComp
 
-Typically Natural Transformations (NTs) are defined using `~>` type operator.
+Typically, Natural Transformations are defined using `~>` type operator.
 This is the case for Scalaz and Purescript. To keep with my convention of prefixing
-type operators with `:` I will define it as `:~>`.  Otherwise, this definition matches the book.
+type operators with `:` I will define it as `:~>`.  Other than using type operator (`TypeOperators` pragma is required), 
+this definition matches the book.
 
 > infixr 0 :~>
 > type f :~> g = forall x. f x -> g x
@@ -40,7 +41,8 @@ safeHead :: [a] :~> Maybe a
 
 Recap. Vertical Composition
 ---------------------------
-Vertical composition of NT-ies reduces to `(.)`. Composition of 2 functions that happen to be polymorphic must also be polymorphic.
+Vertical composition of NT-ies reduces to function composition `(.)`. 
+That works because composition of two functions that happen to be polymorphic must also be polymorphic.
 
 > verticalComp :: g :~> h -> f :~> g -> f :~> h
 > verticalComp gh fg = gh . fg
@@ -59,18 +61,17 @@ However, we can accomplish that in two different ways:
 > naturality2 :: Functor f => f :~> g -> (a -> b) -> f a -> g b
 > naturality2 alpha f = alpha . fmap f
 
-(Read this as: if I have an NT `f :~> g` and a function `(a -> b)`, I can change both `f a -> g b`.)   
+(Read this as: if I have an NT `f :~> g` and a function `(a -> b)`, I can change both: `f a -> g b`.)   
 Category Theoretical definition of Natural Transformation says that both approaches need to commute (yield the same result).
-What is amazing is that in programming you get this for FREE!  Static code analysis can safely replace one code with
-the other if it feels like it will make thing better or faster.   
-TODO: I think this can happen if both f and g are functors (but maybe I am wrong and f suffices).  
+What is amazing is that in programming you get this for FREE!  If both `f` and `g` are functors, 
+static code analysis can safely replace one code with the other if it feels like it will make thing better or faster.   
 
 The actual formula in Category Theory repeated from the book is:
 ```
    fmap_G f . alpha_a == alpha_b . fmap_F f
 ```
-but because alpha is polymorphic we can drop underscored types `a` and `b`. Compiler can reconstruct/infer which functor type
-to use for fmap and this can be dropped as well.
+but because alpha is polymorphic we can drop underscored types `a` and `b`. Compiler can reconstruct/infer which functor 
+type to use for fmap and this can be dropped as well.
 
 
 Functor Category
@@ -112,7 +113,7 @@ Parametricity/polymorphism arguments make horizontal composition simpler in Hask
 > horizontalComp2 beta alpha =
 >    (\(FComp.Compose x) -> FComp.Compose $ fmap alpha . beta $ x)
 
-Again, since we have `horizontalComp1 '==' horizontalComp2` static code analysis can swap one code for the other.  
+Again, we get `horizontalComp1 '==' horizontalComp2` and static code analysis can swap one code for the other.  
 This is really nice!
 
 Note 1: In the above formulas (from the CT point of view) (.) represents Hask morphism so it should be viewed as 
@@ -122,18 +123,65 @@ TODO: do we need all of them to be functors for the interchange law to hold in H
 Note 3: a much simpler implementation `fmap (beta . fmap alpha)` does not compile.  
 GHC infers the same types on both sides:
 ```  
- Expected type: (:.:) b1 a1 x -> (:.:) b2 a2 x  
+ Expected type: (:.) b1 a1 x -> (:.) b2 a2 x  
     Actual type: FComp.Compose b2 a2 (b1 (a1 x0))
                  -> FComp.Compose b2 a2 (b2 (a2 x0))
 ```
 
+Interchange Law
+---------------
+We have two types of compositions and they enjoy this nice distribution formula:  
+     (β' ⋅ α') ∘ (β ⋅ α) = (β' ∘ β) ⋅ (α' ∘ α)
+
+In this formula (.) is vertical and (∘) is horizontal composition 
+(not that it would look much different if the notation was swapped). 
+
+I will quote Milewski quoting Mac Lane:
+"I will quote Saunders Mac Lane here: The reader may enjoy writing down the evident diagrams needed to prove this fact."
+
+Here is LHS of this formula in Haskell, thank You typechecker!
+
+> lhs :: (Functor f1, Functor f2, Functor f3, Functor g1, Functor g2, Functor g3)  => 
+>           f2 :~> f3 -> f1 :~> f2 -> g2 :~> g3 -> g1 :~> g2 -> f1 :. g1 :~> f3 :. g3
+> lhs beta2 alpha2 beta1 alpha1 = (beta2 `verticalComp` alpha2) `horizontalComp1` (beta1 `verticalComp` alpha1)
+
+The hard part was getting the types right in the declaration for `lhs`. What would happen if we keep the same type signature and
+variable names and just use the above interchange law to swap the implementation of `lhs`?
+Here is the swapped version under new name `rhs`:
+
+> rhs :: (Functor f1, Functor f2, Functor f3, Functor g1, Functor g2, Functor g3)  => 
+>            f2 :~> f3 -> f1 :~> f2 -> g2 :~> g3 -> g1 :~> g2 -> f1 :. g1 :~> f3 :. g3
+> rhs beta2 alpha2 beta1 alpha1 = (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp2` alpha1)
+
+(I also used one horizontalComp1 and one horizontalComp2 just because I am allowed!)
+It typechecks! That is good news, GHC compiler does not have a problem with the intechange law and accepted my blind swap.
+
+Equational reasoning that prooves lhs == rhs is somewhat complex, starting at `rhs`:
+```
+  rhs                                                                              ==
+  (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp1` alpha1) ==  -- definition of verticalComp
+  (beta2 `horizontalComp1` beta1) . (alpha2 `horizontalComp2` alpha1)              ==  -- definition of horizontalComp
+  (\ Compose x -> Compose $ beta2 . fmap beta1 $ x) . 
+                               (\ Compose x -> Compose $ fmap alpha1 . alpha2 $ x) == 
+                                                         -- Compose is a simple constructor with trivial patter match
+  (\ Compose x -> Compose $ beta2 . fmap beta1 $ fmap alpha1 . alpha2 $ x)         ==  -- fmap commutes with (.)
+  (\ Compose x -> Compose $ beta2 . fmap (beta1 . alpha1) . alpha2 $ x)            ==    
+                                                         -- Godement interchange applied to (beta1 . alpha1) and alpha2
+                                                         -- see naturality1 and naturality2 above
+  \ Compose x -> Compose $ (beta2 . alpha2) . fmap (beta1 . alpha1) $ x            ==  -- definition of horizontalComp
+  (beta2 . alpha2) `horizontalComp1` (beta1 . alpha1)                              ==  -- definition of verticalComp
+  (beta2 `verticalComp` alpha2) `horizontalComp1` (beta1 `verticalComp` alpha1)    ==  
+  lhs 
+```
+
+
+
+
 TODOs
 -----
 
-TODO  interchange law:     
-      (β' ⋅ α') ∘ (β ⋅ α) = (β' ∘ β) ⋅ (α' ∘ α)
-      in Haskell
 
 TODO can we express Category that uses horizontalComp in Haskell? I doubt. 
 
-TODO real life examples of NTs
+TODO real life examples of NTs 
+     think about programming examples that use both compositions
