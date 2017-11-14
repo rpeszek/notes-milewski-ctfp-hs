@@ -5,8 +5,11 @@ Notes about CTFP Part 1 Chapter 7. Functors - Functor Composition
 
 The last section of [chapter 7](https://bartoszmilewski.com/2015/01/20/functors/) talks about composition of functors 
 and about how functors themselves can be viewed as morphisms in another 'higher' category.
-This is my attempt to use Haskell language to describe these concepts. In my opinion, these topics are foundational to 
-understanding of even basic types like nested lists `[[a]]` or something like `Maybe [a]`.
+This is my attempt to use Haskell language to describe these concepts.  
+
+What are the properties of types like `[Tree (Either Err [a])]`, `Either Err (Parser [a])` or 
+`(r -> [(s -> Maybe (t -> ))])`?  In my opinion, these topics are foundational to 
+understanding of even basic types like nested lists `[[a]]` or something like a safeTail `Maybe [a]`.
 
 These notes assume familiarity with 
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
@@ -148,9 +151,12 @@ Category where morphisms are Haskell functors is, thus, a monster monoid.  I wil
 >    type KId Monster = Identity
 >    type KComp Monster = Compose
 
+Moving from types to kinds makes thinks less interesting. The only interesting thing here is that I can actually express
+this in the language.
 
-Stronger Type Checking the Monster
---------------------
+
+Stronger Type Checking of the Monster
+-------------------------------------
 We can do better and try to match the level of type checking done by `Control.Category.Category`.
 Remember, we can only hope for type isomorphism.
 For example, `Identity Bool` is not the same as `Bool`, but is isomorphic to `Bool`.
@@ -207,7 +213,7 @@ instance Composition Compose where
 
 
 Practical examples
------------------
+------------------
 Functor composition provides a theoretical framework for working with and understanding nested types. 
 Typically, in day-to-day work we are dealing with 'hardcoded' types like `[[Int]]` or `Maybe [Int]` and do not think 
 much about their theoretical properties.
@@ -226,9 +232,16 @@ Another example:
 > maybeList =  Compose $ Just [1,2,3]
 > adjustedList2 = fmap (+1) maybeList
 
+or something crazy like this:
+
+> nested :: (((->) Int) :. ([] :. ((->) Int))) Int
+> nested = Compose (\i -> Compose $ map (+) [0..i])
+> adjusted3 :: (((->) Int) :. ([] :. ((->) Int))) Int
+> adjusted3 = fmap (+1) nested
+
 I can write polymorphic code (here `fmap (+1)`) against nested types.  Even cooler!
 
-But it gets better and more interesting.  `Compose` (`Data.Functor.Compose`) has instances of `Foldable`, 
+But it gets even better and more interesting.  `Compose` (`Data.Functor.Compose`) has instances of `Foldable`, 
 `Traversable`, `Applicative` allowing for interesting polymorphic access when programming with nested types.
 
 
@@ -240,3 +253,4 @@ always a monad.  It turns out that there is a natural monad structure on the com
 if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . (n :. m) a -> (m :. n) a`).  
 
 TODO provide code for this when implementing notes about Monads.
+

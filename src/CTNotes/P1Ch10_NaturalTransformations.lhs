@@ -4,9 +4,9 @@ TODO work in progress
 
 CTFP Part 1 Chapter 10. Natural Transformations
 ===============================================
+Natural Transformations (NTs for short) are building blocks to lot of category theory as well as program design.
+If good programming is about composability then we got to study NTs. NTs can be composed in more than one way.
 
-If good programming is about composability than we got to study Natural Transformations (here NTs for short).
-NTs can be composed in more than one way.
 These notes assume familiarity with 
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 10](https://bartoszmilewski.com/2015/04/07/natural-transformations/).
@@ -19,6 +19,7 @@ These notes assume familiarity with
 > import qualified Control.Category as Cat
 > import CTNotes.P1Ch07_Functors_Composition ((:.))
 > import qualified Data.Functor.Compose as FComp
+> import Data.Functor.Identity (Identity(..))
 
 Typically, Natural Transformations are defined using `~>` type operator.
 This is the case for Scalaz and Purescript. To keep with my convention of prefixing
@@ -97,8 +98,8 @@ Horizontal composition of NT-ies is an NT between composed functors, repeating t
  β :: G -> G'  
  β ∘ α :: G ∘ F -> G'∘ F'  
 
-In general we would have something like  
-    G'α_a ∘ β_F a  == β_F'a ∘ G α_a
+In general we would have something like 
+    G'α_a ∘ β_Fa  == β_F'a ∘ G α_a
 
 β ∘ α is sometimes called Godement product and the above isomorphism Godement interchange law.
 
@@ -122,7 +123,7 @@ Note 1: In the above formulas (from the CT point of view) (.) represents Hask mo
 function composition, not vertical composition of NTs.   
 Note 2: all of these should be Functors but for the implementation we just need one.  
 TODO: do we need all of them to be functors for the interchange law to hold in Haskell?  
-Note 3: a much simpler implementation `fmap (beta . fmap alpha)` does not compile.  
+Note 3: a much simpler implementation of `horizontalComp1` given by `fmap (beta . fmap alpha)` does not compile.  
 GHC infers the same types on both sides:
 ```  
  Expected type: (:.) b1 a1 x -> (:.) b2 a2 x  
@@ -145,46 +146,62 @@ I will quote Milewski quoting Mac Lane:
 Here is LHS of this formula in Haskell, thank You typechecker!
 
 > lhs :: (Functor f1, Functor f2, Functor f3, Functor g1, Functor g2, Functor g3)  => 
->           f2 :~> f3 -> f1 :~> f2 -> g2 :~> g3 -> g1 :~> g2 -> f1 :. g1 :~> f3 :. g3
-> lhs beta2 alpha2 beta1 alpha1 = (beta2 `verticalComp` alpha2) `horizontalComp1` (beta1 `verticalComp` alpha1)
+>         f2 :~> f3 -> f1 :~> f2 -> g2 :~> g3 -> g1 :~> g2 -> f1 :. g1 :~> f3 :. g3
+> lhs beta2 alpha2 beta1 alpha1 = 
+>        (beta2 `verticalComp` alpha2) `horizontalComp1` (beta1 `verticalComp` alpha1)
 
 The hard part was getting the types right in the declaration for `lhs`. What would happen if we keep the same type signature and
 variable names and just use the above interchange law to swap the implementation of `lhs`?
 Here is the swapped version under new name `rhs`:
 
 > rhs :: (Functor f1, Functor f2, Functor f3, Functor g1, Functor g2, Functor g3)  => 
->            f2 :~> f3 -> f1 :~> f2 -> g2 :~> g3 -> g1 :~> g2 -> f1 :. g1 :~> f3 :. g3
-> rhs beta2 alpha2 beta1 alpha1 = (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp2` alpha1)
+>          f2 :~> f3 -> f1 :~> f2 -> g2 :~> g3 -> g1 :~> g2 -> f1 :. g1 :~> f3 :. g3
+> rhs beta2 alpha2 beta1 alpha1 = 
+>     (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp2` alpha1)
 
 (I also used one horizontalComp1 and one horizontalComp2 just because I am allowed!)
 It typechecks! That is good news, GHC compiler does not have a problem with the interchange law and accepted my blind swap.
 
 Equational reasoning that shows lhs == rhs is somewhat complex, starting at `rhs`:
 ```
-  rhs                                                                              ==
-  (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp1` alpha1) ==  -- definition of verticalComp
-  (beta2 `horizontalComp1` beta1) . (alpha2 `horizontalComp2` alpha1)              ==  -- definition of horizontalComp
+  rhs                                                                             ==
+  (beta2 `horizontalComp1` beta1) `verticalComp` (alpha2 `horizontalComp1` alpha1)==  
+                     -- definition of verticalComp
+  (beta2 `horizontalComp1` beta1) . (alpha2 `horizontalComp2` alpha1)             ==  
+                     -- definition of horizontalComp
   (\ Compose x -> Compose $ beta2 . fmap beta1 $ x) . 
-                               (\ Compose x -> Compose $ fmap alpha1 . alpha2 $ x) == 
-                                                         -- Compose is a simple constructor with trivial patter match
-  (\ Compose x -> Compose $ beta2 . fmap beta1 $ fmap alpha1 . alpha2 $ x)         ==  -- fmap commutes with (.)
-  (\ Compose x -> Compose $ beta2 . fmap (beta1 . alpha1) . alpha2 $ x)            ==    
-                                                         -- Godement interchange applied to (beta1 . alpha1) and alpha2
-                                                         -- see naturality1 and naturality2 above
-  \ Compose x -> Compose $ (beta2 . alpha2) . fmap (beta1 . alpha1) $ x            ==  -- definition of horizontalComp
-  (beta2 . alpha2) `horizontalComp1` (beta1 . alpha1)                              ==  -- definition of verticalComp
-  (beta2 `verticalComp` alpha2) `horizontalComp1` (beta1 `verticalComp` alpha1)    ==  
+                               (\ Compose x -> Compose $ fmap alpha1 . alpha2 $ x)== 
+                     -- Compose is a simple constructor with trivial patter match
+  (\ Compose x -> Compose $ beta2 . fmap beta1 $ fmap alpha1 . alpha2 $ x)        ==  
+                     -- fmap commutes with (.)
+  (\ Compose x -> Compose $ beta2 . fmap (beta1 . alpha1) . alpha2 $ x)           ==    
+                     -- Godement interchange applied to (beta1 . alpha1) and alpha2
+                     -- see naturality1 and naturality2 above
+  \ Compose x -> Compose $ (beta2 . alpha2) . fmap (beta1 . alpha1) $ x           ==  
+                     -- definition of horizontalComp
+  (beta2 . alpha2) `horizontalComp1` (beta1 . alpha1)                             ==  
+                     -- definition of verticalComp
+  (beta2 `verticalComp` alpha2) `horizontalComp1` (beta1 `verticalComp` alpha1)   ==  
   lhs 
 ```
 
 
+Horizontal composition as morphisms between categories 
+------------------------------------------------------
+Horizontally composed NTs work on composed functors β ∘ α :: G ∘ F -> G'∘ F'.
+In general case these do not need to be endofunctors so if F :: C -> D and G :: D -> E, G ∘ F:: C -> E
+(rinse and repeat for primes) then we can neatly think of NTs mapping the same categories as functors do
+α:: C -> D and β:: D -> E, β ∘ α:: C -> E.   
+In Haskell that all flattens out and we have
+F :: Hask -> Hask and G :: Hask -> v, G ∘ F:: Hask -> Hask and the neatly converted 
+α:: Hask -> Hask and β:: Hask -> Hask, β ∘ α:: Hask -> Hask is not interesting.  
+For programming, the devil is in the details so the precise type signature (above) is what we want.
 
+TODO Still it is nice to see this play out some in the code
 
-TODOs
------
+ 
+TODO Kind level definition?
 
-
-TODO can we express Category that uses horizontalComp in Haskell? I doubt. 
 
 TODO real life examples of NTs 
-     think about programming examples that use both compositions
+     include examples that compose NTs 
