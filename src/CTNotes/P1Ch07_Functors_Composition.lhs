@@ -96,7 +96,7 @@ Left and right identity laws are equally easy to verify.
 Equi-composition
 ----------------
 We are forced to deal with isomorphism because of newtype. A more structural type composition would produce
-strict equality (LiberalTypeSynonyms pragma is required to do this): 
+strict equality (`LiberalTypeSynonyms` pragma is required to do this): 
 
 > type Comp f g a = f (g a)
 > associativity :: Comp f (Comp g h) a -> Comp (Comp f g) h a
