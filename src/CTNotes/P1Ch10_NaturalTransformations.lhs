@@ -11,13 +11,13 @@ These notes assume familiarity with
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 10](https://bartoszmilewski.com/2015/04/07/natural-transformations/).
 
-> {-# LANGUAGE RankNTypes #-}
+> {-# LANGUAGE Rank2Types #-}
 > {-# LANGUAGE TypeOperators #-}
 >
 > module CTNotes.P1Ch10_NaturalTransformations where
 >
 > import qualified Control.Category as Cat
-> import CTNotes.P1Ch07_Functors_Composition ((:.))
+> import CTNotes.P1Ch07_Functors_Composition ((:.), isoFCA1, isoFCA2)
 > import qualified Data.Functor.Compose as FComp
 > import Data.Functor.Identity (Identity(..))
 
@@ -29,7 +29,9 @@ this definition matches the book.
 > infixr 0 :~>
 > type f :~> g = forall x. f x -> g x
 
-This means functions from type `f x` to type `g x` that are polymorphic in type parameter x.  For example, we could write
+This requires language to support universally quantified types. Both `Rank2Types` and `RankNTypes` pragmas
+suffice. This means that functions from type `f x` to type `g x` that are polymorphic in type parameter x.  
+With type operators, for example, we could write
 
 > safeHead :: [] :~> Maybe  
 > safeHead [] = Nothing
@@ -101,7 +103,9 @@ Horizontal composition of NT-ies is an NT between composed functors, repeating t
 In general we would have something like 
     G'α_a ∘ β_Fa  == β_F'a ∘ G α_a
 
-β ∘ α is sometimes called Godement product and the above isomorphism Godement interchange law.
+β ∘ α is sometimes called Godement product and the above isomorphism Godement interchange law.  
+I like to think that this composition is called horizontal because (vertical) NTs are pushed 
+forward by (horizontal) functors.
 
 Parametricity/polymorphism arguments make horizontal composition simpler in Haskell:
 
@@ -195,13 +199,50 @@ In general case these do not need to be endofunctors so if F :: C -> D and G :: 
 In Haskell that all flattens out and we have
 F :: Hask -> Hask and G :: Hask -> v, G ∘ F:: Hask -> Hask and the neatly converted 
 α:: Hask -> Hask and β:: Hask -> Hask, β ∘ α:: Hask -> Hask is not interesting.  
-For programming, the devil is in the details so the precise type signature (above) is what we want.
+For programming, the devil is in the detail so the precise type signature (above) is what we want.
 
-TODO Still it is nice to see this play out some in the code
+I can at least verify category laws.   
+Following the book the identity morphism is natural tranformation 
+of the type `Identity :~> Identity` 
+(Identity defined in base package Data.Functor.Identity module and `id` is the identity function.) 
 
- 
+> ntId:: Identity :~> Identity
+> ntId = id
+
+That makes right and left identity laws trivial. 
+  
+Associativity: (γ ∘ β) ∘ α == γ ∘ (β ∘ α), assume α, β as above and γ :: H -> H`.  
+Because of how we typed the 
+[functor composition](https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch07_Functors_Composition)
+LHS and RHS have different (but isomorphic) types:  
+ (γ ∘ β) ∘ α:: (H ∘ G) ∘ F -> (H'∘ G') ∘ F'  
+ γ ∘ (β ∘ α):: H ∘ (G ∘ F) -> H'∘ (G'∘ F')  
+
+This shows one side of that type isomorphism (the other side is equally easy): 
+
+> assoIso1:: (Functor f, Functor f', Functor g, Functor g',Functor h, Functor h') =>
+>            (h :. g) :. f :~> (h' :. g') :. f' -> h :. (g :. f) :~> h' :. (g' :. f')
+> assoIso1 nt = isoFCA1 . nt . isoFCA2
+
+
+(TODO needs some polish.) Equational reasoning about the associativity 
+(lying a little bit by ignoring `Compose` data constructor):
+```
+  gamma `horizontalComp1` (beta `horizontalComp1` alpha) ==
+  gamma . fmap (beta . fmap alpha)                       ==
+     -- fmap commutes with (.)
+  gamma . fmap beta . (fmap . fmap) alpha                ==
+     -- composition of 2 functors is a functor
+  gamma . fmap beta . fmap alpha                         ==
+     -- function composition is associative              ==
+  (gamma . fmap beta ) . fmap alpha                      ==   
+  (gamma `horizontalComp1` beta) `horizontalComp1` alpha
+```
+
+
 TODO Kind level definition?
-
 
 TODO real life examples of NTs 
      include examples that compose NTs 
+
+TODO maybe isos should use ~= and for actual equals use == ?

@@ -17,6 +17,7 @@ up to and including [Ch 7](https://bartoszmilewski.com/2015/01/20/functors/).
 
 > {-# LANGUAGE TypeOperators #-}
 > {-# LANGUAGE TypeFamilies #-}
+> {-# LANGUAGE LiberalTypeSynonyms #-}
 >
 > module CTNotes.P1Ch07_Functors_Composition where
 > import Data.Functor.Compose (Compose(..))
@@ -70,26 +71,43 @@ Category Laws
 We can compose functors and we also have identity functor.  To have a category in which functors are morphisms
 we need to verify category laws.
 The most interesting of these is the check that composition is associative
-(again, up to isomorphism because `Compose` data constructor will need to move around).  
+(again, up to isomorphism because `Compose` data constructor will need to move around).    
 This is done by explicitly defining the isomorphisms:
 
-> iso1 :: Functor f => ((f :. g) :. h) a -> (f :. (g :. h)) a
-> iso1 (Compose (Compose fgh_x)) = Compose (fmap Compose fgh_x)
+> isoFCA1 :: Functor f => ((f :. g) :. h) a -> (f :. (g :. h)) a
+> isoFCA1 (Compose (Compose fgh_x)) = Compose (fmap Compose fgh_x)
 >
-> iso2 :: Functor f => (f :. (g :. h)) a -> ((f :. g) :. h) a
-> iso2 (Compose f_comp_ghx) =  Compose (Compose $ fmap getCompose f_comp_ghx)
+> isoFCA2 :: Functor f => (f :. (g :. h)) a -> ((f :. g) :. h) a
+> isoFCA2 (Compose f_comp_ghx) =  Compose (Compose $ fmap getCompose f_comp_ghx)
 
-Simple equational reasoning shows that `iso1` and `iso2` are indeed inverses of each other.
-For example, this shows that `iso1 . iso2` reduces to identity:
+Simple equational reasoning shows that `isoFCA1` and `isoFCA2` are indeed inverses of each other.
+For example, this shows that `isoFCA1 . isoFCA2` reduces to identity:
 ```
- iso2 . iso1 $ Compose (Compose fgh_x)                    ==  -- definition of iso1
- iso2 $ Compose (fmap Compose fgh_x)                      ==  -- definition of iso2
+ isoFCA2 . isoFCA1 $ Compose (Compose fgh_x)              ==  -- definition of isoFCA1
+ isoFCA2 $ Compose (fmap Compose fgh_x)                   ==  -- definition of isoFCA2
  Compose (Compose $ fmap getCompose (fmap Compose fgh_x)) ==  -- functors preserve morphism composition
  Compose (Compose $ fmap (getCompose . Compose) fgh_x)    ==  -- getCompose deconstructs Compose
  Compose (Compose $ fmap id fgh_x)                        ==  -- functors preserve identity morphisms
  Compose (Compose fgh_x)
 ```
 Left and right identity laws are equally easy to verify.
+
+
+Equi-composition
+----------------
+We are forced to deal with isomorphism because of newtype. A more structural type composition would produce
+strict equality (LiberalTypeSynonyms pragma is required to do this): 
+
+> type Comp f g a = f (g a)
+> associativity :: Comp f (Comp g h) a -> Comp (Comp f g) h a
+> associativity = id
+
+This seems somewhat analogous to the equi-recursion vs iso-recursion ideas in language design,
+except wrapping and unwrapping (using `Compose` and `getCompose`) is not handled automatically at the language level.
+Because of this similarity I am giving it (probably not very good) name of equi-composition.  
+I am not pursuing this direction here.  Using newtype seems just a simpler way to go in Haskell (for example, 
+I have little and on a negative side experience with `-XTypeSynonymInstances` pragma). 
+On intuitive level it seems that this direction is much harder on the language.
 
 
 Typing it
@@ -212,8 +230,8 @@ instance Composition Compose where
 ```
 
 
-Practical examples
-------------------
+Straightforward practical examples
+----------------------------------
 Functor composition provides a theoretical framework for working with and understanding nested types. 
 Typically, in day-to-day work we are dealing with 'hardcoded' types like `[[Int]]` or `Maybe [Int]` and do not think 
 much about their theoretical properties.
@@ -252,5 +270,5 @@ The composition of (applicative) functors is always (applicative) functor, but t
 always a monad.  It turns out that there is a natural monad structure on the composite functor m :. n 
 if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . (n :. m) a -> (m :. n) a`).  
 
-TODO provide code for this when implementing notes about Monads.
+TODO provide code for this when implementing notes about Monads.  The book does not talk about transformers.
 
