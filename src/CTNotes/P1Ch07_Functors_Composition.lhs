@@ -3,17 +3,17 @@
 Notes about CTFP Part 1 Chapter 7. Functors - Functor Composition
 =================================================================
 
-The last section of [chapter 7](https://bartoszmilewski.com/2015/01/20/functors/) talks about composition of functors 
+The last section of 
+[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
+[Ch 7](https://bartoszmilewski.com/2015/01/20/functors/)
+talks about composition of functors 
 and about how functors themselves can be viewed as morphisms in another 'higher' category.
 This is my attempt to use Haskell language to describe these concepts.  
 
 What are the properties of types like `[Tree (Either Err [a])]`, `Either Err (Parser [a])` or 
-`(r -> [(s -> Maybe (t -> ))])`?  In my opinion, these topics are foundational to 
-understanding of even basic types like nested lists `[[a]]` or something like a safeTail `Maybe [a]`.
-
-These notes assume familiarity with 
-[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
-up to and including [Ch 7](https://bartoszmilewski.com/2015/01/20/functors/).
+`(r -> [(s -> Maybe (t -> ))])`?   
+In my opinion, Functor Composition is foundational to understanding of even basic types like nested lists 
+`[[a]]` or something like a safeTail `Maybe [a]` to say nothing of CT stuff like monads and comonands.
 
 > {-# LANGUAGE TypeOperators #-}
 > {-# LANGUAGE TypeFamilies #-}
@@ -25,8 +25,8 @@ up to and including [Ch 7](https://bartoszmilewski.com/2015/01/20/functors/).
 
 Functor Composition
 -------------------
-Expressing functor composition is surprisingly doable in Haskell and it has been implemented in the `base` package in 
-imported `Data.Functor.Compose` module.  I am quoting abbreviated definition for documentation purposes:
+Expressing functor composition is surprisingly doable in Haskell. It is implemented in the
+imported `Data.Functor.Compose` module (`base` package).  I am quoting abbreviated definition for documentation purposes:
 
 ```
 newtype Compose f g a = Compose { getCompose :: f (g a) }
@@ -37,7 +37,7 @@ instance (Functor f, Functor g) => Functor (Compose f g) where
 Instead of direct composition like `Maybe [a]` this creates an isomorphic type `Compose Maybe [] a`.  
 Haskell has no problem with writing types like `(a -> b) -> f (g a) -> f (g b)` but
 using this nominal typing trick allows us to get a hook to actually program with type level composition!   
-The book uses `G ∘ F` notation for function composition. To mimic this we can create a type operator
+The book uses `G ∘ F` notation for function composition. To mimic this, I create a type operator
 (requires `TypeOperators` pragma). I am using colon `:` to make it clear that this is a type level operator.
 
 > type f :. g = Compose f g
@@ -48,14 +48,14 @@ This way `Maybe :. []` becomes a functor that maps type `Int` into `Maybe [Int]`
 > safeTail [] = Compose Nothing
 > safeTail (x:xs) = Compose $ Just xs 
 
-Well, it really maps `Int` to `Compose Maybe [Int]`, but that is that up-to isomorphisms limitation we need to accept
-in Category Theory.
+Well, it really maps `Int` to `Compose Maybe [Int]`, but that is that up-to isomorphisms limitation caused
+by using the `newtype`.
 
 
 Identity
 --------
 Identity functor is introduced in the book in Chapter 8.  I will use definition from the `base` package `Data.Functor.Identity` module. 
-Here is an equivalent definition (it is a quote not actual code since I am importing it):
+Here is the definition (it is a quote not actual code since I am importing it):
 
 ```
 newtype Identity a = Identity { runIdentity :: a }
@@ -70,7 +70,7 @@ Category Laws
 -------------
 We can compose functors and we also have identity functor.  To have a category in which functors are morphisms
 we need to verify category laws.
-The most interesting of these is the check that composition is associative
+The most interesting is the check that composition is associative
 (again, up to isomorphism because `Compose` data constructor will need to move around).    
 This is done by explicitly defining the isomorphisms:
 
@@ -81,7 +81,7 @@ This is done by explicitly defining the isomorphisms:
 > isoFCA2 (Compose f_comp_ghx) =  Compose (Compose $ fmap getCompose f_comp_ghx)
 
 Simple equational reasoning shows that `isoFCA1` and `isoFCA2` are indeed inverses of each other.
-For example, this shows that `isoFCA1 . isoFCA2` reduces to identity:
+For example, this shows that `isoFCA2 . isoFCA1` reduces to identity:
 ```
  isoFCA2 . isoFCA1 $ Compose (Compose fgh_x)              ==  -- definition of isoFCA1
  isoFCA2 $ Compose (fmap Compose fgh_x)                   ==  -- definition of isoFCA2
@@ -90,12 +90,13 @@ For example, this shows that `isoFCA1 . isoFCA2` reduces to identity:
  Compose (Compose $ fmap id fgh_x)                        ==  -- functors preserve identity morphisms
  Compose (Compose fgh_x)
 ```
+(`isoFCA2 . isoFCA1` is identity on `((f :. g) :. h) a`.)   
 Left and right identity laws are equally easy to verify.
 
 
 Equi-composition
 ----------------
-We are forced to deal with isomorphism because of newtype. A more structural type composition would produce
+We are forced to deal with isomorphism because of `newtype`. A more structural type composition would produce
 strict equality (`LiberalTypeSynonyms` pragma is required to do this): 
 
 > type Comp f g a = f (g a)
@@ -104,10 +105,11 @@ strict equality (`LiberalTypeSynonyms` pragma is required to do this):
 
 This seems somewhat analogous to the equi-recursion vs iso-recursion ideas in language design,
 except wrapping and unwrapping (using `Compose` and `getCompose`) is not handled automatically at the language level.
-Because of this similarity I am giving it (probably not very good) name of equi-composition.  
-I am not pursuing this direction here.  Using newtype seems just a simpler way to go in Haskell (for example, 
-I have little and on a negative side experience with `-XTypeSynonymInstances` pragma). 
-On intuitive level it seems that this direction is much harder on the language.
+Because of this similarity I am calling it (probably not a very good name) equi-composition.  
+I am not pursuing this direction here.  `newtype` seems just a simpler way to go in Haskell (for example, 
+I have little and on a negative side experience with `-XTypeSynonymInstances` pragma).  
+On intuitive level, it seems that this direction would be easier on the programmer and 
+much harder on the language.
 
 
 Typing it
@@ -152,7 +154,8 @@ For example bifunctors described in [Ch.8](https://bartoszmilewski.com/2015/02/0
 are functors and are composable with other functors including the 
 `Data.Functor` functors.
 Bifunctor type constructors have kind `* -> * -> *` and are not covered by my `KCategory` class.  
-Category theoretical properties of functor composition apply in general case, not just to `Data.Functor` functors.
+I will need to remember that category theoretical properties of functor composition apply in general case, 
+not just to `Data.Functor` functors.
 
 (TODO need to include more info in the future note for 
 [Ch.8](https://bartoszmilewski.com/2015/02/03/functoriality/) )
@@ -174,7 +177,7 @@ this in the language.
 
 Stronger Type Checking of the Monster
 -------------------------------------
-We can do better and try to match the level of type checking done by `Control.Category.Category`.
+I can do better and try to match the level of type checking done by `Control.Category.Category`.
 Remember, we can only hope for type isomorphism.
 For example, `Identity Bool` is not the same as `Bool`, but is isomorphic to `Bool`.
 
@@ -204,9 +207,9 @@ The proofs of isomorphisms are trivial and boil down to construction and deconst
 `MkComp`, `Compose`, `Identity`, and `MkId`.
 
 Notice that `KCategory` uses `type` keyword (is a type synonym family) and `KCategory2` uses a somewhat more tedious `data`
-(is a data family). This is because, for complex reasons, type synonym classes are more permissive and may not be injective.
-GHC compiler would not allow us to define the Iso constraints idIsoEvidence or compIsoEvidence using
-the type synonym approach.
+(is a data family). This is because, for complex reasons, type synonym classes are more permissive and may be not injective.
+GHC compiler does not allow me to define the Iso constraints idIsoEvidence or compIsoEvidence using
+the type synonym approach.  (TODO I lack detailed understanding.)
 
 
 Polymorphic Composition
@@ -232,7 +235,7 @@ instance Composition Compose where
 Code examples
 -------------
 Functor composition provides a theoretical framework for working with and understanding nested types. 
-Typically, in day-to-day work we are dealing with 'hardcoded' types like `[[Int]]` or `Maybe [Int]` and do not think 
+In day-to-day work I am dealing with 'hardcoded' types like `[[Int]]` or `Maybe [Int]` and do not think 
 much about their theoretical properties.
 Is there any direct benefit of polymorphic, programmable composition of type constructors?  
 Here is one fun example:
@@ -269,5 +272,4 @@ The composition of (applicative) functors is always (applicative) functor, but t
 always a monad.  It turns out that there is a natural monad structure on the composite functor m :. n 
 if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . (n :. m) a -> (m :. n) a`).  
 
-TODO provide code for this when implementing notes about Monads.  The book does not talk about transformers.
-
+TODO related code examples when implementing notes about Monads.  The book does not talk about transformers.
