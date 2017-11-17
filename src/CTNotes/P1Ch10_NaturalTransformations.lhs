@@ -304,7 +304,7 @@ and notice that (join is a natural transformation [Part 3, Ch.7](https://bartosz
 > reduceDoubleMaybe :: Maybe :. Maybe :~> Maybe
 > reduceDoubleMaybe = join . FComp.getCompose
 
-Is that not nice!
+Is that not nice! We just composed vertically and horizontally: `join . (safeHead ∘ safeHead)`.  
 
 
 TODO maybe isos should use ~= and for actual equals use == ?
