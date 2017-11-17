@@ -4,7 +4,7 @@ TODO work in progress
 
 CTFP Part 1 Chapter 10. Natural Transformations
 ===============================================
-Natural Transformations (NTs for short) are building blocks to lot of category theory as well as program design.
+Natural Transformations (NTs for short) are building blocks to a lot of category theory and are ubiquitous in Haskell.
 If good programming is about composability then we got to study NTs. NTs can be composed in more than one way.
 
 These notes assume familiarity with 
@@ -20,6 +20,8 @@ These notes assume familiarity with
 > import CTNotes.P1Ch07_Functors_Composition ((:.), isoFCA1, isoFCA2)
 > import qualified Data.Functor.Compose as FComp
 > import Data.Functor.Identity (Identity(..))
+> import Data.Functor.Const (Const(..))
+> import Control.Monad (join)
 
 Typically, Natural Transformations are defined using `~>` type operator.
 This is the case for Scalaz and Purescript. To keep with my convention of prefixing
@@ -41,6 +43,17 @@ instead of
 ```
 safeHead :: [a] :~> Maybe a
 ```
+The above definition of NT is oriented towards `Data.Functor` functors. However, it seems to be general enough.
+For example, the following definition for bifunctors (which are functors too) is not interesting:
+
+> type f :~~> g = forall x y. f x y -> g x y
+
+It amounts to establishing NT for each type variable separately. 
+For example, `type f :~~> g` is equivalent to `forall x . f x :~> g x` as shown here:
+
+> rep :: f :~~> g -> forall x . f x :~> g x
+> rep = id
+
 
 Recap. Vertical Composition
 ---------------------------
@@ -239,10 +252,59 @@ This shows one side of that type isomorphism (the other side is equally easy):
   (gamma `horizontalComp1` beta) `horizontalComp1` alpha
 ```
 
+Implementing KCategory class with kind constraints from 
+[N_P1Ch07_Functors_Composition](https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch07_Functors_Composition)
+is not that interesting and I will skip it.
 
-TODO Kind level definition?
 
-TODO real life examples of NTs 
-     include examples that compose NTs 
+Code examples
+-------------
+Natural Transformations are ubiquitous in Haskell as is the use of polymorphic functions. Even polymorphic functions 
+that do not look like `f a -> g a` end up being NTies.  Book has this intersting example:
+
+> lengthIsNt :: [] :~> Const Int 
+> lengthIsNt = Const . length
+
+NTs involving `Reader r` have very special importance (Yoneda) and deserve separate set of notes.
+Other examples: 
+
+(to avoid package dependencies I am redefining this monad transformer here):
+
+> newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
+> runMaybeTisNT :: MaybeT m :~> m :. Maybe
+> runMaybeTisNT = FComp.Compose . runMaybeT
+> maybeTisNT :: m :. Maybe :~> MaybeT m 
+> maybeTisNT = MaybeT . FComp.getCompose
+
+These examples are just quoted to avoid package dependencies:
+ 
+```
+liftIOIsNT ::  MonadIO m =>  IO :~> m
+liftIOIsNT = liftIO
+
+liftIsNT :: (MonadTrans t, Monad m) => m :~> t m
+liftIsNT = lift
+
+atomicallyIsNt :: STM :~> IO
+atomicallyIsNt = atomically
+```
+I sometimes see natural transformations explicitly called out in the code (typically by using `~>`) to emphasize 
+type transformation.  For example, DSL implementations that map abstract syntax instructions to interpreter, 
+or transformation of effects.
+
+__Composition__. Vertical composition of NTies reduces to `(.)` and is obviously used a lot.
+Horizontal composition hides in code patterns like `fmap f . g` used with composed types.  
+But here is some fun with it:
+
+> safeHead2 :: [] :. [] :~> Maybe :. Maybe
+> safeHead2 = safeHead `horizontalComp1` safeHead
+
+and notice that (join is a natural transformation [Part 3, Ch.7](https://bartoszmilewski.com/2016/12/27/monads-categorically/)):
+
+> reduceDoubleMaybe :: Maybe :. Maybe :~> Maybe
+> reduceDoubleMaybe = join . FComp.getCompose
+
+Is that not nice!
+
 
 TODO maybe isos should use ~= and for actual equals use == ?

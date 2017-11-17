@@ -144,19 +144,18 @@ For example `id :: cat a a` guarantees that `a` is the same on both sides, we no
 
 Short recap to understand KCategory and kind system:
 ----------------------------------------------------
-(TODO does this section add anything?)  
-Functors are structure preserving mappings between categories.
-In Haskell, the term functor is almost synonymous with instances of `Data.Functor` typeclass (and this is how I am using it). 
-These functors map functions (Hask category morphisms) to functions (`fmap:: (a -> b) -> f a -> f b`) and 
-types (Hask category objects) to types (`a` tp `f a`).
-They are structure preserving but Haskell does not type check this aspect and leaves the proof obligation to the programmer.
+In Haskell, the term functor is almost synonymous with instances of `Data.Functor` typeclass 
+(and this is how I am using it). 
+This limits their use to just type constructors of kind `* -> *` (type constructors that have one type variable).  
+There are more functors, even in Haskell, than there are functors in Haskell ;). 
+For example bifunctors described in [Ch.8](https://bartoszmilewski.com/2015/02/03/functoriality/) 
+are functors and are composable with other functors including the 
+`Data.Functor` functors.
+Bifunctor type constructors have kind `* -> * -> *` and are not covered by my `KCategory` class.  
+Category theoretical properties of functor composition apply in general case, not just to `Data.Functor` functors.
 
-If we ignore the action of functors on functions, we can think of Haskell functors as just acting on types.
-With that reduced viewpoint, functors are 'type-level' functions that map types to types and have kind `* -> *`.  
-Functor typeclass defined in `Data.Functor` can be viewed as having kind signature `(* -> *) -> Constraint`.
-
-Note that the `Compose` type (`Data.Functor.Compose`) does not just compose functors.
-It can compose more general type expressions of kind `* -> *`.
+(TODO need to include more info in the future note for 
+[Ch.8](https://bartoszmilewski.com/2015/02/03/functoriality/) )
 
 
 Monster Category we are looking for
@@ -230,8 +229,8 @@ instance Composition Compose where
 ```
 
 
-Straightforward practical examples
-----------------------------------
+Code examples
+-------------
 Functor composition provides a theoretical framework for working with and understanding nested types. 
 Typically, in day-to-day work we are dealing with 'hardcoded' types like `[[Int]]` or `Maybe [Int]` and do not think 
 much about their theoretical properties.
