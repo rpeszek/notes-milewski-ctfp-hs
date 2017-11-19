@@ -21,7 +21,8 @@ CTPF considers the general case of limits of functors D:: I -> C.
 These define a lot of interesting commuting diagrams in D.  Even taking I to be 
 a very trivial (finite) category often generates quite interesting diagrams (pullback, equalizer, pushout). 
 Unfortunately, these diagrams do not map easily to Hask. For example, `MondadPlus` is 
-not a pullback of `Monad` and `Monoid` but it defines its own `mzero` and `mplus`.  
+not a pullback of `Monad` and `Monoid`, instead it defines its own `mzero` and `mplus`.
+(Intuitively, I think that in nominally typed language this type of stuff is hard if not impossible).  
 My focus in these notes is on learning and understanding of more direct/polymorphic 
 applications of CT to the type system and programming. 
 
