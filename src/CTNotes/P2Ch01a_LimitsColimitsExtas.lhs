@@ -47,7 +47,9 @@ The only way to get a polymorphic function from something not dependent on `x` t
 I need a way to transform `FooBar` to a type that keeps constructors that 'do not depend on x'. 
 For `FooBar`, that type would be (remember, this is a regular type, no type variables):  
 
-> data LimitFooBar = NoX | AnotherNoX 
+```
+data LimitFooBar = NoX | AnotherNoX 
+```
 
 Fortunately, if type system supports universal quantification we can do just that. `category-extras` defines  
 
