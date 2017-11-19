@@ -24,6 +24,7 @@ cabal.project.local
 .idea/
 *.iml
 
+temp
 temp*.md
 Temp*.hs
 

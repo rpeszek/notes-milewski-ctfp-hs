@@ -1,7 +1,5 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch10_NaturalTransformations
 
-TODO work in progress
-
 CTFP Part 1 Chapter 10. Natural Transformations
 ===============================================
 Natural Transformations (NTs for short) are building blocks to a lot of category theory and are ubiquitous in Haskell.
