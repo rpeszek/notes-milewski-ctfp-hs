@@ -82,6 +82,8 @@ factor = cone
 Parametricity enforces commutativity conditions, so indeed `Limit f` is the 
 limit of `f` in the categorical sense.
 
+HasLimit
+--------
 Since not all `Data.Functor` functors have limits `category-extras` includes
 
 > class HasLimit f where
@@ -106,6 +108,24 @@ Intuitively, I view `Limit` as `(* -> *) -> *` type operator that strips all con
 that depend to the parameter type.  A stricter view is that `Limit f` is regular `*` 
 type inhabited by values that all types `f a` have.
 
+
+Limit as a Natural Isomorphism
+------------------------------
+Following the book (section with the title) existence of the following natural isomorphism can 
+be viewed as a defining formula for Lim D:
+
+ C(b, Lim F) ≃ Nat(Δb, F)
+
+I can use that to derive `Limit f`.
+Using pseudo Haskell:
+```
+Nat(Δb, F)  ==  --Haskell def on Natural Transformation
+forall a . Const b a -> f a ~= -- def of Const and getConst isomorphism 
+forall a . b -> f a ~= -- b does not depend on a
+b -> forall a . f a == -- def of Limit f
+b -> Limit f  ==
+C(b, Lim F)
+```
 
 Functor Colimit
 ---------------
