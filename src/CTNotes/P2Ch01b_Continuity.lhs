@@ -3,7 +3,11 @@
 Work in progress
 
 > {-# LANGUAGE GADTs #-}
+> {-# LANGUAGE DataKinds #-}
 > {-# LANGUAGE KindSignatures #-}
+> {-# LANGUAGE TypeOperators #-}
+> {-# LANGUAGE FlexibleInstances #-}
+>
 > module CTNotes.P2Ch01b_Continuity where
 > import GHC.TypeLits
 > import Data.Proxy
@@ -32,3 +36,43 @@ vs `(f Bool, f Bool)` or even `f ((), ())` vs `(f (), f ())`
 - `Const a` - for `a` with > 1 inhabitants
 - `Maybe`
 - `Either Err`
+
+I will prove this with GHC type solver!  
+First I need to develop ability to calculate type cardinatities on the type level.
+
+> data TypeCardinality a (n :: Nat) = TypeCardinality
+>
+> boolCard :: TypeCardinality Bool 2
+> boolCard = TypeCardinality
+>
+> unitCard :: TypeCardinality () 1
+> unitCard = TypeCardinality
+>
+> constCard ::  TypeCardinality a n -> TypeCardinality (Const a b) n
+> constCard _ = TypeCardinality
+>
+> pairCard :: TypeCardinality a n -> TypeCardinality b m -> TypeCardinality (a, b) (n * m)
+> pairCard _ _ = TypeCardinality
+>
+> maybeCard :: TypeCardinality a n -> TypeCardinality (Maybe a) (n + 1)
+> maybeCard _ = TypeCardinality
+>
+> eitherCard :: TypeCardinality b n -> TypeCardinality a m -> TypeCardinality (Either b a) (n + m)
+> eitherCard _ _ = TypeCardinality
+
+This GADT encodes a reason why `f` is not continuous. Has one constructor because I came up with one method for 
+generating counter examples:
+
+> data NotContinuousEv (f :: * -> *) where 
+>    CardinalityMismatch :: (n1 + 1 <= n2) => TypeCardinality (f (a,b)) n1 -> TypeCardinality (f a, f b) n2 -> NotContinuousEv f
+> 
+> class (Functor f) => NotContinuous f where
+>    counterExample :: NotContinuousEv f
+
+Proof that Const Bool is not continuous,  
+this simply compares (at type level) cardinalities for Const Bool (a, b) with (Const Bool a, Const Bool b):
+
+> instance NotContinuous (Const Bool) where
+>    counterExample = CardinalityMismatch (constCard boolCard) (pairCard (constCard boolCard) (constCard boolCard)) 
+
+TODO finish this for other types
