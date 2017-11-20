@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch01a_LimitsColimitsExtas
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch01a_LimitsColimitsExtras
 
 CTFP Part 2 Chapter 1. Limits and Colimits - example from category-extras 
 =========================================================================
