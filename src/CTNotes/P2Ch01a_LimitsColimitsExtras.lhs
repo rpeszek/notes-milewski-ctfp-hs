@@ -116,7 +116,8 @@ be viewed as a defining formula for Lim D:
 
  C(b, Lim F) ≃ Nat(Δb, F)
 
-I can use that to derive `Limit f`.
+(This says that factorizing morphisms are equivalent to limit defining natural transformations.)  
+I can use it to derive `Limit f`.
 Using pseudo Haskell:
 ```
 Nat(Δb, F)  ==  --Haskell def on Natural Transformation

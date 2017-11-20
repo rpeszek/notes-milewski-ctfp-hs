@@ -27,10 +27,10 @@ That gives me one diagram I can easily use to check the continuity.  Continuous 
 
 
 CTFP states that the `(->)` profunctor is continuous (maps colimits to limits in first type variable
-and limit to limits in the second).  This is very strong property considering the the functor needs to 
+and limit to limits in the second).  This seems a very strong property considering the the functor needs to 
 commute with any diagram not just the product `(,)`.
 
-Still, just the product check elimiates lots of Functors from that game!
+Still, just the product check eliminates lots of Functors from that game!
 The following functors apparently are not continuous because we simply can count inhabitants of `f (Bool, Bool)`
 vs `(f Bool, f Bool)` or even `f ((), ())` vs `(f (), f ())`
 - `Const a` - for `a` with > 1 inhabitants
@@ -38,7 +38,7 @@ vs `(f Bool, f Bool)` or even `f ((), ())` vs `(f (), f ())`
 - `Either Err`
 
 I will prove this with GHC type solver!  
-First I need to develop ability to calculate type cardinatities on the type level.
+First I need to develop ability to calculate type cardinalities on the type level.
 
 > data TypeCardinality a (n :: Nat) = TypeCardinality
 >
@@ -60,7 +60,7 @@ First I need to develop ability to calculate type cardinatities on the type leve
 > eitherCard :: TypeCardinality b n -> TypeCardinality a m -> TypeCardinality (Either b a) (n + m)
 > eitherCard _ _ = TypeCardinality
 
-This GADT encodes a reason why `f` is not continuous. Has one constructor because I came up with one method for 
+This GADT encodes a reason why type constructor `f` is not continuous. Has one constructor because I came up with one method for 
 generating counter examples:
 
 > data NotContinuousEv (f :: * -> *) where 
@@ -69,8 +69,8 @@ generating counter examples:
 > class (Functor f) => NotContinuous f where
 >    counterExample :: NotContinuousEv f
 
-Proof that Const Bool is not continuous,  
-this simply compares (at type level) cardinalities for Const Bool (a, b) with (Const Bool a, Const Bool b):
+Proof that `Const Bool` is not continuous,  
+this simply compares (at type level) cardinalities for `Const Bool (a, b)` with `(Const Bool a, Const Bool b)`:
 
 > instance NotContinuous (Const Bool) where
 >    counterExample = CardinalityMismatch (constCard boolCard) (pairCard (constCard boolCard) (constCard boolCard)) 
