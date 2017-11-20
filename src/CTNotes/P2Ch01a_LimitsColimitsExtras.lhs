@@ -12,7 +12,7 @@ This note maps `category-extras` definitions to universal construction of limit 
 > {-# LANGUAGE ExistentialQuantification #-}
 > {-# LANGUAGE TypeOperators #-}
 
-> module CTNotes.P2Ch01a_LimitsColimitsExtas where
+> module CTNotes.P2Ch01a_LimitsColimitsExtras where
 > import CTNotes.P1Ch10_NaturalTransformations ((:~>))
 > import Data.Functor.Identity (Identity(..))
 > import Data.Functor.Const (Const(..))

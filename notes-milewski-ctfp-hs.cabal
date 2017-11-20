@@ -17,7 +17,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     CTNotes.P1Ch07_Functors_Composition
                      , CTNotes.P1Ch10_NaturalTransformations
-                     , CTNotes.P2Ch01a_LimitsColimitsExtas
+                     , CTNotes.P2Ch01a_LimitsColimitsExtras
                      , CTNotes.P2Ch01b_Continuity
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
