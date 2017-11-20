@@ -22,12 +22,13 @@ That gives me one diagram I can easily use to check the continuity.  Continuous 
 >     commuteProof = IsoProof (\f -> (fst . f, snd . f)) (\(fa, fb) -> (\r -> (fa r, fb r)))
 
 
-CTFP point out that the `(->)` profunctor is continuous (maps colimits to limits in first type variable
+CTFP states that the `(->)` profunctor is continuous (maps colimits to limits in first type variable
 and limit to limits in the second).  This is very strong property considering the the functor needs to 
-commute with any diagram not just `(,)`.
+commute with any diagram not just the product `(,)`.
 
+Still, just the product check elimiates lots of Functors from that game!
 The following functors apparently are not continuous because we simply can count inhabitants of `f (Bool, Bool)`
-and `(f Bool, f Bool)` or even `f ((), ())` vs (f (), f ()) to get a counter example:
+vs `(f Bool, f Bool)` or even `f ((), ())` vs `(f (), f ())`
 - `Const a` - for `a` with > 1 inhabitants
 - `Maybe`
 - `Either Err`
