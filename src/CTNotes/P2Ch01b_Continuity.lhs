@@ -1,6 +1,11 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch01b_Continuity
 
-Work in progress
+This note explores last section of
+[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
+[Part 2. Ch.1 Limits and Colimits](https://bartoszmilewski.com/2015/04/15/limits-and-colimits/).
+
+Continuity condition is very strong and it amounts to requirement that functor commutes with diagrams.
+This note shows that functors are mostly not continuous.
 
 > {-# LANGUAGE GADTs #-}
 > {-# LANGUAGE DataKinds #-}
@@ -67,8 +72,9 @@ type level numbers)
 
 The following GADT encodes a reason why type constructor `f` is not continuous. It has one constructor because I only came up with 
 one method for generating counter examples.  It type checks that the cardinalities are actually different. 
-`GADTs` pragma is needed for 'other' things like existential type construction, 
+`GADTs` pragma is needed for 'other' things like existential quantification, 
 integration with `DataKinds`, and typeclass constraints. (`GADTs` is not needed for GADT-ness :)  
+Existential quantification is perfect for writing counter examples.  I can just pick a type that has mismatch.  
 
 > data NotContinuousEv (f :: * -> *) where 
 >    CardinalityMismatch :: (n1 + 1 <= n2) => TypeCardinality (f (a,b)) n1 -> TypeCardinality (f a, f b) n2 -> NotContinuousEv f
@@ -86,4 +92,11 @@ Similarly, we get different cardinalities for `Maybe (Unit, Unit)` vs `(Maybe Un
 > instance NotContinuous Maybe where
 >    counterExample = CardinalityMismatch (maybeCard $ pairCard unitCard unitCard) (pairCard (maybeCard unitCard) (maybeCard unitCard)) 
 
-and we can expect the same for `Either` since `Either ()` is isomorphic to `Maybe`.
+and we can expect the same for `Either` since `Either ()` is isomorphic to `Maybe`.  
+
+> instance NotContinuous (Either ()) where
+>    counterExample = CardinalityMismatch (eitherCard unitCard $ pairCard unitCard unitCard) 
+>                             (pairCard (eitherCard unitCard unitCard) (eitherCard unitCard unitCard)) 
+
+GHC type checker knows that 2 < 4 (2 + 1 <= 4 to be exact). Maybe far from being a proof assistant but I still 
+find it amazing. 
