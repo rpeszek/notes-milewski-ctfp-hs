@@ -2,9 +2,14 @@
 
 CTFP Part 2 Chapter 1. Limits and Colimits - example from category-extras 
 =========================================================================
-Edward Kmett's `category-extras` package contains a straightforward defining of limit and colimit 
-for Haskell `Data.Functor` functors.  
-This note maps `category-extras` definitions to universal construction of limit presented in
+Edward Kmett's, now obsolete, 
+[category-extras](https://hackage.haskell.org/package/category-extras-0.53.5) 
+package contains definition of limit and colimit for Haskell `Data.Functor` functors.  
+I have linked the last nicely navigable hackage version of `category-extras`. 
+That package is still a treasure trove except for its rule to
+not exceed one line of explanation per typeclass and in most cases per module.
+
+This note maps `category-extras` code definitions to the construction of limit and colimit presented in
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 2. Ch.1 Limits and Colimits](https://bartoszmilewski.com/2015/04/15/limits-and-colimits/).
 

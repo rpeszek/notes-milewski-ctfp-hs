@@ -14,31 +14,36 @@ Work in progress
 > import Data.Functor.Const (Const(..))
 > import CTNotes.P1Ch07_Functors_Composition (Iso(..))
 
-Def: F :: C -> B is continuous if Lim (F ∘ D) ~= F (Lim D) for every diagram D :: I -> C.  
+__Definition:__ Functor F :: C -> B is continuous if Lim (F ∘ D) ~= F (Lim D) for every diagram D :: I -> C.  
+
 It is probably not possible to express this definition in Haskell.  Very few limit constructions
 are easily expressed.  Fortunately, the limit of `2 -> Hask` functor is the pair type `(,)`.
-That gives me one diagram I can easily use to check the continuity.  Continuous functors need to satisfy  
+That gives me one diagram I can easily use to check the continuity. 
+Thus, continuous functors need to satisfy  
  F (a, b) ~= (F a, F b):
 
-> class (Functor f) => CommutesWithIso f where
+> class (Functor f) => CommutesWithPair f where
 >     commuteProof :: Iso (f (a,b)) (f a, f b)
-> instance CommutesWithIso ((->) r) where
+> instance CommutesWithPair ((->) r) where
 >     commuteProof = IsoProof (\f -> (fst . f, snd . f)) (\(fa, fb) -> (\r -> (fa r, fb r)))
 
 
 CTFP states that the `(->)` profunctor is continuous (maps colimits to limits in first type variable
-and limit to limits in the second).  This seems a very strong property considering the the functor needs to 
+and limit to limits in the second).  This seems to be a very strong property considering that the functor needs to 
 commute with any diagram not just the product `(,)`.
 
-Still, just the product check eliminates lots of Functors from that game!
+Still, just checking the Pair constructor eliminates lots of functors from that game!
 The following functors apparently are not continuous because we simply can count inhabitants of `f (Bool, Bool)`
-vs `(f Bool, f Bool)` or even `f ((), ())` vs `(f (), f ())`
+vs `(f Bool, f Bool)` or even `f ((), ())` vs `(f (), f ())` 
 - `Const a` - for `a` with > 1 inhabitants
 - `Maybe`
 - `Either Err`
 
-I will prove this with GHC type solver!  
-First I need to develop ability to calculate type cardinalities on the type level.
+This provides a perfect excuse to do some type level programming. I will prove this using Haskell type checker!  
+First, I need to develop ability to calculate type cardinalities (count values that inhabitant the type).   
+(`KindSignatures` allows to define type level variables of kind `Nat`, 
+`GHC.TypeLits` allow to use type level number literals, `<=`, `+`, `*` are type families that work on 
+type level numbers)  
 
 > data TypeCardinality a (n :: Nat) = TypeCardinality
 >
@@ -60,8 +65,10 @@ First I need to develop ability to calculate type cardinalities on the type leve
 > eitherCard :: TypeCardinality b n -> TypeCardinality a m -> TypeCardinality (Either b a) (n + m)
 > eitherCard _ _ = TypeCardinality
 
-This GADT encodes a reason why type constructor `f` is not continuous. Has one constructor because I came up with one method for 
-generating counter examples:
+The following GADT encodes a reason why type constructor `f` is not continuous. It has one constructor because I only came up with 
+one method for generating counter examples.  It type checks that the cardinalities are actually different. 
+`GADTs` pragma is needed for 'other' things like existential type construction, 
+integration with `DataKinds`, and typeclass constraints. (`GADTs` is not needed for GADT-ness :)  
 
 > data NotContinuousEv (f :: * -> *) where 
 >    CardinalityMismatch :: (n1 + 1 <= n2) => TypeCardinality (f (a,b)) n1 -> TypeCardinality (f a, f b) n2 -> NotContinuousEv f
@@ -69,10 +76,14 @@ generating counter examples:
 > class (Functor f) => NotContinuous f where
 >    counterExample :: NotContinuousEv f
 
-Proof that `Const Bool` is not continuous,  
-this simply compares (at type level) cardinalities for `Const Bool (a, b)` with `(Const Bool a, Const Bool b)`:
+Proof that `Const Bool` is not continuous simply compares cardinalities for `Const Bool (a, b)` with `(Const Bool a, Const Bool b)`:
 
 > instance NotContinuous (Const Bool) where
 >    counterExample = CardinalityMismatch (constCard boolCard) (pairCard (constCard boolCard) (constCard boolCard)) 
 
-TODO finish this for other types
+Similarly, we get different cardinalities for `Maybe (Unit, Unit)` vs `(Maybe Unit, Maybe Unit)`
+
+> instance NotContinuous Maybe where
+>    counterExample = CardinalityMismatch (maybeCard $ pairCard unitCard unitCard) (pairCard (maybeCard unitCard) (maybeCard unitCard)) 
+
+and we can expect the same for `Either` since `Either ()` is isomorphic to `Maybe`.
