@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch01b_Continuity
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch02b_Continuity
 
 This note explores last section of
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
@@ -13,7 +13,7 @@ This note shows that functors are mostly not continuous.
 > {-# LANGUAGE TypeOperators #-}
 > {-# LANGUAGE FlexibleInstances #-}
 >
-> module CTNotes.P2Ch01b_Continuity where
+> module CTNotes.P2Ch02b_Continuity where
 > import GHC.TypeLits
 > import Data.Proxy
 > import Data.Functor.Const (Const(..))

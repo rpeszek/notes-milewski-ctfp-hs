@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch01a_LimitsColimitsExtras
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch02a_LimitsColimitsExtras
 
 CTFP Part 2 Chapter 1. Limits and Colimits - example from category-extras 
 =========================================================================
@@ -17,7 +17,7 @@ This note maps `category-extras` code definitions to the construction of limit a
 > {-# LANGUAGE ExistentialQuantification #-}
 > {-# LANGUAGE TypeOperators #-}
 
-> module CTNotes.P2Ch01a_LimitsColimitsExtras where
+> module CTNotes.P2Ch02a_LimitsColimitsExtras where
 > import CTNotes.P1Ch10_NaturalTransformations ((:~>))
 > import Data.Functor.Identity (Identity(..))
 > import Data.Functor.Const (Const(..))

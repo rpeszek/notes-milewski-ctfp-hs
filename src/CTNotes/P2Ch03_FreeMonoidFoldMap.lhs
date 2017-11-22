@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch3_FreeMonoidFoldMap
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch03_FreeMonoidFoldMap
 
 This note explains factorization in free construction of monoid using Haskell. It is the `foldMap`! 
 
@@ -7,7 +7,7 @@ This note explores
 [Part 2. Ch.3 Free Monoids](https://bartoszmilewski.com/2015/07/21/free-monoids/).
 
 
-> module CTNotes.P2Ch3_FreeMonoidFoldMap where
+> module CTNotes.P2Ch03_FreeMonoidFoldMap where
 > import Data.Foldable (foldMap)
 > import Data.Monoid
 
