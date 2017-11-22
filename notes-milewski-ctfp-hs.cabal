@@ -19,6 +19,7 @@ library
                      , CTNotes.P1Ch10_NaturalTransformations
                      , CTNotes.P2Ch01a_LimitsColimitsExtras
                      , CTNotes.P2Ch01b_Continuity
+                     , CTNotes.P2Ch3_FreeMonoidFoldMap
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
                      , comonad
