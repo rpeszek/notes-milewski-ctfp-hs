@@ -75,11 +75,13 @@ The proof is, again, a simple induction on the size of the list
 factorize' q x:xs == -- homomorphism
 (factorize' q [x]) `mappend` (factorize' q xs) == -- induction
 (factorize' q [x]) `mappend` (foldMap q xs) == -- free construction requirement
-(foldMap q [x]) `mappend` (foldMap q xs) == -- foldMap q is homomorphisms 
+(foldMap q [x]) `mappend` (foldMap q xs) == -- foldMap q is homomorphism 
 foldMap q x:xs
 ```
 
-Note: writing this code is a garden path walk too. We could have made some 
+Note 1: writing this code is a garden path walk too. We could have made some 
 equivalent choices by using left associative `foldl` instead of right associative `foldr`
 but these end up superficial (`mappend` associativity).
  
+Note 2: Given generators, Free Monoid is unique up to isomorphism.  This follows directly
+from uniqueness of the factorizing homomorphism.  
