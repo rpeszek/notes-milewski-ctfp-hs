@@ -83,6 +83,8 @@ factorize' q x:xs == -- homomorphism
 foldMap q x:xs
 ```
 
+__square box__
+
 Note 1: writing this code is a garden path walk too. We could have made some 
 equivalent choices by using left associative `foldl` instead of right associative `foldr`
 but these end up superficial (`mappend` associativity).
@@ -90,4 +92,40 @@ but these end up superficial (`mappend` associativity).
 Note 2: Given generators, Free Monoid is unique up to isomorphism.  This follows directly
 from uniqueness of the factorizing homomorphism.  
 
-TODO Is list the only foldable that is also a monoid? 
+
+Is List the only foldable that is also a monoid?
+------------------------------------------------
+Answer: __NO__   
+`foldMap` is what defines Foldable also `foldMap` embodies the free construction of monoid. 
+That would suggest that if we impose additional constraint 
+```
+factorizeFoldable :: (Monoid m, Monoid (t a), Functor t) => (a -> m) -> [a] -> m
+factorizeFoldable q = foldr mappend mempty . fmap q
+```
+the resulting morphism `[a] -> m` would be a homomorphism and we would satisfy free construction.
+Because of uniqueness of free construction, `t` would have to be isomorphic to `[]`. 
+
+What breaks in this argument is that we cannot prove uniqueness of factorization. 
+Types are sometimes not everything. 
+
+Counterexample: 
+
+> data TreeWithInorderTraversal a = Leaf a 
+>                                   | Split {left:: TreeWithInorderTraversal a, right:: TreeWithInorderTraversal a} 
+>                                   | Flat [a]
+>
+> traverseInorder :: TreeWithInorderTraversal a -> [a]
+> traverseInorder = undefined
+
+Deriving Functor and Foldable on this is straightforward 
+(Coproduct of foldables is foldable, Coproduct of functors is functor, etc).
+
+> instance Monoid (TreeWithInorderTraversal a) where
+>   mempty = Flat []
+>   tree1 `mappend` tree2 = Flat (traverseInorder tree1 ++ traverseInorder tree2) 
+
+monoid laws follow from the monoid properties of the list.  
+This structure is not a List and is not a Free Monoid, 
+but it is an honest `Monoid` and it is an honest `Foldable`. 
+
+ 
