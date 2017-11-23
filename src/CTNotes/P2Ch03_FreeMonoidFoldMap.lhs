@@ -90,4 +90,4 @@ but these end up superficial (`mappend` associativity).
 Note 2: Given generators, Free Monoid is unique up to isomorphism.  This follows directly
 from uniqueness of the factorizing homomorphism.  
 
-TODO So list is unique foldable that is monoid, is there something more in this statement?
+TODO Is list the only foldable that is also a monoid? 
