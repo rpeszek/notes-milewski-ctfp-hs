@@ -64,7 +64,10 @@ Assume that there is another homomorphisms
 > factorize' q = undefined
 
 that factorizes `q`.  
-We know that both need to act the same on single element lists (requirement of this free construction)
+We know that both need to act the same on single element lists 
+(This is the requirement of the free construction,
+notice that, what book calls, `p` is the obvious embedding `p :: a -> [a]` 
+that creates single element list)
 ```
 foldMap    q [ax] = q ax
 factorize' q [ax] = q ax
