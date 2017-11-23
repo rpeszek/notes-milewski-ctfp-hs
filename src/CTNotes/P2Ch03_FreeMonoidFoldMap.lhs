@@ -17,7 +17,8 @@ about free construction of monoid I wrote this:
 > factorize :: Monoid m => (a -> m) -> [a] -> m
 > factorize q  = foldr mappend mempty . map q
 
-Hmm, that does look familiar.  This is exactly `foldMap` (even has the same implementation).
+Hmm, that does look familiar.  This is `foldMap` 
+(ignoring the more general foldable `t` but keeping the same implementation).
 ```
 foldMap :: Monoid m => (a -> m) -> [a] -> m
 ```
@@ -56,7 +57,7 @@ foldr mappend mempty . map q ( (x:xs) ++ ys) == -- def of foldr
 ```
 _square box_
 
-__Uniquness__  
+__Uniqueness__  
 follows from properties of monoids.  
 Assume that there is another homomorphisms  
 
@@ -67,10 +68,10 @@ that factorizes `q`.
 We know that both need to act the same on single element lists 
 (This is the requirement of the free construction,
 notice that, what book calls, `p` is the obvious embedding `p :: a -> [a]` 
-that creates single element list)
+that creates single element list, U is not needed types `X-ray` themselves)
 ```
-foldMap    q [ax] = q ax
-factorize' q [ax] = q ax
+foldMap    q [ax] = q ax -- from implementation
+factorize' q [ax] = q ax -- from construction
 ```
 And both need to match on empty lists too.
 The proof is, again, a simple induction on the size of the list
@@ -88,3 +89,5 @@ but these end up superficial (`mappend` associativity).
  
 Note 2: Given generators, Free Monoid is unique up to isomorphism.  This follows directly
 from uniqueness of the factorizing homomorphism.  
+
+TODO So list is unique foldable that is monoid, is there something more in this statement?
