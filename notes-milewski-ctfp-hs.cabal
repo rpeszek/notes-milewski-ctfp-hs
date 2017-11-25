@@ -15,7 +15,8 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     CTNotes.P1Ch07_Functors_Composition
+  exposed-modules:     CTNotes.P1Ch03a_NatsCat
+                     , CTNotes.P1Ch07_Functors_Composition
                      , CTNotes.P1Ch10_NaturalTransformations
                      , CTNotes.P2Ch02a_LimitsColimitsExtras
                      , CTNotes.P2Ch02b_Continuity
@@ -23,6 +24,7 @@ library
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
                      , comonad
+                     , ghc-prim
   default-language:    Haskell2010
 
 executable notes-milewski-ctfp-hs
