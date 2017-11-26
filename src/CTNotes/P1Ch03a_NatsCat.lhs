@@ -34,18 +34,23 @@ monoid as a single object category so this note is a bit different.
 > import qualified GHC.Base as B (id,(.))
 > import Prelude(Integer, (+), ($), (*))
 
-In this construction Objects are types of kind `Nat` and morphism have type `NatMorph`.
+In this construction Objects are types of kind `Nat` and morphism have type `NatHomSet`.
 `DataKinds` pragma allows me to easily define type level enumerations
 as well as to restrict morphism to the kind I want.
  
 > data NatCatType = NatPlus | NatMultiply
-> data NatMorph (t:: NatCatType) (a :: Nat) (b :: Nat) = NatMorph { morph :: Integer -> Integer }
+> data NatHomSet (t:: NatCatType) (a :: Nat) (b :: Nat) = NatHomSet { morph :: Integer -> Integer }
+
+`NatHomSet` type defines hom-set for both categories. Both categories are thin (have at most
+one morphism between any two objects) and this is reflected by having a simple one element record type.
+`NatHomSet` hom-set representation tries to be reusable by representing single morphism directly 
+as `Integer -> Integer` function.
 
 `NatPlus` category
 ------------------
   
-> defNatPlusMorph :: KnownNat m => Proxy m -> NatMorph 'NatPlus n (n + m)
-> defNatPlusMorph proxy = NatMorph ( (+) (natVal proxy))
+> defNatPlusMorph :: KnownNat m => Proxy m -> NatHomSet 'NatPlus n (n + m)
+> defNatPlusMorph proxy = NatHomSet ( (+) (natVal proxy))
 >  
 > add0 = defNatPlusMorph (Proxy :: Proxy 0)
 > add2 = defNatPlusMorph (Proxy :: Proxy 2)
@@ -54,25 +59,25 @@ as well as to restrict morphism to the kind I want.
 here is the ghci output:
 ```bash
 λ> :t add2 
-add2 :: NatMorph 'NatPlus n (n + 2)
+add2 :: NatHomSet 'NatPlus n (n + 2)
 
 λ> add2Test 3
 5
 ```
 (prettified the GHC output, GHC tends to use `GHC.TypeLits.+ 2` instead of `2`)
 
-Composition is polymorphic (will work for both `NatPlus` and `NatMultiply` case):
+Composition is polymorphic in `t` (will work for both `NatPlus` and `NatMultiply` case):
   
-> compNatMorph :: NatMorph t b c -> NatMorph t a b -> NatMorph t a c
-> compNatMorph m1 m2 = NatMorph (morph m1 B.. morph m2)
+> compNatHomSet :: NatHomSet t b c -> NatHomSet t a b -> NatHomSet t a c
+> compNatHomSet m1 m2 = NatHomSet (morph m1 B.. morph m2)
 >  
-> add4 = add2 `compNatMorph` add2
+> add4 = add2 `compNatHomSet` add2
 > add4Test = morph add4
 
 ghci output shows that GHC infers types nicely:
 ```bash 
 λ> :t add4
-add4 :: NatMorph 'NatPlus a ((a + 2) + 2)
+add4 :: NatHomSet 'NatPlus a ((a + 2) + 2)
  
 λ> add4Test 3
 7
@@ -89,11 +94,11 @@ instance Category (->) where ...
 
 `PolyKinds` pragma causes `Category` to infer most general type on `cat` which is `k -> k -> *`
 so `Category` class automatically infers `Nat -> Nat -> *` for me      
-(Note `NatMorph` has kind `NatMorph :: NatCatType -> Nat -> Nat -> *`):
+(Note `NatHomSet` has kind `NatHomSet :: NatCatType -> Nat -> Nat -> *`):
   
-> instance Category (NatMorph 'NatPlus) where
+> instance Category (NatHomSet 'NatPlus) where
 >    id = add0
->    (.) = compNatMorph
+>    (.) = compNatHomSet
 
 Here is example of polymorphic use of `(.)`:
   
@@ -102,7 +107,7 @@ Here is example of polymorphic use of `(.)`:
 ghci output:
 ```bash
 λ> :t add4`
-add4' :: NatMorph 'NatPlus a ((a + 2) + 2)
+add4' :: NatHomSet 'NatPlus a ((a + 2) + 2)
 
 λ> morph add4` $ 3
 7
@@ -110,21 +115,21 @@ add4' :: NatMorph 'NatPlus a ((a + 2) + 2)
 
 _Small note:_ this does not compile, GHC does not allow me to supply theorems
 ```
-add4'' :: NatMorph 'NatPlus a (a + 4)
+add4'' :: NatHomSet 'NatPlus a (a + 4)
 add4'' =  add2 . add2 
 ```
 
 `NatMultiply` case
 ------------------
 
-> defMultiplyMorph :: KnownNat m => Proxy m -> NatMorph 'NatMultiply n (n * m)
-> defMultiplyMorph proxy = NatMorph ( (*) (natVal proxy))
+> defMultiplyMorph :: KnownNat m => Proxy m -> NatHomSet 'NatMultiply n (n * m)
+> defMultiplyMorph proxy = NatHomSet ( (*) (natVal proxy))
 >
 > mul1 = defMultiplyMorph (Proxy :: Proxy 1)
 >
-> instance Category (NatMorph 'NatMultiply) where
+> instance Category (NatHomSet 'NatMultiply) where
 >     id = mul1
->     (.) = compNatMorph
+>     (.) = compNatHomSet
 >
 > mult4' = defMultiplyMorph (Proxy :: Proxy 2) . defMultiplyMorph (Proxy :: Proxy 2)
 
@@ -133,6 +138,8 @@ ghci output:
 λ> morph mult4' $ 2
 8
 ```
+
+Works!
 
 TODO:  Many CT goodies are very general.  Special casing 
 everything to Hask seems like missing out on generality that is already there.
