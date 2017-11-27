@@ -1,7 +1,7 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch03a_NatsCat
 
-Notes about CTFP Part 1 Chapter 3. Examples of categories.  Natural numbers.
-============================================================================
+Note about CTFP Part 1 Chapter 3. Examples of categories.  Natural numbers.
+==========================================================================
 This note shows how represent the following natural number based categories in Haskell: 
 ``` 
   Objects: 0 (initial), 1, 2, 3, ...  
@@ -92,7 +92,7 @@ class Category cat where
 instance Category (->) where ...  
 ```
 
-`PolyKinds` pragma causes `Category` to infer most general type on `cat` which is `k -> k -> *`
+`PolyKinds` pragma causes `Category` to infer most general kind on `cat` which is `k -> k -> *`
 so `Category` class automatically infers `Nat -> Nat -> *` for me      
 (Note `NatHomSet` has kind `NatHomSet :: NatCatType -> Nat -> Nat -> *`):
   
