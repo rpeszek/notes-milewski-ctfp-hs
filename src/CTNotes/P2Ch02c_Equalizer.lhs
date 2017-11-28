@@ -5,10 +5,11 @@ __ Work in progress __
 Note about CTFP Part 2 Chapter 2. Limits - Equalizer. 
 =====================================================
 Representing Equalizer in Haskell.  
-This is not going to end well. The goal is to see how far I can go with it and where it breaks.  
-
-Book reference: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
-[Ch 3](https://bartoszmilewski.com/2015/04/15/limits-and-colimits/).
+This is not going to end well. The goal is to see how far I can go with it before it breaks.  
+The exercise is to use Equalizer as an example and try to follow 
+[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
+[Ch 3. Limit and Colimits](https://bartoszmilewski.com/2015/04/15/limits-and-colimits/).
+using Haskell code.
 
 > {-# LANGUAGE GADTs #-}
 > {-# LANGUAGE DataKinds #-}
@@ -16,15 +17,14 @@ Book reference: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-fo
 > {-# LANGUAGE FlexibleInstances #-}
 > {-# LANGUAGE PolyKinds #-}
 > {-# LANGUAGE MultiParamTypeClasses #-}
-> 
+> {-# LANGUAGE Rank2Types #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
-
+>
 > module CTNotes.P2Ch02c_Equalizer where
-
 > import Control.Category 
 > import Prelude(undefined, ($))
 > import Data.Functor.Const (Const(..))
-
+> import CTNotes.P1Ch07b_Functors_AcrossCats (CFunctor, cmap)
 
 A => B Category
 ----------------
@@ -43,15 +43,8 @@ This approach follows construction in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCat
 
 Cool! GHC knows that this pattern match is exhaustive.  I love it!
 
-__This Haskell `Control.Category` category:__  
-Here is the definition of `Category` quoted from base package `Control.Category` module: 
-```
-class Category cat where
-       id :: cat a a
-       (.) :: cat b c -> cat a b -> cat a c
-```
-
-A => B Category is Haskell category
+__A => B Category is Haskell category__
+Similarly to [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats) I get:
 
 > instance Category HomSet where
 >   id = MorphId
@@ -60,53 +53,43 @@ A => B Category is Haskell category
 
 Functors `A => B` to `Hask` 
 ---------------------------
-Ref: https://hackage.haskell.org/package/category-extras-0.53.5/docs/Control-Functor-Categorical.html
+I am using imported definition of `CFunctor` from [N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats)
+(similar to `category-extras` package).  Here it is for reference:
 ```
-class (Category r, Category s) => CFunctor f r s | f r -> s, f s -> r where
-  cmap :: r a b -> s (f a) (f b)
+class (Category r, Category s) => CFunctor f r s  where
+   cmap :: r a b -> s (f a) (f b)
 ```
 
-Ignoring functional dependencies I define non-endofunctors as:
+__Const functor__  
+[N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats) provided instance of imported 
+`Const` (`Data.Functor.Const`) that works polymorphically for any source Category
 
-> class (Category r, Category s) => CFunctor f (r :: k -> k -> *) s  where
->    cmap :: r a b -> s (f a) (f b)
+Here is a proof that it works here (this compiles):
 
-__Const functor__   
-is easy (this is using `Const` definition form base `Data.Functor.Const`):
-
-> instance CFunctor (Const a) HomSet (->) where
->   cmap _ (Const v) = Const v
-
-Note polymorphic kinds at work. `Const` is defined as 
-```
-newtype Const a b = Const { getConst :: a }
-
-λ> :k Const
-Const :: * -> k -> *
-```
-and here it automatically uses `b` of kind `Object`.
+> test :: Const a (x :: Object) -> Const a (x :: Object)
+> test = cmap MorphId
 
 
-__Embedding functor__  
-I need 2 fixed types `a` `b` and two morphisms `a -> b` in Hask
+__Embedding functor ('D' functor)__  
+To create a functor from `A => B` to Hask I simply need to pick
+2 fixed types `a` and `b`, and two functions `a -> b`
 
-> data PickVal a b (o :: Object) where
->    First :: a -> PickVal a b 'A
->    Second :: b -> PickVal a b 'B
+> data PickType a b (o :: Object) where
+>    First :: a -> PickType a b 'A
+>    Second :: b -> PickType a b 'B
 >
-> getFirst :: PickVal a b 'A -> a
+> getFirst :: PickType a b 'A -> a
 > getFirst (First x) = x
 
-Note, `getFirst` is exhaustive patter match. 
+Note, `getFirst` patter match is exhaustive. 
 
 > data PickFun a b (o :: Object) = Pick {
 >      f1:: a -> b
 >      , f2:: a -> b
->      , value:: PickVal a b o
+>      , value:: PickType a b o
 >    }
 
-With some ugly non-lens code I managed to define the second functor needed 
-for the equalizer:
+`PickFun a b` is the 'D' functor:
 
 > applyF1 :: PickFun a b 'A  -> PickFun a b 'B
 > applyF1 x = let v = (f1 x) ((getFirst . value $ x)) in x { value = Second v }
@@ -119,7 +102,60 @@ for the equalizer:
 >   cmap MorphAB1 = applyF1 
 >   cmap MorphAB2 = applyF2 
 
+(Some ugly non-lens code indeed.)  
+We have `Const` and `D` functors needed in the construction of the cone.
 
 
+Cone and Natural Transformations 
+--------------------------------
+Given two (fixed) functions `fn1 :: a -> b`, `fn2: a -> b`, cone is simply two functions from `c` to either end of `a -> b`:
 
-TODO this is still hopeless, but think more
+> type Cone a b c = (c -> a, c -> b)
+
+Naive steal from [N_P2Ch02a_LimitsColimitsExtras](N_P2Ch02a_LimitsColimitsExtras) suggests to define
+natural transformation between `Const c` and `PickFun a b` as
+
+> -- Not what I want
+> type NatTran0 a b c = forall (x :: Object). Const c x -> PickFun a b x
+
+this type contains polymorphic functions that do not depend on `x :: Object`. 
+Instead, I want a product type one that knows which `x` is used
+(using poor man's singleton approach)
+
+> data Sing (a:: Object) where
+>    IsA :: Sing 'A
+>    IsB :: Sing 'B
+>    
+> type NatTran a b c = forall (x::Object). Sing x -> Const c x -> PickFun a b x
+
+We know from the book that cones and natural transformations are isomorphic.  
+Here is how this plays out in this special case (showing only one iso):
+
+> iso1 :: (a -> b) -> (a -> b) -> Cone a b c -> NatTran a b c
+> iso1 fn1 fn2 (c1, c2) IsA = \cx -> Pick fn1 fn2 ((First . c1 . getConst) cx)
+> iso1 fn1 fn2 (c1, c2) IsB = \cx -> Pick fn1 fn2 ((Second . c2 . getConst) cx)
+
+(Read this as: given 2 fixed functions `f1`, `f2` we can establish iso from `Cone` to `NatTran`.)
+
+Type checking the code we just know that arrows point at correct objects. We do not know if diagrams
+actually commute
+```
+ fn1 . c1 = fn2 . c1 = c2  
+```
+this would have to be a proof obligation left to the programmer and that obligation is the pudding.
+This is like having to check that `fmap (f . g) = fmap f . fmap g`, only this property is much harder.
+
+Dead stop
+---------
+It was clear from the beginning that this journey is hopeless.  
+Even if Haskell provided ability for me to supply proof that diagrams commute, 
+finding the limit would be next step where, again, I would have no clue how to proceed.  
+With `Hask -> Hask` endofunctors limit is 'guessed' and constructed using  
+universal quantification.  There is a higher rank type that does the trick. 
+There does not seem to be a good uniform guess like this here. 
+
+I read that an equalizer problem called 'Post Correspondence Problem' is undecidable. 
+It is about checking if equalizer of 2 group homomorphisms is not empty.
+
+Computing equalizers seems to be related to finding if 2 functions are equivalent
+and this is undecidable as well.
