@@ -1,7 +1,5 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch07b_Functors_AcrossCats
 
-__ Work in progress __
-
 Note about CTFP Part 1 Chapter 7. Functors on non-Hask categories 
 ==================================================================
 Ref: https://hackage.haskell.org/package/category-extras-0.53.5/docs/Control-Functor-Categorical.html

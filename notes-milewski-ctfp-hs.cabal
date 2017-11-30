@@ -17,6 +17,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     CTNotes.P1Ch03a_NatsCat
                      , CTNotes.P1Ch03b_FiniteCats
+                     , CTNotes.P1Ch03c_DiscreteCats
                      , CTNotes.P1Ch07_Functors_Composition
                      , CTNotes.P1Ch07b_Functors_AcrossCats
                      , CTNotes.P1Ch10_NaturalTransformations
@@ -24,6 +25,7 @@ library
                      , CTNotes.P2Ch02b_Continuity
                      , CTNotes.P2Ch02c_Equalizer
                      , CTNotes.P2Ch03_FreeMonoidFoldMap
+                     , CTNotes.P2Ch05a_YonedaAndMap
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
                      , comonad

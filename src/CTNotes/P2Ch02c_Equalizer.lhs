@@ -1,7 +1,5 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch03c_Equalizer
 
-__ Work in progress __
-
 Note about CTFP Part 2 Chapter 2. Limits - Equalizer. 
 =====================================================
 Representing Equalizer in Haskell.  
