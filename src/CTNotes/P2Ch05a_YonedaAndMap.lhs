@@ -68,8 +68,9 @@ In Type Theoretical lambda terms, this applies type `a` to quantification `foral
 only at type level. In psedo-Haskell that would look like `(forall x) $ a` resulting in `a`.    
 In Category Theoretical terms, this picks the component of the natural transformation at object `a`. 
 That component starts at the hom-set `C(a,a)` (`a -> a` in Hask), 
-`id` is the point value on which that component operates.
-
+`id` is the point value on which that component operates.  
+A very helpful intuition from the book, for me, was that Yoneda allows me to pick any value of type `f a` 
+when transforming `id` and there rest is uniquely determined by naturality conditions.
 
 Equational reasoning in pseudo-Haskell shows that these are indeed isomorphic
 (current impredicative polymorphism limitations prevent from using GHC to do much of this)
