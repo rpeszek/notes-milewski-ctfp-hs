@@ -79,10 +79,10 @@ so `Category` class automatically infers `Object -> Object -> *` for me matching
 Expressions like  `MorphCB . MorphAB`  will not compile, but other compositions work fine:
 
 ```bash
-λ> :t MorphId . MorphAB
+ghci> :t MorphId . MorphAB
 MorphId . MorphAB :: HomSet 'A 'B
 
-λ> :t MorphBC1 . MorphAB
+ghci> :t MorphBC1 . MorphAB
 MorphBC1 . MorphAB :: HomSet 'A 'C
 ```
 

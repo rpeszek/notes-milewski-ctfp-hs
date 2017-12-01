@@ -58,7 +58,7 @@ as `Integer -> Integer` function.
 
 here is the ghci output:
 ```bash
-λ> :t add2 
+ghci> :t add2 
 add2 :: NatHomSet 'NatPlus n (n + 2)
 
 λ> add2Test 3
@@ -76,10 +76,10 @@ Composition is polymorphic in `t` (will work for both `NatPlus` and `NatMultiply
 
 ghci output shows that GHC infers types nicely:
 ```bash 
-λ> :t add4
+ghci> :t add4
 add4 :: NatHomSet 'NatPlus a ((a + 2) + 2)
  
-λ> add4Test 3
+ghci> add4Test 3
 7
 ```
 
@@ -106,10 +106,10 @@ Here is example of polymorphic use of `(.)`:
 
 ghci output:
 ```bash
-λ> :t add4`
+ghci> :t add4`
 add4' :: NatHomSet 'NatPlus a ((a + 2) + 2)
 
-λ> morph add4` $ 3
+ghci> morph add4` $ 3
 7
 ```
 
@@ -135,7 +135,7 @@ add4'' =  add2 . add2
 
 ghci output:
 ```bash
-λ> morph mult4' $ 2
+ghci> morph mult4' $ 2
 8
 ```
 

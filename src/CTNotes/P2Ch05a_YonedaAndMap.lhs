@@ -8,7 +8,7 @@ Notes about CTFP Part 2 Chapter 5. Yoneda Lemma and fmap
 This note is about what helped me internalize Yoneda from the programming point of view.  
 It is about how (Co)Yoneda relates to `fmap` on the conceptual and practical level.
 This note also includes some equational reasoning proofs to supplement the more 
-general mathematical approach in the book. 
+general, mathematical approach in the book. 
 
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 2. Ch.5 Yoneda Lemma](https://bartoszmilewski.com/2015/09/01/the-yoneda-lemma/).
@@ -112,7 +112,7 @@ fmap f . trans == trans . fmap f
       (a -> a) ------->  f a
                 trans
 ```
-As stated in the book, Yoneda is not just isomorphism it is also natural in both `f` and `a`.  
+As stated in the book, Yoneda is not just isomorphism, it is also natural in both `f` and `a`.  
 TODO is naturality of Yoneda represented somehow in programming? 
 
 
@@ -159,13 +159,13 @@ and the corresponding isomorphisms would look like this (notice duality to Yoned
 > coyoneda_2 (CoYoneda'' f fa) = fmap f fa
 
 
-(Co)Yoneda Functor instance
----------------------------
+(Co)Yoneda functor instance - free `fmap`
+----------------------------------------
 Following definitions in `category-extras` or `kan-extensions` package I can define 
 
 > newtype Yoneda f a = Yoneda { runYoneda :: forall x. ((a -> x) -> f x) } 
 
-what is interesting is that `(Co)Yoneda` type constructors get `fmap` for free
+what is interesting is that `(Co)Yoneda` type constructors get to be functors for free
 
 > instance Functor (Yoneda f) where
 >  	fmap f y = Yoneda (\k -> (runYoneda y) (k . f))
@@ -176,8 +176,8 @@ what is interesting is that `(Co)Yoneda` type constructors get `fmap` for free
 they also nicely preserve other properties like Monad or Applicative instances.
 
 
-Yoneda with no-Hask categories
-------------------------------
+Yoneda with not-Hask categories
+-------------------------------
 Can we get some of the same goodness for functors `F :: C -> Hask`, where `C` is a non-Hask category
 such as some discrete category ([N_P1Ch03c_DiscreteCat](N_P1Ch03c_DiscreteCat)) or a simple finite category 
 created with GADTs ([N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats), [N_P1Ch03c_Equalizer](N_P1Ch03c_Equalizer))?
@@ -187,7 +187,7 @@ In Hask natural transformations are simply polymorphic functions `forall x. f x 
 other categories this is not as nice but this aspect seems doable ([N_P1Ch03c_Equalizer](N_P1Ch03c_Equalizer)).
 
 The breaking point is the hom-set. With `C = Hask` the hom-set functor used in Yoneda Lemma is 
-the Reader Functor `(->)`. There is no nice equivalent like that for no-Hask categories. 
+the Reader Functor `(->)`. There is no nice equivalent like that for not-Hask categories. 
 For example, for discrete categories the hom-set would be a Unit `()` for `Discrete(a,a)` and `Void` 
 for everything else.  
 Whatever type equivalence can be achieved in these cases, I think it will be ugly. 
@@ -195,8 +195,8 @@ Whatever type equivalence can be achieved in these cases, I think it will be ugl
 
 Code Examples
 -------------
-__Performance__  Functional code often ends up with lots of `fmap` calls.  For recursive data structures
-such as trees or lists `fmap` can be expensive. It is beneficial to use functor law
+__Performance - faster `fmap` with CoYoneda__  Functional code often ends up with lots of `fmap` calls.  
+For recursive data structures such as trees or lists `fmap` can be expensive. It is beneficial to use functor law
 `fmap f . fmap g == fmap f . g` to fuse composition of `fmap`-s into one big `fmap` of composed functions.
 Careful look at `fmap` definitions for `(Co)Yoneda` shows that this is exactly what is going on.
 
@@ -214,18 +214,27 @@ http://alpmestan.com/posts/2017-08-17-coyoneda-fmap-fusion.html
 >
 > stupid :: (Functor f, Num a) => f a -> f a
 > stupid = fmap (*2) . fmap (+1) . fmap (^2)
+> 
+> smarter = fmap ((*2) . (+1) . (^2))
 >
-> bigSum1 = sum $ stupid $ [1..1000000]
-> bigSum2 = sum $ withCoYoneda stupid  $ ([1..1000000] :: [Int])
+> bigSum1a = sum $ stupid $ [1..1000000]
+> bigSum1b = sum $ smarter $ [1..1000000]
+> bigSumCoY = sum $ withCoYoneda stupid  $ ([1..1000000])
 
+ghci output:
 ```bash
-λ.CoYoneda> bigSum2
+ghci> :set +s
+ghci> bigSum1a
 666667666669000000
-(1.57 secs, 865,690,504 bytes)
-λ.CoYoneda> bigSum1
+(1.95 secs, 938,081,272 bytes)
+ghci> bigSum1b
 666667666669000000
-(2.09 secs, 938,079,312 bytes)
+(1.61 secs, 826,081,816 bytes)
+ghci> bigSumCoY
+666667666669000000
+(1.61 secs, 858,082,656 bytes)
 ```
+This will not measure up to lambda optimization of something like `Vector` but it is nice.
 
 __DSLs__ Functor for free benefit allows to remove functor requirement on the design of 
 abstract DSL instruction set (on the DSL algebra).
