@@ -7,8 +7,8 @@ Notes about CTFP Part 2 Chapter 5. Yoneda Lemma and fmap
 ========================================================
 This note is about what helped me internalize Yoneda from the programming point of view.  
 It is about how (Co)Yoneda relates to `fmap` on the conceptual and practical level.
-This note also includes some equational reasoning proofs to supplement more book's more 
-general mathematical approach. 
+This note also includes some equational reasoning proofs to supplement the more 
+general mathematical approach in the book. 
 
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 2. Ch.5 Yoneda Lemma](https://bartoszmilewski.com/2015/09/01/the-yoneda-lemma/).
@@ -41,13 +41,13 @@ fmap :: Functor f => (a -> x) -> f a -> f x
 ```
 Here are both, spelled out in English:   
 
-`fmap`    : for a given value `fa` of type `f a` and function `a -> x` I can produce value of type `f x`.  
-`yoneda_1`: for a given value `fa` of type `f a` and function `a -> x` I can produce value of type `f x`.  
+`fmap`: for a given value `fa` of type `f a` and function `a -> x`, I can produce value of type `f x`.  
+`yoneda_1`: for a given value `fa` of type `f a` and function `a -> x`, I can produce value of type `f x`.  
 
 If it walks like a duck ...  
 The power of squinting!
 
-I will show the details next.  
+__The details:__  
 To define `yoneda_1` I just need to flip the arguments on `fmap` and notice that `fmap` is a perfectly polymorphic function
 
 > fmap_1 :: Functor f => f a -> ((a -> x) -> f x)
@@ -55,15 +55,13 @@ To define `yoneda_1` I just need to flip the arguments on `fmap` and notice that
 >
 > yoneda_1 :: Functor f => f a -> forall x. (a -> x) -> f x
 > yoneda_1 = fmap_1
->
 > -- or
->
 > yoneda_1' :: Functor f => f a -> ((->) a :~> f)
 > yoneda_1' = fmap_1
 
 To get `yoneda_2` in the __other direction__, I need to look at `forall x. (a -> x) -> f x` and understand what it is.
-It looks close to a _Continuation Passing Style_ computation and, as programmer, I would like to use it as such.
-I need to pass a function to it. The code writes itself, giving me only one option, the `id`. 
+It looks close to a _Continuation Passing Style_ computation and I would like to use it as such.
+I need to pass a function to it. The code writes itself giving me only one option: the `id`. 
 
 > yoneda_2 :: (forall x. (a -> x) -> f x) -> f a
 > yoneda_2 trans = trans id
@@ -93,8 +91,8 @@ Equational reasoning in pseudo-Haskell shows that these are indeed isomorphic
 (yoneda_1 . yoneda_2) :: Functor f => ((->) a :~> f) -> ((->) a :~> f)
 
 (yoneda_1 . yoneda_2) trans 
-==  ((flip fmap) . (\t -> t id)) trans 
-==  (flip fmap) (trans id) 
+== ((flip fmap) . (\t -> t id)) trans 
+== (flip fmap) (trans id) 
 == (\f -> fmap f (trans id)) 
 == (\f -> trans (fmap f id)) -- naturality *
 == (\f -> trans (f . id)) -- definition of reader (->) functor
