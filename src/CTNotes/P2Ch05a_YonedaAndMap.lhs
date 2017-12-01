@@ -120,18 +120,27 @@ TODO is naturality of Yoneda represented somehow in programming?
 
 Co-Yoneda in Hask
 -----------------
-Co-Yoneda states that (in pseudo-Haskell):
+The book defines Co-Yoneda as 
+```
+Functor f => f a ~= forall x . (x -> a) -> f x
+```
+which corresponds directly to Nat(C(-, a), F) ≅ F a. 
+
+Most libraries such as scalaz or `category-extras`, `kan-extensions` in Haskell 
+use the following, co-limit based, definition of CoYoneda (in pseudo-Haskell):
 ```
 Functor f => f a ~= exists x . (x -> a) -> f x
 ```
-This has the equivalent (dual) similarity to `fmap`
+I am focusing on the second definition.  
+
+There is an equivalent (dual) similarity to `fmap`
 ```
 F a ~= exists x . (x -> a) -> f x
 coyoneda_2 :: (exists x . (x -> a) -> f x) -> f a
 
 fmap :: Functor f => (x -> a) -> f x -> f a
 ```
-In Haskell this will be defined as (see `category-extras` or `kan-extensions`)
+In Haskell CoYoneda is defined as
  
 > data CoYoneda f a = forall x. CoYoneda (x -> a) (f x)
 > -- | or
@@ -143,7 +152,7 @@ or in GADT style (which I find the cleanest)
 > data CoYoneda'' f a where
 >    CoYoneda'' :: (x -> a) -> f x -> CoYoneda'' f a
 
-and the corresponding isomorphisms would look like this:
+and the corresponding isomorphisms would look like this (notice duality to Yoneda):
 
 > coyoneda_1 :: f a -> CoYoneda'' f a
 > coyoneda_1 = CoYoneda'' id
