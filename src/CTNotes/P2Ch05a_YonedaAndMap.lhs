@@ -204,9 +204,28 @@ Careful look at `fmap` definitions for `(Co)Yoneda` shows that this is exactly w
 `coyoneda_2 :: Functor f => CoYoneda f a -> f a` transformation and not in `coyoneda_1 :: f a -> CoYoneda f a`
 Thus, wrapping up a big computation inside `CoYoneda` can lead to significant performance optimization.
 
-I imagine this to be especially true in languages like Scala which do not have lambda like code rewriting rules.   
-This blog post shows how this plays out in Haskell: 
-http://alpmestan.com/posts/2017-08-17-coyoneda-fmap-fusion.html.
+I imagine this to be especially true in languages like Scala which do not have lambda like code rewriting rules.    
+
+The following trivial example is simplified version of: 
+http://alpmestan.com/posts/2017-08-17-coyoneda-fmap-fusion.html
+
+> withCoYoneda :: Functor f => (CoYoneda'' f a -> CoYoneda'' f b) -> f a -> f b
+> withCoYoneda comp = coyoneda_2 . comp . coyoneda_1
+>
+> stupid :: (Functor f, Num a) => f a -> f a
+> stupid = fmap (*2) . fmap (+1) . fmap (^2)
+>
+> bigSum1 = sum $ stupid $ [1..1000000]
+> bigSum2 = sum $ withCoYoneda stupid  $ ([1..1000000] :: [Int])
+
+```bash
+λ.CoYoneda> bigSum2
+666667666669000000
+(1.57 secs, 865,690,504 bytes)
+λ.CoYoneda> bigSum1
+666667666669000000
+(2.09 secs, 938,079,312 bytes)
+```
 
 __DSLs__ Functor for free benefit allows to remove functor requirement on the design of 
 abstract DSL instruction set (on the DSL algebra).
