@@ -2,7 +2,7 @@
 
 Note about CTFP Part 1 Chapter 3. Examples of categories.  Finite category construction in Haskell.
 ===================================================================================================
-Haskell representation of categories created from simple graphs (finite enumeration of objects and morphisms).
+Haskell representation of categories created from simple directed graphs (finite enumeration of objects and morphisms).
 I use a dependently typed approach to encode category objects as types (of a custom kind) and enumerate
 all possible morphisms using a GADT. 
 

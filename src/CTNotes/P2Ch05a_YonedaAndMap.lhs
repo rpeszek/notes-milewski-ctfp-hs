@@ -3,8 +3,8 @@
 __Work-in-progress__
 
 
-Notes about CTFP Part 2 Chapter 5. Yoneda Lemma and fmap
-========================================================
+Notes about CTFP Part 2 Chapter 5. Yoneda Lemma and `fmap`
+=========================================================
 This note is about what helped me internalize Yoneda from the programming point of view.  
 It is about how (Co)Yoneda relates to `fmap` on the conceptual and practical level.
 This note also includes some equational reasoning proofs to supplement the more 
@@ -25,6 +25,11 @@ Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 Yoneda in Hask
 --------------
 As a programmer, I view Yoneda Lemma as a stronger version of `fmap`. 
+This includes
+* Iso nature of `fmap`-s
+* Free `fmap`-s
+* Faster `fmap`-s
+
 The great news is that this strength is there for free.
 Yoneda Lemma states (in pseudo-Haskell, ~= represents type isomorphism) that
 ```
@@ -33,7 +38,7 @@ Functor f => f a ~= forall x. (a -> x) -> f x
 Yoneda says that `fmap` is (in some sense) an isomorphism.  
 Lets start with __one direction__:
 ```
-yoneda_1 :: Functor f => f a -> forall x. (a -> x) -> f x
+toYoneda :: Functor f => f a -> forall x. (a -> x) -> f x
 ```
 This is pretty much, `fmap`
 ```
@@ -42,32 +47,32 @@ fmap :: Functor f => (a -> x) -> f a -> f x
 Here are both, spelled out in English:   
 
 `fmap`: for a given value `fa` of type `f a` and function `a -> x`, I can produce value of type `f x`.  
-`yoneda_1`: for a given value `fa` of type `f a` and function `a -> x`, I can produce value of type `f x`.  
+`toYoneda`: for a given value `fa` of type `f a` and function `a -> x`, I can produce value of type `f x`.  
 
 If it walks like a duck ...  
 The power of squinting!
 
 __The details:__  
-To define `yoneda_1` I just need to flip the arguments on `fmap` and notice that `fmap` is a perfectly polymorphic function
+To define `toYoneda` I just need to flip the arguments on `fmap` and notice that `fmap` is a perfectly polymorphic function
 
-> fmap_1 :: Functor f => f a -> ((a -> x) -> f x)
-> fmap_1 = flip fmap  
+> fmap' :: Functor f => f a -> ((a -> x) -> f x)
+> fmap' = flip fmap  
 >
-> yoneda_1 :: Functor f => f a -> forall x. (a -> x) -> f x
-> yoneda_1 = fmap_1
+> toYoneda :: Functor f => f a -> forall x. (a -> x) -> f x
+> toYoneda = fmap'
 > -- or
-> yoneda_1' :: Functor f => f a -> ((->) a :~> f)
-> yoneda_1' = fmap_1
+> toYoneda' :: Functor f => f a -> ((->) a :~> f)
+> toYoneda' = fmap'
 
-To get `yoneda_2` in the __other direction__, I need to look at `forall x. (a -> x) -> f x` and understand what it is.
+To get `fromYoneda` in the __other direction__, I need to look at `forall x. (a -> x) -> f x` and understand what it is.
 It looks close to a _Continuation Passing Style_ computation and I would like to use it as such.
 I need to pass a function to it. The code writes itself giving me only one option: the `id`. 
 
-> yoneda_2 :: (forall x. (a -> x) -> f x) -> f a
-> yoneda_2 trans = trans id
+> fromYoneda :: (forall x. (a -> x) -> f x) -> f a
+> fromYoneda trans = trans id
 > -- | or
-> yoneda_2' :: ((->) a :~> f) -> f a
-> yoneda_2' trans = trans id
+> fromYoneda' :: ((->) a :~> f) -> f a
+> fromYoneda' trans = trans id
 
 In Type Theoretical lambda terms, this applies type `a` to quantification `forall x`. This is like a function application 
 only at type level. In psedo-Haskell that would look like `(forall x) $ a` resulting in `a`.    
@@ -80,17 +85,17 @@ when transforming `id` and there rest is uniquely determined by the naturality c
 Equational reasoning in pseudo-Haskell shows that these are indeed isomorphic
 (current impredicative polymorphism limitations prevent from using GHC to do much of this)
 ```
-(yoneda_2 . yoneda_1) :: Functor f => f a -> f a
+(fromYoneda . toYoneda) :: Functor f => f a -> f a
 
-(yoneda_2 . yoneda_1) fa 
+(fromYoneda . toYoneda) fa 
 == (\t -> t id) . (flip fmap $ fa)
 == (flip fmap $ fa) id 
 == fmap id fa 
 == id -- because f is functor
 
-(yoneda_1 . yoneda_2) :: Functor f => ((->) a :~> f) -> ((->) a :~> f)
+(toYoneda . fromYoneda) :: Functor f => ((->) a :~> f) -> ((->) a :~> f)
 
-(yoneda_1 . yoneda_2) trans 
+(toYoneda . fromYoneda) trans 
 == ((flip fmap) . (\t -> t id)) trans 
 == (flip fmap) (trans id) 
 == (\f -> fmap f (trans id)) 
@@ -129,34 +134,34 @@ use the following, co-limit based, definition of CoYoneda (in pseudo-Haskell):
 ```
 Functor f => f a ~= exists x . (x -> a) -> f x
 ```
-I am focusing on the second definition.  
+('co' also reverses the quantification).  
+I am focusing on the second definition. Existential quantification makes this one quite intuitive, 
+more so than the original, universally quantified, Yoneda.  
 
 There is an equivalent (dual) similarity to `fmap`
 ```
 F a ~= exists x . (x -> a) -> f x
-coyoneda_2 :: (exists x . (x -> a) -> f x) -> f a
+fromCoYoneda :: (exists x . (x -> a) -> f x) -> f a
 
 fmap :: Functor f => (x -> a) -> f x -> f a
 ```
 In Haskell CoYoneda is defined as
  
 > data CoYoneda f a = forall x. CoYoneda (x -> a) (f x)
-> -- | or
-> data CoYoneda' f a = forall x. CoYoneda' ((x -> a) -> f x)
 
 (`CoYoneda` data constructor hides x making it existential)  
 or in GADT style (which I find the cleanest)
 
-> data CoYoneda'' f a where
->    CoYoneda'' :: (x -> a) -> f x -> CoYoneda'' f a
+> data CoYoneda' f a where
+>    CoYoneda' :: (x -> a) -> f x -> CoYoneda' f a
 
 and the corresponding isomorphisms would look like this (notice duality to Yoneda):
 
-> coyoneda_1 :: f a -> CoYoneda'' f a
-> coyoneda_1 = CoYoneda'' id
+> toCoYoneda :: f a -> CoYoneda' f a
+> toCoYoneda = CoYoneda' id
 >
-> coyoneda_2 :: Functor f => CoYoneda'' f a -> f a
-> coyoneda_2 (CoYoneda'' f fa) = fmap f fa
+> fromCoYoneda :: Functor f => CoYoneda' f a -> f a
+> fromCoYoneda (CoYoneda' f fa) = fmap f fa
 
 
 (Co)Yoneda functor instance - free `fmap`
@@ -169,28 +174,18 @@ what is interesting is that `(Co)Yoneda` type constructors get to be functors fo
 
 > instance Functor (Yoneda f) where
 >  	fmap f y = Yoneda (\k -> (runYoneda y) (k . f))
-> instance Functor (CoYoneda'' f) where
-> 	fmap f (CoYoneda'' x2a fx) = CoYoneda'' (f . x2a) fx
+> instance Functor (CoYoneda' f) where
+> 	fmap f (CoYoneda' x2a fx) = CoYoneda' (f . x2a) fx
 
 (The proof obligations follow from properties of function composition)  
 they also nicely preserve other properties like Monad or Applicative instances.
 
 
-Yoneda with not-Hask categories
--------------------------------
-Can we get some of the same goodness for functors `F :: C -> Hask`, where `C` is a non-Hask category
-such as some discrete category ([N_P1Ch03c_DiscreteCat](N_P1Ch03c_DiscreteCat)) or a simple finite category 
-created with GADTs ([N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats), [N_P1Ch03c_Equalizer](N_P1Ch03c_Equalizer))?
-I am doubtful.
-
-In Hask natural transformations are simply polymorphic functions `forall x. f x -> g x`, with
-other categories this is not as nice but this aspect seems doable ([N_P1Ch03c_Equalizer](N_P1Ch03c_Equalizer)).
-
-The breaking point is the hom-set. With `C = Hask` the hom-set functor used in Yoneda Lemma is 
-the Reader Functor `(->)`. There is no nice equivalent like that for not-Hask categories. 
-For example, for discrete categories the hom-set would be a Unit `()` for `Discrete(a,a)` and `Void` 
-for everything else.  
-Whatever type equivalence can be achieved in these cases, I think it will be ugly. 
+TODO Yoneda with non-Hask categories
+------------------------------------
+Since I can define functors of kind k -> k -> *,  Hask should effectively act as __Set__.
+This investigation belongs in a separate note.
+I have changed my mind on this, this seems to me doable now.
 
 
 Code Examples
@@ -201,7 +196,7 @@ For recursive data structures such as trees or lists `fmap` can be expensive. It
 Careful look at `fmap` definitions for `(Co)Yoneda` shows that this is exactly what is going on.
 
 `CoYoneda` has the additional benefit of running the `fmap` in the 
-`coyoneda_2 :: Functor f => CoYoneda f a -> f a` transformation and not in `coyoneda_1 :: f a -> CoYoneda f a`
+`fromCoYoneda :: Functor f => CoYoneda f a -> f a` transformation and not in `toCoYoneda :: f a -> CoYoneda f a`
 Thus, wrapping up a big computation inside `CoYoneda` can lead to significant performance optimization.
 
 I imagine this to be especially true in languages like Scala which do not have lambda like code rewriting rules.    
@@ -209,8 +204,8 @@ I imagine this to be especially true in languages like Scala which do not have l
 The following trivial example is simplified version of: 
 http://alpmestan.com/posts/2017-08-17-coyoneda-fmap-fusion.html
 
-> withCoYoneda :: Functor f => (CoYoneda'' f a -> CoYoneda'' f b) -> f a -> f b
-> withCoYoneda comp = coyoneda_2 . comp . coyoneda_1
+> withCoYoneda :: Functor f => (CoYoneda' f a -> CoYoneda' f b) -> f a -> f b
+> withCoYoneda comp = fromCoYoneda . comp . toCoYoneda
 >
 > stupid :: (Functor f, Num a) => f a -> f a
 > stupid = fmap (*2) . fmap (+1) . fmap (^2)

@@ -2,7 +2,8 @@
 
 Note about CTFP Part 1 Chapter 7. Functors on non-Hask categories 
 ==================================================================
-Ref: https://hackage.haskell.org/package/category-extras-0.53.5/docs/Control-Functor-Categorical.html
+This note explores generalized definition of Functor typeclass that works with other categories
+than Hask. 
 
 Book ref:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
@@ -21,11 +22,13 @@ Book ref:
 > import qualified CTNotes.P1Ch03b_FiniteCats as Finite
 
 
-`category-extras` defines `CFunctor` (quoted code):
+`categories` (`Control.Categorical.Functor`) and `category-extras` (`Control.Functor.Categorical`) 
+define `CFunctor` (quoted code):
 ```
 class (Category r, Category s) => CFunctor f r s | f r -> s, f s -> r where
   cmap :: r a b -> s (f a) (f b)
 ```
+(Taken from `category-extras`, `categories` just call it `Functor`)
 
 Ignoring functional dependencies I define non-endofunctors as:
 
