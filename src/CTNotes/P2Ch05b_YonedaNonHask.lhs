@@ -10,9 +10,9 @@ It also provides a nice intuition.
 I use a simple GADT construction (from [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats)) of finite categories 
 that enumerates all possible morphisms.
 To implement functors on such categories I have to pattern match on all morphisms.
-Yoneda Lemma is a reordering of that pattern match and grouping it on the functor data constructors.
-Yoneda Lemma provides type isomorphism for that grouping and says that each data constructor has 
-partial function to every `f x`, all these partial functions are different, and there aren't any more of them.
+Yoneda Lemma can be observed by reordering of that pattern match and grouping it on the functor data constructors.
+Each data constructor ends up matched with a polymorphic function to every `f x`, all these functions are different, 
+and the implementation needs all of them.
 
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 2. Ch.5 Yoneda Lemma](https://bartoszmilewski.com/2015/09/01/the-yoneda-lemma/).
@@ -146,7 +146,7 @@ This pattern match is a polymorphic case expression of type `homset a x -> f x` 
 >                     A_B__C.MorphAC2 -> P2End2 . P2Mid1 $ P2Start1
 > cmapForP2Start1 P2Start2 morph = undefined
 
-Each of these partial functions will be different and the exhaustive pattern match will need all of them.
+Each of these functions will be different and the exhaustive pattern match will need all of them.
 Yoneda Lemma says that code for `cmap` will just write itself. 
 
 
