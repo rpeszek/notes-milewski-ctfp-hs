@@ -3,8 +3,9 @@
 Note about CTFP Part 1 Chapter 3. Examples of categories.  Finite category construction in Haskell.
 ===================================================================================================
 Haskell representation of categories created from simple directed graphs (finite enumeration of objects and morphisms).
-I use a dependently typed approach to encode category objects as types (of a custom kind) and enumerate
-all possible morphisms using a GADT. 
+I use a 'dependently typed' approach to encode category objects as types (of a custom kind) and enumerate
+all possible morphisms using a GADT.  Using GADTs makes it simple to visualize what is going on because I use them
+to enumerate al possible morphisms.
 
 The approach looks generic (should be easily adjusted to other finite categories) 
 but I am not trying to do it polymorphically (if that is even possible).  
@@ -37,7 +38,7 @@ All objects in `A->B=>C` are defined as data type
 and promoted (`DataKinds` pragma) to a kind `Object` with types `A` `B` and  `C`.  
 Category objects will be the types `A` `B` and  `C`.
  
-All morphims in `A->B=>C` are defined using the following GADT 
+All morphism in `A->B=>C` are defined using the following GADT 
 
 > data HomSet (a :: Object) (b :: Object) where
 > -- generating edges in A->B=>C
@@ -49,8 +50,7 @@ All morphims in `A->B=>C` are defined using the following GADT
 >    MorphAC1 :: HomSet 'A 'C -- MorphCB1 . MorphAB
 >    MorphAC2 :: HomSet 'A 'C -- MorphCB2 . MorphAB
   
-  
-Morphism composition:
+Morphism composition:  
 
 > compose :: HomSet b c -> HomSet a b -> HomSet a c
 > compose MorphId mab  = mab      -- GHC knows b == c
@@ -61,6 +61,17 @@ Morphism composition:
 Cool! GHC knows that this pattern match is exhaustive, something that takes a minute to digest.
 When writing this, I just needed to think about free construction cases.
 
+_Note_: I have assume free construction approach, `MorphAC1` and `MorphAC2` are different.
+If, instead, I created a GADT with one `MorphAC` and have defined 
+```
+compose MorphBC1 MorphAB = MorphAC
+compose MorphBC2 MorphAB = MorphAC 
+```
+This would have been an equalizer-like diagram and it would be very hard to functor it into Hask.  
+Explicitly enumerating all possible morphisms in a GADT looks like redundant coding, but
+it provides flexibility to play with different category designs. 
+
+
 __`A->B=>C` is `Control.Category`:__  
 Here is the definition of `Category` quoted from base package `Control.Category` module: 
 ```
@@ -70,13 +81,15 @@ class Category cat where
 ```
 
 `PolyKinds` pragma causes `Category` to infer most general kind on `cat` which is `k -> k -> *`
-so `Category` class automatically infers `Object -> Object -> *` for me matching HomSet kind signature.     
+so `Category` class automatically infers `Object -> Object -> *` for me matching HomSet kind signature.  
+From the categorical stand point, `cat :: Object -> Object -> *` acts as a hom-set and `Hask` acts as
+the __Set__ category.  A better name would be 'Hom-Hask'.    
 
 > instance Category HomSet where
 >   id = MorphId
 >   (.) = compose
 
-Expressions like  `MorphCB . MorphAB`  will not compile, but other compositions work fine:
+Expressions like  `MorphCB . MorphAB`  will not compile, but 'correct' compositions work fine:
 
 ```bash
 ghci> :t MorphId . MorphAB
@@ -86,7 +99,7 @@ ghci> :t MorphBC1 . MorphAB
 MorphBC1 . MorphAB :: HomSet 'A 'C
 ```
 
-It is quite amazing that you can do stuff like this in Haskell. 
-Generalizing use of categories instead of just hardcoding Hask everywhere seems like a good thing.
+It is quite amazing that you can do stuff like this. 
+Generalizing use of categories instead of just hardcoding Hask everywhere seems like an interesting direction.
 
-TODO should I add value level representation of this?
+TODO should I add value level representation of this? Does not seem to be needed.

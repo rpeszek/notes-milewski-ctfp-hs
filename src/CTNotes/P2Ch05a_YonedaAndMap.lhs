@@ -22,8 +22,8 @@ Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 > module CTNotes.P2Ch05a_YonedaAndMap where
 > import CTNotes.P1Ch10_NaturalTransformations((:~>))
 
-Yoneda in Hask
---------------
+Yoneda Lemma
+------------
 As a programmer, I view Yoneda Lemma as a stronger version of `fmap`. 
 This includes
 * Iso nature of `fmap`-s
@@ -121,8 +121,8 @@ As stated in the book, Yoneda is not just isomorphism, it is also natural in bot
 TODO is naturality of Yoneda represented somehow in programming? 
 
 
-Co-Yoneda in Hask
------------------
+Co-Yoneda
+---------
 The book defines Co-Yoneda as 
 ```
 Functor f => f a ~= forall x . (x -> a) -> f x
@@ -164,8 +164,8 @@ and the corresponding isomorphisms would look like this (notice duality to Yoned
 > fromCoYoneda (CoYoneda' f fa) = fmap f fa
 
 
-(Co)Yoneda functor instance - free `fmap`
-----------------------------------------
+Functor instances - free `fmap`
+-------------------------------
 Following definitions in `category-extras` or `kan-extensions` package I can define 
 
 > newtype Yoneda f a = Yoneda { runYoneda :: forall x. ((a -> x) -> f x) } 
@@ -181,11 +181,10 @@ what is interesting is that `(Co)Yoneda` type constructors get to be functors fo
 they also nicely preserve other properties like Monad or Applicative instances.
 
 
-TODO Yoneda with non-Hask categories
-------------------------------------
-Since I can define functors of kind k -> k -> *,  Hask should effectively act as __Set__.
-This investigation belongs in a separate note.
-I have changed my mind on this, this seems to me doable now.
+With non-Hask categories
+------------------------
+I have changed my mind on this, the answer is YES!
+See [N_P2Ch05b_YonedaNonHask](N_P2Ch05b_YonedaNonHask)
 
 
 Code Examples
@@ -196,7 +195,8 @@ For recursive data structures such as trees or lists `fmap` can be expensive. It
 Careful look at `fmap` definitions for `(Co)Yoneda` shows that this is exactly what is going on.
 
 `CoYoneda` has the additional benefit of running the `fmap` in the 
-`fromCoYoneda :: Functor f => CoYoneda f a -> f a` transformation and not in `toCoYoneda :: f a -> CoYoneda f a`
+`fromCoYoneda :: Functor f => CoYoneda f a -> f a` transformation and not in `toCoYoneda :: f a -> CoYoneda f a`.
+People call it deferred `fmap`.
 Thus, wrapping up a big computation inside `CoYoneda` can lead to significant performance optimization.
 
 I imagine this to be especially true in languages like Scala which do not have lambda like code rewriting rules.    

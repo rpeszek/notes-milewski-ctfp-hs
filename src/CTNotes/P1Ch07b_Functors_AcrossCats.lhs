@@ -14,12 +14,14 @@ Book ref:
 > {-# LANGUAGE FlexibleInstances #-}
 > {-# LANGUAGE KindSignatures #-}
 > {-# LANGUAGE DataKinds #-}
+> {-# LANGUAGE GADTs #-}
+> {-# LANGUAGE FlexibleContexts #-}
 >
 > module CTNotes.P1Ch07b_Functors_AcrossCats where
 > import Data.Functor.Const (Const(..))
 > import Control.Category 
 > import Prelude(undefined, ($))
-> import qualified CTNotes.P1Ch03b_FiniteCats as Finite
+> import qualified CTNotes.P1Ch03b_FiniteCats as FinCat
 
 
 `categories` (`Control.Categorical.Functor`) and `category-extras` (`Control.Functor.Categorical`) 
@@ -60,15 +62,78 @@ I am using (->) for destination, because this is what the implementation `\Const
 
 To show that this works, I use category defined in the imported notes [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
 
-> test :: Const a (x :: Finite.Object) -> Const a (x :: Finite.Object)
-> test = cmap Finite.MorphId
+> test :: Const a (x :: FinCat.Object) -> Const a (x :: FinCat.Object)
+> test = cmap FinCat.MorphId
 
 But this would not compile:
 
 ```
 -- Bad code
-test :: Const a (x :: Finite.Object) -> Const a (x :: Finite.Object)
-test = cmap Finite.MorphAB
+test :: Const a (x :: FinCat.Object) -> Const a (x :: FinCat.Object)
+test = cmap FinCat.MorphAB
 ```
  
-TODO: more examples?
+Functor Examples
+----------------
+
+This example splits object `FinCat.C` into 2 possible endings of the same type `Process1 'FinCat.C`
+
+> data Process1 (o :: FinCat.Object) where
+>     P1Start ::  Process1 'FinCat.A
+>     P1Mid   ::  Process1 'FinCat.A -> Process1 'FinCat.B
+>     P1End1  ::  Process1 'FinCat.B -> Process1 'FinCat.C
+>     P1End2  ::  Process1 'FinCat.B -> Process1 'FinCat.C
+>
+> instance CFunctor Process1 FinCat.HomSet (->) where
+>    cmap FinCat.MorphId   = \x -> x
+>    cmap FinCat.MorphAB   = P1Mid 
+>    cmap FinCat.MorphBC1  = P1End1 
+>    cmap FinCat.MorphBC2  = P1End2 
+>    cmap FinCat.MorphAC1  = P1End1 . P1Mid  
+>    cmap FinCat.MorphAC2  = P1End2 . P1Mid 
+
+This example collapses morphisms leading to the end type `Process2 'FinCat.C`
+
+> data Process2 (o :: FinCat.Object) where
+>     P2Start1 ::  Process2 'FinCat.A
+>     P2Start2 ::  Process2 'FinCat.A
+>     P2Mid1   ::  Process2 'FinCat.A -> Process2 'FinCat.B
+>     P2Mid2   ::  Process2 'FinCat.A -> Process2 'FinCat.B
+>     P2End1   ::  Process2 'FinCat.B -> Process2 'FinCat.C
+>     P2End2   ::  Process2 'FinCat.B -> Process2 'FinCat.C
+>   
+> instance CFunctor Process2 FinCat.HomSet (->) where
+>    cmap = go  
+>        where
+>            step1 :: Process2 'FinCat.A -> Process2 'FinCat.B
+>            step1 P2Start1 = P2Mid1 P2Start1
+>            step1 P2Start2 = P2Mid2 P2Start2
+>            go :: FinCat.HomSet a b -> Process2 a -> Process2 b      
+>            go FinCat.MorphId  =  \x -> x
+>            go FinCat.MorphAB  = step1 
+>            go FinCat.MorphBC1  = P2End1 
+>            go FinCat.MorphBC2  = P2End2 
+>            go FinCat.MorphAC1  = P2End1 . step1  
+>            go FinCat.MorphAC2  = P2End2 . step1 
+
+A more involved example of a Tree where leafs are marked with `FinCat.A`, single branches with `FinCat.B`, 
+and double branches with `FinCat.A`. Branches can be of any type so, for example, `A -> B -> B -> B` is valid.
+The image in `Hask` is reacher allowing for more flexibility.
+
+> data Tree (o :: FinCat.Object) where 
+>     Leaf :: Tree 'FinCat.A
+>     Down :: Tree o -> Tree 'FinCat.B
+>     Branch :: Tree o1 -> Tree o2 -> Tree 'FinCat.C
+> 
+> instance CFunctor Tree FinCat.HomSet (->) where
+>    cmap = go  
+>        where
+>          right = Branch Leaf
+>          left = \t -> Branch t Leaf
+>          go :: FinCat.HomSet a b -> Tree a -> Tree b      
+>          go FinCat.MorphId   = \x -> x
+>          go FinCat.MorphAB   = Down 
+>          go FinCat.MorphBC1  = right
+>          go FinCat.MorphBC2  = left
+>          go FinCat.MorphAC1  = right . Down 
+>          go FinCat.MorphAC2  = left . Down
