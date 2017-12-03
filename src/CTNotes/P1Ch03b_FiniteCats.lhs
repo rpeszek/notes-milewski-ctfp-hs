@@ -23,11 +23,12 @@ This note supplements _Simple Graphs_ section of [CTFP](https://bartoszmilewski.
 > {-# LANGUAGE KindSignatures #-}
 > {-# LANGUAGE FlexibleInstances #-}
 > {-# LANGUAGE PolyKinds #-}
+> {-# LANGUAGE StandaloneDeriving #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module CTNotes.P1Ch03b_FiniteCats where
 > import Control.Category 
-> import Prelude()
+> import Prelude(Show)
 
 Simple Finite Category
 ----------------------
@@ -49,6 +50,12 @@ All morphism in `A->B=>C` are defined using the following GADT
 > -- derived 
 >    MorphAC1 :: HomSet 'A 'C -- MorphCB1 . MorphAB
 >    MorphAC2 :: HomSet 'A 'C -- MorphCB2 . MorphAB
+>
+> deriving instance Show (HomSet a b)
+>
+> newtype CoHomSet b a = CoHomSet (HomSet a b)
+>
+> deriving instance Show (CoHomSet a b)
   
 Morphism composition:  
 
@@ -101,5 +108,10 @@ MorphBC1 . MorphAB :: HomSet 'A 'C
 
 It is quite amazing that you can do stuff like this. 
 Generalizing use of categories instead of just hardcoding Hask everywhere seems like an interesting direction.
+
+Functors
+--------
+[N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats) provides example functors from this category. 
+
 
 TODO should I add value level representation of this? Does not seem to be needed.

@@ -11,6 +11,7 @@ These notes are about
 
 > {-# LANGUAGE Rank2Types #-}
 > {-# LANGUAGE TypeOperators #-}
+> {-# LANGUAGE PolyKinds #-}  -- added to make (:~>) definition kind polymorphic
 >
 > module CTNotes.P1Ch10_NaturalTransformations where
 >

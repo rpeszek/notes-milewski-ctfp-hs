@@ -4,8 +4,10 @@ Note about CTFP Part 1 Chapter 7. Functors on non-Hask categories
 ==================================================================
 This note explores generalized definition of Functor typeclass that works with other categories
 than Hask.  
+
 It also provides some example Functors for the category `A->B=>C` defined in 
-[N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
+[N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats). The interesting bit is that a given type constructor can now
+have several possible functor instances. 
 
 Book ref:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
@@ -18,11 +20,12 @@ Book ref:
 > {-# LANGUAGE DataKinds #-}
 > {-# LANGUAGE GADTs #-}
 > {-# LANGUAGE FlexibleContexts #-}
+> {-# LANGUAGE StandaloneDeriving #-}
 >
 > module CTNotes.P1Ch07b_Functors_AcrossCats where
 > import Data.Functor.Const (Const(..))
 > import Control.Category 
-> import Prelude(undefined, ($))
+> import Prelude(undefined, ($), Show)
 > import qualified CTNotes.P1Ch03b_FiniteCats as FinCat
 
 
@@ -74,9 +77,21 @@ But this would not compile:
 test :: Const a (x :: FinCat.Object) -> Const a (x :: FinCat.Object)
 test = cmap FinCat.MorphAB
 ```
+For the sake of completeness
+
+> class (Category r, Category s) => CContraFunctor f r s  where
+>    ccmap :: r b a -> s (f a) (f b)
+
  
 Functor Examples
 ----------------
+__HomSet as Functor__
+
+> instance CFunctor (FinCat.HomSet a) FinCat.HomSet (->) where
+>   cmap morph x = morph . x
+
+
+__Simple Example__
 
 This example splits object `FinCat.C` into 2 possible endings of the same type `Process1 'FinCat.C`
 
@@ -86,6 +101,8 @@ This example splits object `FinCat.C` into 2 possible endings of the same type `
 >     P1End1  ::  Process1 'FinCat.B -> Process1 'FinCat.C
 >     P1End2  ::  Process1 'FinCat.B -> Process1 'FinCat.C
 >
+> deriving instance Show (Process1 o)
+>
 > instance CFunctor Process1 FinCat.HomSet (->) where
 >    cmap FinCat.MorphId   = \x -> x
 >    cmap FinCat.MorphAB   = P1Mid 
@@ -94,7 +111,19 @@ This example splits object `FinCat.C` into 2 possible endings of the same type `
 >    cmap FinCat.MorphAC1  = P1End1 . P1Mid  
 >    cmap FinCat.MorphAC2  = P1End2 . P1Mid 
 
-This example collapses morphisms leading to the end type `Process2 'FinCat.C`
+
+__More complex Functor image, lack of `cmap` uniqueness__
+
+The following type allows for all of these morphisms
+```
+  Start1 --> Mid1 --->  End2
+        \  /\     \  /\
+         \/        \/
+         /\        /\
+        /  \/     /  \/ 
+  Start2 --> Mid2 ---> End2
+               
+```
 
 > data Process2 (o :: FinCat.Object) where
 >     P2Start1 ::  Process2 'FinCat.A
@@ -103,7 +132,21 @@ This example collapses morphisms leading to the end type `Process2 'FinCat.C`
 >     P2Mid2   ::  Process2 'FinCat.A -> Process2 'FinCat.B
 >     P2End1   ::  Process2 'FinCat.B -> Process2 'FinCat.C
 >     P2End2   ::  Process2 'FinCat.B -> Process2 'FinCat.C
->   
+>
+> deriving instance Show (Process2 o)
+
+Any functor needs to work on objects by mapping `A` into `Process2 A`, `B` into `Process2 B`, and `C` into `Process2 C`.  
+But there is a choice how the morphisms are mapped.  
+The following instance uses this approach:
+```
+  Start1 --> Mid1 --->  End2
+                  \  /\
+                   \/
+                   /\
+                  /  \/ 
+  Start2 --> Mid2 ---> End2              
+```  
+  
 > instance CFunctor Process2 FinCat.HomSet (->) where
 >    cmap = go  
 >        where
@@ -115,9 +158,32 @@ This example collapses morphisms leading to the end type `Process2 'FinCat.C`
 >            go FinCat.MorphAB  = step1 
 >            go FinCat.MorphBC1  = P2End1 
 >            go FinCat.MorphBC2  = P2End2 
->            go FinCat.MorphAC1  = P2End1 . step1  
->            go FinCat.MorphAC2  = P2End2 . step1 
+>            go FinCat.MorphAC1  = P2End1 . P2Mid1  
+>            go FinCat.MorphAC2  = P2End2 . P2Mid2 
 
+Notice there are other possible functor instance for Process2, one that moves Start1 to Mid2 and Start2 to Mid1
+would work as well
+```
+  Start1     Mid1 --->  End2
+        \  /\     \  /\
+         \/        \/
+         /\        /\
+        /  \/     /  \/ 
+  Start2     Mid2 ---> End2
+               
+```
+or collapses all into one of the branches
+```
+  Start1 --> Mid1 --->  End2
+           /\     \  /\
+          /        \/
+         /         /\
+        /         /  \/ 
+  Start2     Mid2 ---> End2              
+```
+
+
+__Tree Example__ TODO this may need more thinking.   
 A more involved example of a Tree where leafs are marked with `FinCat.A`, single branches with `FinCat.B`, 
 and double branches with `FinCat.A`. Branches can be of any type so, for example, `A -> B -> B -> B` is valid.
 The image in `Hask` is reacher allowing for more flexibility.
@@ -126,6 +192,8 @@ The image in `Hask` is reacher allowing for more flexibility.
 >     Leaf :: Tree 'FinCat.A
 >     Down :: Tree o -> Tree 'FinCat.B
 >     Branch :: Tree o1 -> Tree o2 -> Tree 'FinCat.C
+>
+> deriving instance Show (Tree o)
 > 
 > instance CFunctor Tree FinCat.HomSet (->) where
 >    cmap = go  
