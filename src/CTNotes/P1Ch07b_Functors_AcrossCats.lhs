@@ -3,7 +3,9 @@
 Note about CTFP Part 1 Chapter 7. Functors on non-Hask categories 
 ==================================================================
 This note explores generalized definition of Functor typeclass that works with other categories
-than Hask. 
+than Hask.  
+It also provides some example Functors for the category `A->B=>C` defined in 
+[N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
 
 Book ref:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
