@@ -78,7 +78,7 @@ and a simple Functor which maps objects `A` to `Process 'A` and `B` to `Process 
 >    cmap MorphAB PStart1 = PEnd1 PStart1
 >    cmap MorphAB PStart2 = PEnd2 PStart2
 
-As type `Process` allows any of these morphisms:
+As a type, `Process` allows any of these morphisms:
 ```
   Start1 --> End1 
         \  /\    
@@ -87,19 +87,21 @@ As type `Process` allows any of these morphisms:
         /  \/    
   Start2 --> End2
 ``` 
-However the functor instance picks just these 2 morphisms
+However the above functor instance just picks these 2 morphisms
 ```
   Start1 --> End1 
 
   Start2 --> End2
 ``` 
-(Notice there are possible `CFunctor` instances that will make different picks)
+(Notice possible `CFunctor` instances that make different picks)  
+
+Counterexample:
 
 > badNt :: Process :~> Process
 > badNt (PEnd2 x) = (PEnd1 x)
 > badNt (PEnd1 x) = (PEnd2 x)
 > badNt x = x
- 
+> 
 > naturality1 = cmap MorphAB . badNt 
 > naturality2 = badNt . cmap MorphAB
 
@@ -112,12 +114,13 @@ PEnd2 PStart1
 __square box__
 
 
-How to think about it
----------------------
-What `forall (x::k). f x -> g x` type is missing is evidence of naturality.  This is value level equality and as such is not 
-easy to define.  I will think of this as additional proof obligation needed when working with 'small' kinds.  
+How to think about this
+-----------------------
+`forall (x::k). f x -> g x` type is missing evidence of naturality for non-Hask source categories.  
+I think of this as additional proof obligation needed when working with non-Hask categories.  
+This requirement is a value level equality similar in nature to many other laws. 
 
 As indicated in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats) there could be several very different functor instances
-of type constructors from these categories.  This tells me that the type constructors `f :: k -> *` themselves do not 
+for a given type constructor.  This tells me that the type constructors `f :: k -> *` themselves do not 
 embody their functoriality well.  Thus, we should not expect that we get functorial properties 
-automatically from type expressions that just use `f` (like the forall (x::k). f x -> g x` expression).
+automatically from type expressions that just use `f` (like the `forall (x::k). f x -> g x` expression).
