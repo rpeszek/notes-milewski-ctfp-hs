@@ -9,7 +9,7 @@ Functors from non-Hask categories.  However the naturality condition free theore
 
 Book ref:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
-[Ch 10](https://bartoszmilewski.com/2015/04/07/natural-transformations/).
+[Ch 10. Natural Transformations](https://bartoszmilewski.com/2015/04/07/natural-transformations/).
 
 > {-# LANGUAGE GADTs #-}
 > {-# LANGUAGE DataKinds #-}
@@ -27,13 +27,13 @@ Book ref:
 > import Prelude(Show)
 > import CTNotes.P1Ch10_NaturalTransformations ((:~>))
 > import CTNotes.P1Ch07b_Functors_AcrossCats (CFunctor, cmap, Process2(..))
-> import qualified CTNotes.P1Ch03b_FiniteCats as A_B__C
 
 
 Example why Naturality is not for free
 --------------------------------------
 
-Natural transformations (:~>) defined in N_P1Ch10_NaturalTransformations are kind-polymorphic
+Natural transformations (:~>) defined in 
+[N_P1Ch10_NaturalTransformations](N_P1Ch10_NaturalTransformations) are kind-polymorphic
 ```
 ghci> :k (:~>)
 (:~>) :: (k -> *) -> (k -> *) -> *
@@ -124,3 +124,13 @@ As indicated in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats) there could be seve
 for a given type constructor.  This tells me that the type constructors `f :: k -> *` themselves do not 
 embody their functoriality well.  Thus, we should not expect that we get functorial properties 
 automatically from type expressions that just use `f` (like the `forall (x::k). f x -> g x` expression).
+A polymorphic function may play nice with one of the functors but not with all of them.
+
+Last being the best:  free theorems are based on parametricity which is rooted on not being 
+able to recover type information. GADT defines a very small space of possible morphisms. 
+Pattern matching on these effectively recovers type information.  Parametricity is lost.
+
+Here is answer to my question form Bartosz Milewski:
+"Free theorems are the result of parametricity, which is a property of the language rather than a category. 
+In simple words, parametricity means that we define a polymorphic function using a single 
+formula for all types. As soon as you allow pattern-matching on types, you lose parametricity."

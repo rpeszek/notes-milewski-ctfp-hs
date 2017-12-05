@@ -9,7 +9,7 @@ This note explores Yoneda Lemma for Functors from non-Hask categories in Haskell
 I use a simple GADT construction (from [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats)) of finite category 
 that enumerates all possible morphisms.
 As we know ([N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats)) functors from such categories are not unique. 
-We also know ([N_P2Ch10b_NTsNonHask](N_P2Ch10b_NTsNonHask)) that naturality condtion is no longer automatically satisified.
+We also know ([N_P2Ch10b_NTsNonHask](N_P2Ch10b_NTsNonHask)) that naturality condition is no longer automatically satisfied.
 
 However, examining Yoneda on such categories does provides a nice intuition. 
 To implement functors my simple GADT categories I have to pattern match on all morphisms.
