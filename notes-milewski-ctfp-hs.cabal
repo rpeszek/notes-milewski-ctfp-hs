@@ -20,6 +20,7 @@ library
                      , CTNotes.P1Ch03c_DiscreteCats
                      , CTNotes.P1Ch07_Functors_Composition
                      , CTNotes.P1Ch07b_Functors_AcrossCats
+                     , CTNotes.P1Ch08a_BiFunctorAsFunctor
                      , CTNotes.P1Ch10_NaturalTransformations
                      , CTNotes.P1Ch10b_NTsNonHask
                      , CTNotes.P2Ch02a_LimitsColimitsExtras

@@ -1,0 +1,54 @@
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch08a_BiFunctorAsFunctor
+
+Notes about CTFP Part 1 Chapter 8. BiFunctor as CFunctor and Product Category
+=============================================================================
+The book introduced CT concept of pifunctor as simply a functor from a product category __C x C -> D__.
+This formula is worth 1000 of pictures:
+```
+instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f)
+```
+Unfortunately, product category `:**:` does not implement `Control.Category` `id` because of 
+a kind strictness. 
+
+Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
+[Part 1. Ch.8 Functoriality](https://bartoszmilewski.com/2015/02/03/functoriality/).
+ 
+> {-# LANGUAGE TypeFamilies, TypeOperators, GADTs, FlexibleContexts, PolyKinds, UndecidableInstances #-}
+>
+> module CTNotes.P1Ch08a_BiFunctorAsFunctor where
+> import Control.Category
+> import Prelude(undefined, ($))
+> import CTNotes.P1Ch07b_Functors_AcrossCats
+ 
+Following the `data-category` package https://hackage.haskell.org/package/data-category-0.7
+I define product of categories as (using a more relaxed kind signature) 
+ 
+> data (:**:) :: (k -> k -> *) -> (k -> k -> *) -> * -> * -> * where
+>    (:**:) :: c1 a1 b1 -> c2 a2 b2 -> (:**:) c1 c2 (a1, a2) (b1, b2)
+
+(this is a GADT that defines type parametrized by pairs, this causes problems with implementation of `id`
+which wants to see `cat a a`, not `cat (a,b) (a,b)`).
+So instance of `Control.Category` is only partially implemented: 
+
+> instance (Category c1, Category c2) => Category (c1 :**: c2) where
+>    id = undefined -- id :**: id  -- not general enough, supports objects of kind k only
+>    (a1 :**: a2) . (b1 :**: b2) = (a1 . b1) :**: (a2 . b2)
+ 
+Definition of BiFunctor from the book:
+ 
+> class Bifunctor f where
+>      bimap :: (a -> c) -> (b -> d) -> f a b -> f c d
+>      bimap g h = first g . second h
+>      first :: (a -> c) -> f a b -> f c b
+>      first g = bimap g id
+>      second :: (b -> d) -> f a b -> f a d
+>      second = bimap id
+  
+And here we go: 
+ 
+> newtype Curry f a b = Curry (f (a, b))
+>     
+> instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f) where
+>     bimap ac bd (Curry fp) = Curry $ cmap (ac :**: bd) fp 
+     
+TODO think about that ID.  
