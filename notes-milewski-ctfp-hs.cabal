@@ -29,6 +29,7 @@ library
                      , CTNotes.P2Ch03_FreeMonoidFoldMap
                      , CTNotes.P2Ch05a_YonedaAndMap
                      , CTNotes.P2Ch05b_YonedaNonHask
+                     , CTNotes.P3Ch02a_CurryAdj
                      , Trivialities.NTProps
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
