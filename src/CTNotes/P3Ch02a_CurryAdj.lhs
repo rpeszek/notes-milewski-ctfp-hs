@@ -16,10 +16,10 @@ Adjunction definition from the book with functional dependencies and representab
 to keep it focused
 
 > class (Functor l, Functor r) => Adjunction l r  where
->     unit   :: a -> r (l a)
->     counit :: l (r a) -> a
->     leftAdjunct  :: (l a -> b) -> a -> r b
->     rightAdjunct :: (a -> r b) -> l a -> b
+>     unit   :: d -> r (l d)
+>     counit :: l (r c) -> c
+>     leftAdjunct  :: (l d -> c) -> d -> r c
+>     rightAdjunct :: (d -> r c) -> l d -> c
 > 
 >     unit = leftAdjunct id
 >     counit = rightAdjunct id
