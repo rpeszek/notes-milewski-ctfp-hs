@@ -1,6 +1,6 @@
 name:                notes-milewski-ctfp-hs
 version:             0.0.1.0
-synopsis:             Notes and thoughts from reading Category Theory for Programmers written in Haskell
+synopsis:            Notes and thoughts from reading Category Theory for Programmers written in Haskell
 -- description:
 homepage:            https://github.com/rpeszek/notes-milewski-ctfp-hs#readme
 license:             BSD3
@@ -29,6 +29,7 @@ library
                      , CTNotes.P2Ch03_FreeMonoidFoldMap
                      , CTNotes.P2Ch05a_YonedaAndMap
                      , CTNotes.P2Ch05b_YonedaNonHask
+                     , Trivialities.NTProps
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
                      , comonad

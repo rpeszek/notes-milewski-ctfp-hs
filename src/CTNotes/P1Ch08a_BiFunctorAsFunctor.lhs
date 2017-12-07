@@ -2,13 +2,14 @@
 
 Notes about CTFP Part 1 Chapter 8. BiFunctor as CFunctor and Product Category
 =============================================================================
-The book introduced CT concept of pifunctor as simply a functor from a product category __C x C -> D__.
-This formula is worth 1000 of pictures:
+The book introduced CT concept of bifunctor as simply a functor from a product category __C x C -> D__.  
+This note expresses one side of this equivalence in Haskell as an exercise:
 ```
 instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f)
 ```
-Unfortunately, product category `:**:` does not implement `Control.Category` `id` because of 
-a kind strictness. 
+The hard part is implementing product category so the code can express (->) :**: (->) or `Hask :**: Hask`.
+Unfortunately, `:**:` does not implement `Control.Category` `id` because of 
+a type arity strictness. 
 
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 1. Ch.8 Functoriality](https://bartoszmilewski.com/2015/02/03/functoriality/).
@@ -21,7 +22,7 @@ Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 > import CTNotes.P1Ch07b_Functors_AcrossCats
  
 Following the `data-category` package https://hackage.haskell.org/package/data-category-0.7
-I define product of categories as (using a more relaxed kind signature) 
+I define product of categories as (I am using a more relaxed kind signature) 
  
 > data (:**:) :: (k -> k -> *) -> (k -> k -> *) -> * -> * -> * where
 >    (:**:) :: c1 a1 b1 -> c2 a2 b2 -> (:**:) c1 c2 (a1, a2) (b1, b2)
@@ -50,5 +51,5 @@ And here we go:
 >     
 > instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f) where
 >     bimap ac bd (Curry fp) = Curry $ cmap (ac :**: bd) fp 
-     
-TODO think about that ID.  
+
+TODO think about that `id` issue.  
