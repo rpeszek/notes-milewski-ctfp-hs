@@ -2,7 +2,7 @@
 
 Notes about CTFP Part 3 Chapter 2.  Exponential from Adjunction 
 ===============================================================
-Currying as adjunction.
+Currying yields exponential adjunction, `State`/`Store` construction.
 
 Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
           [Part 3. Ch.2 Adjunctions](https://bartoszmilewski.com/2016/04/18/adjunctions/)
@@ -70,3 +70,5 @@ In the instance implementation I need to have (z, a) flipped to (a,z)
 >     rightAdjunct zab = uncurry $ flip zab     -- or zab ~(z,a) = zab a z
  
 Notice the need to use ugly `flip` and `swap` caused by using (a,-) and not (-,a) as the book does!
+
+TODO: what are programming implication of this adjunction for non-Hask categories? 
