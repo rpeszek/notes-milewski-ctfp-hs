@@ -30,6 +30,7 @@ library
                      , CTNotes.P2Ch05a_YonedaAndMap
                      , CTNotes.P2Ch05b_YonedaNonHask
                      , CTNotes.P3Ch02a_CurryAdj
+                     , CTNotes.P3Ch02b_AdjNonHask
                      , Trivialities.NTProps
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras

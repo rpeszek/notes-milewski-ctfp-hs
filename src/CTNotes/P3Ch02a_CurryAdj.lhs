@@ -27,9 +27,9 @@ to keep it focused
 >     rightAdjunct f = counit . fmap f
 
 Implementation emphasizes that  
-  (-, a) ⊣ a -> -  
+  `(-, a) ⊣ a -> -`    
 is all about currying.   
-These diagrams follow the the book notations
+These diagrams use notations from the book
 ```
                  L
       (z, a) <------   z

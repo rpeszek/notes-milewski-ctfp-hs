@@ -52,4 +52,7 @@ And here we go:
 > instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f) where
 >     bimap ac bd (Curry fp) = Curry $ cmap (ac :**: bd) fp 
 
-TODO think about that `id` issue.  
+TODO think about that `id` issue. 
+
+TODO Implement ProFunctor as CFunctor ((<-) :**: (->)) (->)
+ 
