@@ -70,15 +70,15 @@ Adjunction between functor and bifunctor
 Since there are problems in defining `id` and creating instance of `Control.Category` for product __Hask x Hask__ (`(->) :**: (->)`),
 this section defines adjunction between bifunctor and functor (__C = Hask x Hask__, __D = Hask__).    
 ```
- Hask x Hask            Hask
-               l1, l2    
-(l1 d) (l2 d) <-------   d
-  |        |             |
-  | counit |             | unit
-  |        |             |  
- \ /      \ /           \ /
- c1       c2  ------->  r c
-                  r  
+            C=Hask x Hask         D=Hask
+                           l1, l2    
+            (l1 d) (l2 d) <-------  d
+              |       |             |
+    C(l d, c) |       |             |  D(d, r c)
+              |       |             |  
+             \ /     \ /           \ /
+             c1      c2  ------->  r c
+                             r  
 ```
      
 > class (Bifunctor r, Functor l1, Functor l2)  => Ct21Adjunction l1 l2 r | r -> l1, r -> l2, l1 l2 -> r where
@@ -97,21 +97,20 @@ this section defines adjunction between bifunctor and functor (__C = Hask x Hask
 Product as adjunction
 ---------------------
 ```
- Hask x Hask            Hask
-         Identity, Identity    
-  d        d  <-------   d
-  |        |             |
-  | counit |             | unit
-  |        |             |  
- \ /      \ /           \ /
- c1       c2  -------> (c1, c2)
-                  (,)  
+(C x C)(Δ c,<a, b>) ~= C(c, a*b)
+
+              C=Hask x Hask     D=Hask
+              
+                       Identity, Identity    
+                c   c  <===----   c
+                |   |             |
+    C(Δc,<a,b>) |   |             | D(c, a*b)
+                |   |             |  
+               \ / \ /           \ /
+                a   b  ====---> (a, b)
+                          (,)                          
 ```
 
-> instance Bifunctor (,) where
->     bimap :: (a -> c) -> (b -> d) -> (a, b) -> (c, d)
->     bimap g h (a,b) = (g a, h b)
->  
 > instance Ct21Adjunction Identity Identity (,) where
 >     leftAdjunct21 :: (Identity d -> c1) -> (Identity d -> c2) -> d -> (c1, c2)
 >     leftAdjunct21 dc1 dc2 d = ((dc1 . Identity) d, (dc2 . Identity) d) 
@@ -119,5 +118,22 @@ Product as adjunction
 >     rightAdjunct21 :: (d -> (c1, c2)) -> (Identity d -> c1, Identity d -> c2)
 >     rightAdjunct21 dc1c2 = (fst . dc1c2 . runIdentity, snd . dc1c2 . runIdentity)
 
-I used `21` to indicate product category __Hask x Hask__ on the left and __Hask__ 
+Bifunctor instance of `(,)` was defined in [N_P1Ch08a_BiFunctorAsFunctor](N_P1Ch08a_BiFunctorAsFunctor).   
+I use `21` to indicate product category __Hask x Hask__ on the left and __Hask__ 
 on the right.
+
+Coproduct by reversing arrows  
+```
+C(a+b, c) ~= (C x C)(<a, b>, Δ c)
+
+           C=Hask            D=Hask x Hask  
+                     
+                   Either    
+           a + b <----====    a   b  
+             |                |   | 
+   C(a+b, c) |                |   |  D(<a, b>, Δ c)
+             |                |   | 
+            \ /              \ / \ /  
+             c   -----===>    c   c  
+         Identity, Identity             
+```

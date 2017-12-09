@@ -14,11 +14,11 @@ a type arity strictness.
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 1. Ch.8 Functoriality](https://bartoszmilewski.com/2015/02/03/functoriality/).
  
-> {-# LANGUAGE TypeFamilies, TypeOperators, GADTs, FlexibleContexts, PolyKinds, UndecidableInstances #-}
+> {-# LANGUAGE TypeFamilies, TypeOperators, GADTs, FlexibleContexts, PolyKinds, UndecidableInstances, InstanceSigs #-}
 >
 > module CTNotes.P1Ch08a_BiFunctorAsFunctor where
 > import Control.Category
-> import Prelude(undefined, ($))
+> import Prelude hiding ((.), id)
 > import CTNotes.P1Ch07b_Functors_AcrossCats
  
 Following the `data-category` package https://hackage.haskell.org/package/data-category-0.7
@@ -44,7 +44,18 @@ Definition of BiFunctor from the book:
 >      first g = bimap g id
 >      second :: (b -> d) -> f a b -> f a d
 >      second = bimap id
-  
+
+with 2 examples copied as well:
+ 
+> instance Bifunctor (,) where
+>     bimap :: (a -> c) -> (b -> d) -> (a, b) -> (c, d)
+>     bimap g h (a,b) = (g a, h b)
+>  
+> instance Bifunctor Either where
+>     bimap :: (a -> c) -> (b -> d) -> Either a b -> Either c d
+>     bimap g h (Left a) = Left (g a)
+>     bimap g h (Right b) = Right (h b)
+ 
 And here we go: 
  
 > newtype Curry f a b = Curry (f (a, b))
@@ -55,4 +66,7 @@ And here we go:
 TODO think about that `id` issue. 
 
 TODO Implement ProFunctor as CFunctor ((<-) :**: (->)) (->)
+  
+
+
  

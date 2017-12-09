@@ -31,13 +31,13 @@ Implementation emphasizes that
 is all about currying.   
 These diagrams use notations from the book
 ```
-                 L
-      (z, a) <------   z
-         |             |
- counit  |             | unit
-        \ /           \ /
-         b  ------->  a -> b
-                R
+                   L
+         (z, a) <------   z
+            |             |
+C((z,a),b)  |             | C(z,a->b)
+           \ /           \ /
+            b  ------->  a -> b
+                  R
                
                 L
                 --- d    
@@ -72,3 +72,5 @@ In the instance implementation I need to have (z, a) flipped to (a,z)
 Notice the need to use ugly `flip` and `swap` caused by using (a,-) and not (-,a) as the book does!
 
 TODO: what are programming implication of this adjunction for non-Hask categories? 
+      Such category would need to be cartesian closed and that probably means close to Hask.
+      So most likely no interesting generalizations.

@@ -21,6 +21,7 @@ library
                      , CTNotes.P1Ch07_Functors_Composition
                      , CTNotes.P1Ch07b_Functors_AcrossCats
                      , CTNotes.P1Ch08a_BiFunctorAsFunctor
+                     , CTNotes.P1Ch08b_BiFunctorComposition
                      , CTNotes.P1Ch10_NaturalTransformations
                      , CTNotes.P1Ch10b_NTsNonHask
                      , CTNotes.P2Ch02a_LimitsColimitsExtras
@@ -31,6 +32,7 @@ library
                      , CTNotes.P2Ch05b_YonedaNonHask
                      , CTNotes.P3Ch02a_CurryAdj
                      , CTNotes.P3Ch02b_AdjNonHask
+                     , CTNotes.P3Ch02c_AdjProps
                      , Trivialities.NTProps
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
