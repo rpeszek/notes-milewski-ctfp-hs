@@ -54,14 +54,14 @@ type Coproduct f g x  ~= Comp2 Either f g x
                                             (C x C)(Δ c,<a, b>) 
                                                    ~= C(c, a*b)
 
-                Either          l1, l2      Identity, Identity
+                Either          l1, l2           Δ
              <-----=====      <========     <====-----   
            |              ||             ||             |
            |              ||             ||             | 
            |              ||             ||             |  
           \ /            \  /           \  /           \ /
               ------====>     ========>     =====---->  
-       Identity, Identity      r1, r2           (,)
+                   Δ           r1, r2           (,)
 
     C(a+b, c) ~= 
     (C x C)(<a, b>, Δ c)

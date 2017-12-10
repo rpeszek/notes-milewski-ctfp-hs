@@ -1,0 +1,28 @@
+
+Loose notes about categories in programming which do not go anywhere.
+
+* cartesian closed 
+  - Hask
+  - Functor image of Hask inside Hask:  objects `f a`, morphisms `fmap fn` - equivalent to Hask
+    (e.g. Objects are Lists only, morphisms are maps)
+  - Subsets of Hask generated from fewer unboxed types (for example no unboxed types)
+  - Endofunctors on top of some exotic category (like finite category) (Cat is CC, functors from E × C → D 
+    have one-to-one natural correspondence with the functors from E to D^C.)
+This property is essential for some constructions such as State or Continuation monads.
+
+Haskell Control.Category defines categories using hom-sets defined in Hask. 
+So any such category is embedded in cartesian closed Hask anyway, this is equivalent of CT embedding 
+of locally small categories into Set.
+
+* cartesian or other categories based on properties of bifunctor (monoidal, associative)
+   https://hackage.haskell.org/package/category-extras-0.53.5/docs/Control-Category-Associative.html
+  - Types satisfying typeclass constraint (these typically are not preserved under exponentials)
+
+* fewer morphisms
+  - discrete categories [N_P1Ch03c_DiscreteCat](N_P1Ch03c_DiscreteCat)
+
+* fewer objects 
+  - any subset of types with all Hask morphisms
+
+* finite 
+  - GADT, DataKinds construction [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats)

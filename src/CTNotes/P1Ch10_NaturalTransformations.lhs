@@ -148,6 +148,7 @@ GHC infers the same type on both sides (which makes sense):
     Actual type: FComp.Compose b2 a2 (b1 (a1 x0))
                  -> FComp.Compose b2 a2 (b2 (a2 x0))
 ```
+Horizontal composition is essential in making endofunctor composition a bifunctor (tensor product).
 
 Interchange Law
 ---------------

@@ -128,4 +128,15 @@ monoid laws follow from the monoid properties of the list.
 This structure is not a List and is not a Free Monoid, 
 but it is an honest `Monoid` and it is an honest `Foldable`. 
 
- 
+Adjunction
+----------
+foldMap `(a -> m) -> [a] -> m` is the not trivial side of natural isomorphism (`rightAdjunct`) needed to show
+adjunction between forgetful functor U (`Identity`) and the list free functor. (Not real code
+since Adjunction typeclass works on Hask endofunctors): 
+```
+instance Adjunction [] Identity where
+   leftAdjunct  :: ([x] -> m) -> x -> Identity m
+   leftAdjunct f x = Identity (f [x])
+   rightAdjunct :: (x -> Identity m) -> [x] -> m
+   rightAdjunct f = foldMap (runIdentity . f)
+```
