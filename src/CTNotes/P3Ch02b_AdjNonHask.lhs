@@ -40,7 +40,7 @@ naming conventions (using `catc` for category __C__ hom-set and `catd` for categ
                    l     
           l d <-------   d
            |             |
-   counit  |             | unit
+ C(l d, c) |             | D(d, r c)
            |             |  
           \ /           \ /
            c  ------->  r c
