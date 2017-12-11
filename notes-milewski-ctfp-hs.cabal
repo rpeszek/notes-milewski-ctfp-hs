@@ -33,6 +33,8 @@ library
                      , CTNotes.P3Ch02a_CurryAdj
                      , CTNotes.P3Ch02b_AdjNonHask
                      , CTNotes.P3Ch02c_AdjProps
+                     , CTNotes.P3Ch06a_CTMonads
+                     , CTNotes.P3Ch06b_FiniteMonads
                      , Trivialities.NTProps
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
