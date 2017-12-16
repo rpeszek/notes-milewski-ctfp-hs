@@ -35,10 +35,14 @@ library
                      , CTNotes.P3Ch02c_AdjProps
                      , CTNotes.P3Ch06a_CTMonads
                      , CTNotes.P3Ch06b_FiniteMonads
+                     , CTNotes.P3Ch07a_GameOfLife
                      , Trivialities.NTProps
+                     , Utils.Pretty
+                     , Utils.Stream
   build-depends:       base >= 4.7 && < 5
                      -- , category-extras
                      , comonad
+                     , lens
                      , ghc-prim
   default-language:    Haskell2010
 

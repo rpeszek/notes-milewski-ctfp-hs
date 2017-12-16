@@ -134,3 +134,6 @@ Here is answer to my question form Bartosz Milewski:
 "Free theorems are the result of parametricity, which is a property of the language rather than a category. 
 In simple words, parametricity means that we define a polymorphic function using a single 
 formula for all types. As soon as you allow pattern-matching on types, you lose parametricity."
+
+Some of this goodness can come back when dealing with Functors from finite categories to finite categories
+([N_P3Ch06b_FiniteMonads](N_P3Ch06b_FiniteMonads)).
