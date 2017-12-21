@@ -36,6 +36,7 @@ library
                      , CTNotes.P3Ch06a_CTMonads
                      , CTNotes.P3Ch06b_FiniteMonads
                      , CTNotes.P3Ch07a_GameOfLife
+                     , CTNotes.P3Ch07b_Comonad
                      , Trivialities.NTProps
                      , Utils.Pretty
                      , Utils.Stream

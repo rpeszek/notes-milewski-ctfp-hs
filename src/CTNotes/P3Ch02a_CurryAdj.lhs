@@ -71,6 +71,12 @@ In the instance implementation I need to have (z, a) flipped to (a,z)
  
 Notice the need to use ugly `flip` and `swap` caused by using (a,-) and not (-,a) as the book does!
 
+Introduces two important types:
+```
+type State s a = s -> (a, s)
+type Store s a = (s -> a, s)
+```
+
 TODO: what are programming implication of this adjunction for non-Hask categories? 
       Such category would need to be cartesian closed and that probably means close to Hask.
       So most likely no interesting generalizations.
