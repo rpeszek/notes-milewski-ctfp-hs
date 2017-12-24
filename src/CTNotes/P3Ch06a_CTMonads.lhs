@@ -4,7 +4,7 @@ __Work in progress__
 
 Notes related to CTFP Part 3 Chapter 6.  Monads 
 ===============================================
-This is bunch of loose notes about things like Monad composability, distribution laws, etc.
+This is bunch of loose notes about things like Monad composability, distributive laws, etc.
 
 
 > {-# LANGUAGE InstanceSigs, TypeOperators, MultiParamTypeClasses, ScopedTypeVariables, FlexibleInstances #-}
@@ -33,7 +33,7 @@ join . fmap join     ≡ join . join
 join . fmap return   ≡ join . return ≡ id
 ```
 
-Loose Notes (Products, distribution laws) 
+Loose Notes (Products, distributive laws) 
 -----------------------------------
 
 Monads are closed with respect to functor product
@@ -58,7 +58,7 @@ Functor composition is crucial in CT definition of Monad but composition of mona
 I found a paper about Monad composition: [Jones, Duponcheel](http://web.cecs.pdx.edu/~mpj/pubs/RR-1004.pdf).
 It shows several approaches to composing monads.
 
-I have played with composing monads using what is called distribution law.
+I have played with composing monads using what is called distributive laws.
 Paper calls is swap construction, I based it on this [wikipedia](https://en.wikipedia.org/wiki/Distributive_law_between_monads) 
 
 It turns out that there is a natural monad structure on the composite functor m :. n 
@@ -68,7 +68,7 @@ that satisfies certain conditions).
 > class (Monad n, Monad m) => Dist m n where
 >    dist :: n (m a) -> m (n a)
 
-Certain distribution laws (see below) need to be satisfied, otherwise composition will fail to satisfy monad laws.
+Certain distributive laws (see below) need to be satisfied, otherwise composition will fail to satisfy monad laws.
 
 > joinComp :: forall n m a. Dist m n => m ( n ( m (n a))) -> m (n a)
 > joinComp = (join . (fmap . fmap) join) . (fmap dist)
