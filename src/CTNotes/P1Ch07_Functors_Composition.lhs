@@ -267,10 +267,10 @@ But it gets even better and more interesting.  `Compose` (`Data.Functor.Compose`
 
 Monad Limitation 
 ----------------
-Notice that instance of `Applicative` is implemented in `Data.Functor.Compose` code, instance of `Monad` is not. 
-The composition of (applicative) functors is always (applicative) functor, but the composition of monads is not 
-always a monad.  It turns out that there is a natural monad structure on the composite functor m :. n 
-if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . (n :. m) a -> (m :. n) a`
-that satisfies [certain](https://en.wikipedia.org/wiki/Distributive_law_between_monads) conditions).  
+Notice instance of `Applicative` and no instance of `Monad for `Data.Functor.Compose. 
+The composition of (applicative) functors is always (applicative) functor.
+Functor composition is essential in the categorical definition of Monad but, interestingly, 
+the composition of monads is not always a monad.  
+I will investigate this more in [N_P3Ch06a_CTMonads](N_P3Ch06a_CTMonads) 
 
 TODO related code examples when implementing notes about Monads.  The book does not talk about transformers.
