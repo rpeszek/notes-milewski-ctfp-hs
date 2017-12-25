@@ -38,6 +38,7 @@ library
                      , CTNotes.P3Ch07a_GameOfLife
                      , CTNotes.P3Ch07b_Comonad
                      , Trivialities.NTProps
+                     , CTNotes.P3Ch08a_Falg
                      , Utils.Pretty
                      , Utils.Stream
   build-depends:       base >= 4.7 && < 5
