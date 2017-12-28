@@ -37,8 +37,9 @@ library
                      , CTNotes.P3Ch06b_FiniteMonads
                      , CTNotes.P3Ch07a_GameOfLife
                      , CTNotes.P3Ch07b_Comonad
-                     , Trivialities.NTProps
                      , CTNotes.P3Ch08a_Falg
+                     , CTNotes.P3Ch09b_AlgebraAndFree
+                     , Trivialities.NTProps
                      , Utils.Pretty
                      , Utils.Stream
   build-depends:       base >= 4.7 && < 5

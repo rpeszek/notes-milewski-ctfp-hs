@@ -66,3 +66,9 @@ type Coproduct f g x  ~= Comp2 Either f g x
     C(a+b, c) ~= 
     (C x C)(<a, b>, Δ c)
 ```
+
+Free-Forgetful, Free Monad Adjunction
+--------------------------------------
+See also end of [N_P3Ch08a_Falg](N_P3Ch09a_Talg) for relationship between free-forgetful adjunctions 
+and algebras.
+ 
