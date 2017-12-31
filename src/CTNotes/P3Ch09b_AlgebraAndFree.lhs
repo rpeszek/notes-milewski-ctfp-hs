@@ -1,6 +1,6 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch09a_Talg
 
-__ Very much work-in-progress __
+__Very much work-in-progress__  
 Various side notes about F-algerbas T-algerbars and the Free monad.
 
 > module CTNotes.P3Ch09b_AlgebraAndFree where
@@ -25,8 +25,7 @@ Note: the initial algebra of the list functor is isomorphic to:
 > data RoseTree = Node [RoseTree]
 
 Free Monad 
-----------
- 
+---------- 
 There is category Mnd where objects are monads and morphisms are natural transformations 
 that play nice with monad structure. This category can also be viewed as category of monoids in 
 monoidal category of endofunctors with composition.  Endo is std category of endofunctors.
@@ -59,7 +58,6 @@ deeper here? (TODO)
 
 Free Monad adjunction and F-algebras
 ------------------------------------
-
 ```
 U:: F-Alg -> Hask
 U (f, a, ev) = a  

@@ -1,7 +1,9 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch08a_Falg
 
-__ Very much work-in-progress __
+__Work-in-progress__
 
+> {-# LANGUAGE Rank2Types #-}
+>
 > module CTNotes.P3Ch08a_Falg where
 
 Fix/Unfix Fold/Unfold iso and equi-recusive types
@@ -73,6 +75,92 @@ Lambek theorem says that among F-algerbras `F a -> a` if there is an initial one
 be the fix point of `F`: `F i ~= i`.  This is the equi-recursive take on `μ`. 
 
 
-TODO Initial algebra, uniqueness
---------------------------------
-[Wadler, Recursive Types for Free](http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt) 
+Initial algebra, uniqueness
+---------------------------
+Ref: [Wadler, Recursive Types for Free](http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt) 
+
+Considering type constructors F x where x is appears in positive position (as it should for covariant functor),
+the least fixpoint of F can, actually, be expressed in System F (without recursion).
+Using Haskell these map to:
+
+> data LFix f = LFix (forall x. (f x -> x) -> x)
+
+Using these functions
+
+> fold:: forall x f. (f x -> x) -> LFix f -> x
+> fold = \k (LFix t) -> t k
+>
+> in':: Functor f => f (LFix f) -> LFix f
+> in' s = LFix $ \k -> k (fmap (fold k) s)
+
+This diagrams commutes:
+```
+T = LFix F
+	                     in            
+	             F T ----------> T   
+	              |              |    
+	              |              |    
+   F (fold X k) |              | fold X k
+	              |              |
+	              |              |
+	             F X ----------> X
+	                      k
+```
+And it turns out that uniqueness is a consequence of parametrically. 
+Using generic CT arguments, uniqueness (the fact that (T, in) is initial) is equivalent to following
+2 conditions (using ref numbers 3 and 4 to match the paper):
+
+```
+	            k                                fold X k
+	    F X ----------> X                    T -----------> X
+	     |              |                    |              |
+	     |              |                    |              |
+   F h |              | h    implies    id |              | h    (#3)
+	     |              |                    |              |
+	     |              |                    |              |
+	    F X' ---------> X'                   T -----------> X' .
+	            k'                              fold X' k'
+--and 
+
+fold T in  =  id.                                                (#4)
+```
+and, for System F, (#4) is automatic!
+
+Quoting the paper:
+"Law (#3) does not follow from the reduction laws of polymorphic lambda
+calculus, and indeed there are models that do not satisfy it.  But this
+law is satisfied in many models, including all those having the
+property of PARAMETRICITY ...
+'Theorem for Free' derived from the type of 'fold' is just this
+law."
+
+
+Finite Cats Example
+-------------------
+Considering the `A -> B => C` example from `N_P1Ch03b_FiniteCats`.
+Since not trivial morphisms are never invertible Lambek theorem says
+that initial F-algerbra in this category (if exists) will need to always be based 
+on `id` morphism.
+
+Functor example
+```
+     MorphAB     MorphBCi (i=1,2)
+  A   ---->   B  =====>  C
+  |         /           /
+  |       /           /
+  |     /           /             Functor F
+  |   /           /
+  | /           /
+  A           B          C
+
+F MorphAB = ID_A
+F MorphBCi = MorphAB
+```
+Note given choices of `F B` and `F C`,  `F A` can only go to A.  
+Possible elements in F-algebra for F (all work)
+```
+(A, ID) - Initial
+(B, MorphAB)
+(C, MorphBC1)
+(C, MorphBC2)
+```
