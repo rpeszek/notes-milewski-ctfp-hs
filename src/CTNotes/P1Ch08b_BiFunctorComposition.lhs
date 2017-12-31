@@ -1,5 +1,11 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch08b_BiFunctorComposition
 
+Notes about CTFP Part 1 Chapter 8. BiFunctor composition as Functor composition
+===============================================================================
+It is conceptually easier to think of bifunctor as simply a functor from a product category. 
+This note uses this approach for composition leading to concepts of Functor product
+and coproduct.
+
 __Work in progress__
 
 > {-# LANGUAGE TypeOperators #-}
@@ -31,9 +37,11 @@ type Comp2 bf fu gu a = BiComp bf fu gu a a
 > type (f :*: g) a  = Product f g a 
 > type (f :+: g) a  = Sum f g a 
 
+I need these in other notes.
+
+this diagram illustrates what happens
 ```            
           Δ                   fu, gu                  bf
 Hask   ----->   Hask x Hask  -------->  Hask x Hask ----->  Hask 
  a                a x a               (fu a) x (gu a)       bf (fu a) (gu a)
 ```
-I need these in other notes.

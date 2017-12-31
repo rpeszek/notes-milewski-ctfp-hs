@@ -8,7 +8,7 @@ This note expresses one side of this equivalence in Haskell as an exercise:
 instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f)
 ```
 The hard part is implementing product category so the code can express (->) :**: (->) or `Hask :**: Hask`.
-Unfortunately, `:**:` does not implement `Control.Category` `id` because of 
+Unfortunately, presented `:**:` does not implement `Control.Category` `id` because of 
 a type arity strictness. 
 
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
@@ -22,7 +22,7 @@ Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 > import CTNotes.P1Ch07b_Functors_AcrossCats
  
 Following the `data-category` package https://hackage.haskell.org/package/data-category-0.7
-I define product of categories as (I am using a more relaxed kind signature) 
+I define product of categories (I am using a more relaxed kind signature) as:  
  
 > data (:**:) :: (k -> k -> *) -> (k -> k -> *) -> * -> * -> * where
 >    (:**:) :: c1 a1 b1 -> c2 a2 b2 -> (:**:) c1 c2 (a1, a2) (b1, b2)
@@ -32,7 +32,7 @@ which wants to see `cat a a`, not `cat (a,b) (a,b)`).
 So instance of `Control.Category` is only partially implemented: 
 
 > instance (Category c1, Category c2) => Category (c1 :**: c2) where
->    id = undefined -- id :**: id  -- not general enough, supports objects of kind k only
+>    id = undefined -- id :**: id  
 >    (a1 :**: a2) . (b1 :**: b2) = (a1 . b1) :**: (a2 . b2)
  
 Definition of BiFunctor from the book:
@@ -45,7 +45,7 @@ Definition of BiFunctor from the book:
 >      second :: (b -> d) -> f a b -> f a d
 >      second = bimap id
 
-with 2 examples copied as well:
+with 2 examples copied for a reference:
  
 > instance Bifunctor (,) where
 >     bimap :: (a -> c) -> (b -> d) -> (a, b) -> (c, d)
@@ -63,8 +63,8 @@ And here we go:
 > instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f) where
 >     bimap ac bd (Curry fp) = Curry $ cmap (ac :**: bd) fp 
 
-TODO think about that `id` issue. 
-
+__TODOs__
+TODO think about that `id` issue.   
 TODO Implement ProFunctor as CFunctor ((<-) :**: (->)) (->)
   
 

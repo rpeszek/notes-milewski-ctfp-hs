@@ -41,7 +41,7 @@ ghci> :k (:~>)
 So it make sense to use them with non-Hask categories, such as categories I have defined in 
 [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
 
-However restricting `forall` quantification to some small kind results in
+However, restricting `forall` quantification to some small kind results in
 `forall x. f x -> g x` being not strong enough to have naturality condition as a free theorem.
 
 __Counterexample__
@@ -111,13 +111,13 @@ PEnd1 PStart1
 ghci> naturality2 PStart1
 PEnd2 PStart1
 ```
-__square box__
+_square box_
 
 
 How to think about this
 -----------------------
-`forall (x::k). f x -> g x` type is missing evidence of naturality for non-Hask source categories.  
-I think of this as additional proof obligation needed when working with non-Hask categories.  
+For `forall (x::k). f x -> g x` to be a natural transformation for non-Hask source categories 
+requires a proof obligation of naturality condition.  
 This requirement is a value level equality similar in nature to many other laws. 
 
 As indicated in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats) there could be several very different functor instances
