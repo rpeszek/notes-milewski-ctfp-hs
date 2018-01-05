@@ -38,7 +38,7 @@ Natural transformations (:~>) defined in
 ghci> :k (:~>)
 (:~>) :: (k -> *) -> (k -> *) -> *
 ```
-So it make sense to use them with non-Hask categories, such as categories I have defined in 
+So it make sense to use them with non-Hask source categories, such as categories I have defined in 
 [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
 
 However, restricting `forall` quantification to some small kind results in
@@ -117,7 +117,7 @@ _square box_
 How to think about this
 -----------------------
 For `forall (x::k). f x -> g x` to be a natural transformation for non-Hask source categories 
-requires a proof obligation of naturality condition.  
+requires additional proof obligation of naturality condition.  This type is now too permissive. 
 This requirement is a value level equality similar in nature to many other laws. 
 
 As indicated in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats) there could be several very different functor instances

@@ -39,6 +39,7 @@ library
                      , CTNotes.P3Ch07b_Comonad
                      , CTNotes.P3Ch08a_Falg
                      , CTNotes.P3Ch09b_AlgebraAndFree
+                     , CTNotes.P3Ch11a_KanExt
                      , Trivialities.NTProps
                      , Utils.Pretty
                      , Utils.Stream

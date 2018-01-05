@@ -50,6 +50,19 @@ Free functor:
 >   pure  = return
 >   (<*>) = ap
 
+_Side note:_ "The dual of substitution is redecoration" (Refs https://www.ioc.ee/~tarmo/papers/sfp01-book.pdf, 
+http://comonad.com/reader/2011/free-monads-for-less/).  Think about fmap as substitution and join as renormalization. 
+```
+m >>= f = join (fmap f m)
+```
+In free join is not renormalizing
+
+> joinF :: Functor f => Free f (Free f a) -> Free f a
+> joinF (Pure a) = a
+> joinF (MkFree as) = MkFree (fmap join as)
+
+"free monad is purely defined in terms of substitution".  _End side note_.
+
 The adjunction says that monad morphisms from `Free F A` to some other monad `M` correspond to 
 natural transformations from `F` to `M`.  Natural transformations are used in implementing 
 interpreters for Free DSLs, besides a nice theoretical backing for that approach is there something
@@ -87,3 +100,5 @@ the other direction
 
 > nat0 :: (Free f a -> b) -> a -> b
 > nat0 f = f . Pure
+
+Another reference: http://comonad.com/reader/2011/free-monads-for-less/
