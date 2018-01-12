@@ -183,3 +183,43 @@ Ran ((->) a) Identity b
 ≅ Ran (forall i. ((b, a) -> i) -> i)
 ≅ (b, a)
 ```
+
+Yoneda is Functor for Free
+--------------------------
+Beautiful example of programming with categorical thinking.  Non-functor data constructor D
+are functors from discrete category, using book notation, call it, `|Hask|`
+```
+ A=Hask  
+  / \     \
+K  |       \  Ran_K D
+   |        \/ 
+I=|Hask| --> C=Hask
+         D
+```
+K is the natural embedding of `|Hask|` into `Hask`.  
+Remember we had
+```
+Ran_K D a ≅ ∫i Set(A(a, K i), D i)
+```
+which still translates to since A=Hask
+```
+newtype Ran k d a = Ran (forall i. (a -> k i) -> d i) 
+```
+and since K is type level Identity
+```
+newtype FreeF d a = RanF (forall i. (a -> i) -> d i) 
+```
+which is really (see [N_P2Ch05a_YonedaAndMap](N_P2Ch05a_YonedaAndMap))
+```
+newtype Yoneda d a = Yoneda (forall i. (a -> i) -> d i) 
+```
+That explains why Yoneda creates monads for Free.
+
+Similarly (see [N_P2Ch05a_YonedaAndMap](N_P2Ch05a_YonedaAndMap))
+```
+data CoYoneda f a = forall x. CoYoneda (x -> a) (f x)
+```
+is isomorphic to the type derived in the book using Lan_K D approach
+```
+data FreeF f a = forall i. FMap (i -> a) (f i)
+```
