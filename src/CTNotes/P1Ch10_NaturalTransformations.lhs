@@ -327,3 +327,17 @@ Is that not nice! We just composed vertically and horizontally: `join . (safeHea
 TODO think about this example as I move forward in the book.
 
 TODO maybe isos should use ~= and for actual equals use == ?
+
+NTs as Ends
+-----------
+This note is fast-forward to [Part 3 Ch 10 Ends and Coends](https://bartoszmilewski.com/2017/03/29/ends-and-coends/).
+`C (-, =)` is a profunctor.  If F and G are functors then `C (F -, G =)` is profunctor too.
+This is similar to how bifunctors compose 
+(see [Part 1 Chapter 8](https://bartoszmilewski.com/2015/02/03/functoriality/) and 
+[N_P1Ch08b_BiFunctorComposition](N_P1Ch08b_BiFunctorComposition)).
+
+The end `∫_c C(F c, G c)` wedge condition is exactly the naturality condition.
+Ends are equivalent to NTs.  This provides additional motivation for Haskell
+```
+forall x. f x -> g x
+```

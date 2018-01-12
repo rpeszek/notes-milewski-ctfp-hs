@@ -180,6 +180,8 @@ what is interesting is that `(Co)Yoneda` type constructors get to be functors fo
 (The proof obligations follow from properties of function composition)  
 they also nicely preserve other properties like Monad or Applicative instances.
 
+There is a nice categorical explanation why (Co)Yoneda gives free `fmap` that is based on Kan extensions
+(see [N_P3Ch11a_KanExt](N_P3Ch11a_KanExt)).
 
 With non-Hask categories
 ------------------------
