@@ -121,4 +121,7 @@ Parametricity is lost
 ---------------------
 See [N_P1Ch10b_NTsNonHask](N_P1Ch10b_NTsNonHask) 
 
+Possibly relevant:
+[Retricted Parametricity](https://www.cs.kent.ac.uk/people/staff/dao7/drafts/tfp-structures-orchard12.pdf)
+
 TODO should I add value level representation of this? Does not seem to be needed.

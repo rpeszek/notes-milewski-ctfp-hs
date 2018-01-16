@@ -22,6 +22,7 @@ library
                      , CTNotes.P1Ch07b_Functors_AcrossCats
                      , CTNotes.P1Ch08a_BiFunctorAsFunctor
                      , CTNotes.P1Ch08b_BiFunctorComposition
+                     , CTNotes.P1Ch08c_BiFunctorNonHask
                      , CTNotes.P1Ch10_NaturalTransformations
                      , CTNotes.P1Ch10b_NTsNonHask
                      , CTNotes.P2Ch02a_LimitsColimitsExtras
@@ -35,6 +36,7 @@ library
                      , CTNotes.P3Ch02c_AdjProps
                      , CTNotes.P3Ch06a_CTMonads
                      , CTNotes.P3Ch06b_FiniteMonads
+                     , CTNotes.P3Ch06c_MonoidalCats
                      , CTNotes.P3Ch07a_GameOfLife
                      , CTNotes.P3Ch07b_Comonad
                      , CTNotes.P3Ch08a_Falg
