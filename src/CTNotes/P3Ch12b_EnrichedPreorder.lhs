@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch12a_EnrichedPreorder
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch12b_EnrichedPreorder
 
 Notes about CTFP Part 3 Chapter 12. Preorder example of enhanced category
 =========================================================================
