@@ -1,4 +1,4 @@
-|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch09a_Talg
+|Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch09b_AlgebraAndFree
 
 __Very much work-in-progress__  
 Various side notes about F-algerbas T-algerbars and the Free monad.

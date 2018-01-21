@@ -6,7 +6,7 @@ __Very much work-in-progress__
 
 Refs:: `category-extras`, `categories` packages
 
-> {-#LANGUAGE MultiParamTypeClasses#-}
+> {-#LANGUAGE MultiParamTypeClasses, PolyKinds#-}
 > module CTNotes.P1Ch08c_BiFunctorNonHask where
 > import Control.Category
 > import Prelude hiding ((.), id)
@@ -23,8 +23,8 @@ This bundles the concept into one and uses less generic approach.
 >      second = bimap id
 
 Read `r a c` as `homset_r a c` and `t (bi a b) (bi c d)` as `homset_t (bi a b) (bi c d)`.
-This definition assumes bifunctor `R x R -> T` (instread a more general functor `R x S -> T` in `category-extras`).
-Also instead of using Functor contraints it simply lists first and second projections.
+This definition assumes bifunctor `R x R -> T` (instead a more general functor `R x S -> T` in `category-extras`).
+Also instead of using Functor constraints it simply lists first and second projections.
 
 TODO I may beed functional dependencies
 

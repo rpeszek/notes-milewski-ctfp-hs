@@ -15,7 +15,6 @@ This note shows that functors are mostly not continuous.
 >
 > module CTNotes.P2Ch02b_Continuity where
 > import GHC.TypeLits
-> import Data.Proxy
 > import Data.Functor.Const (Const(..))
 > import CTNotes.P1Ch07_Functors_Composition (Iso(..))
 
