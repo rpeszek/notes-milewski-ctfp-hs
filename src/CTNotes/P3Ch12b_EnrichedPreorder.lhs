@@ -25,11 +25,9 @@ Book Ref: [Part 3 Chapter 12, enhanced categories](https://bartoszmilewski.com/2
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 > module CTNotes.P3Ch12b_EnrichedPreorder where
 > import GHC.TypeLits
-> import GHC.Natural
 > import Control.Category
 > import Prelude (undefined, (+), Bool(True, False))
 > import Data.Kind (Type)
-> import Data.Proxy
 
 
 Construction of Enhanced Preorder Category
@@ -238,6 +236,8 @@ I would get this compiler error:
     Expected type: VHomSet ('TrueV :**: a) a
     Actual type: VHomSet a a
 ```
+
+Finally, I have:
 
 > instance Enhanced SNat VObj VHomSet where 
 >   type C a b = Preorder a b
