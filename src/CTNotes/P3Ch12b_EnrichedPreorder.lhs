@@ -99,7 +99,7 @@ So to make things work, I assume a representation of elements of kind `k` as reg
 >
 > type I_V = 'TrueV
 
-I use `Nat` kind as the book's `C` category that will be enhanced using `V`
+I use `Nat` kind as the book's `C` category/Set that will be enhanced using `V`
 
 > type family If c t e where
 >    If 'True  t e = t
@@ -117,7 +117,7 @@ Modifying book notation `C(a,b)` slightly, I have:
 `Preorder a b` is what book calls `C(a,b)`.
 
 
-__Composition__  
+__Composition__   
 Quote from the book:
 "Let’s have a look at composition. The tensor product of any two objects is 0, unless both of them are 1, in which 
 case it’s 1. If it’s 0, then we have two options for the composition morphism: it could be either id0 or 0->1. 
