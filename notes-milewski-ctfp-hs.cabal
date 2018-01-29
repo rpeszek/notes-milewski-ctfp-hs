@@ -44,6 +44,7 @@ library
                      , CTNotes.P3Ch11a_KanExt
                      , CTNotes.P3Ch12a_HaskEnrich
                      , CTNotes.P3Ch12b_EnrichedPreorder
+                     , CTNotes.P3Ch15a_Spans
                      , Trivialities.NTProps
                      , Utils.Pretty
                      , Utils.Stream
