@@ -45,6 +45,7 @@ library
                      , CTNotes.P3Ch12a_HaskEnrich
                      , CTNotes.P3Ch12b_EnrichedPreorder
                      , CTNotes.P3Ch15a_Spans
+                     , CTNotes.P3Ch15b_CatsAsMonads
                      , Trivialities.NTProps
                      , Utils.Pretty
                      , Utils.Stream

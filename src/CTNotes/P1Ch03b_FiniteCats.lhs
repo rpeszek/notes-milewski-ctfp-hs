@@ -27,17 +27,19 @@ This note supplements _Simple Graphs_ section of [CTFP](https://bartoszmilewski.
 > {-# LANGUAGE FlexibleInstances #-}
 > {-# LANGUAGE PolyKinds #-}
 > {-# LANGUAGE StandaloneDeriving #-}
+> {-# LANGUAGE MultiParamTypeClasses #-}
+> {-# LANGUAGE AllowAmbiguousTypes #-}  --needed for FinCategory instance only
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module CTNotes.P1Ch03b_FiniteCats where
 > import Control.Category 
-> import Prelude(Show)
+> import Prelude(Show, undefined)
 
 Simple Finite Category
 ----------------------
 All objects in `A->B=>C` are defined as data type 
  
-> data Object = A | B | C
+> data Object = A | B | C deriving Show
 
 and promoted (`DataKinds` pragma) to a kind `Object` with types `A` `B` and  `C`.  
 Category objects will be the types `A` `B` and  `C`.
@@ -111,6 +113,53 @@ MorphBC1 . MorphAB :: HomSet 'A 'C
 
 It is quite amazing that you can do stuff like this. 
 Generalizing use of categories instead of just hardcoding Hask everywhere seems like an interesting direction.
+
+A Better Alternative
+--------------------
+`HomSet` uses polymorphic definition of _id_ morphisms `MorphId`.  This is sometimes convenient by does not work well 
+if there is a need to isolate the object on which _id_ works on.  (No pattern matching on types.)  
+The following definition could be a better for finite categories like the `A->B=>C`.
+
+> data ObjectRep (a :: Object) where
+>    ARep :: ObjectRep 'A  
+>    BRep :: ObjectRep 'B 
+>    CRep :: ObjectRep 'C 
+>
+> deriving instance Show (ObjectRep a)
+>
+> data HS (a :: Object) (b :: Object) where
+>    MoId :: ObjectRep a -> HS a a    -- non-polymorphic version
+>    MoAB :: HS 'A 'B
+>    MoBC1 :: HS 'B 'C   
+>    MoBC2 :: HS 'B 'C 
+>    MoAC1 :: HS 'A 'C -- MorphCB1 . MorphAB
+>    MoAC2 :: HS 'A 'C -- MorphCB2 . MorphAB
+>
+> deriving instance Show (HS a b)
+> 
+> comp :: HS b c -> HS a b -> HS a c
+> comp (MoId _) mab  = mab      
+> comp mbc (MoId _) =  mbc      
+> comp MoBC1 MoAB = MoAC1
+> comp MoBC2 MoAB = MoAC2
+
+Except, I no longer get the polymorphic id:
+
+> instance Category HS where
+>   id = undefined
+>   (.) = comp
+
+but I could consider something similar to the definition of `HaskEnrichedCategory` 
+in [N_P3Ch12b_EnrichedPreorder](N_P3Ch12b_EnrichedPreorder).
+
+> class FinCategory (ob :: k -> *) (cat:: k -> k -> *) where
+>   finid :: ob a -> cat a a
+>   fincomp :: cat b c -> cat a b -> cat a c
+>
+> instance FinCategory ObjectRep HS where
+>   finid = MoId
+>   fincomp = comp
+
 
 Functors
 --------

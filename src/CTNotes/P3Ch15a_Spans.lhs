@@ -4,6 +4,7 @@ Notes about CTFP Part 3 Chapter 12. Span bicategory
 ===================================================
 
 Note about the Category of Spans described in [chapter 15](https://bartoszmilewski.com/2017/09/06/monads-monoids-and-categories/).
+It provides supporting conceptual code in Haskell. 
 These notes use the concept of pullback which is not directly expressible in Haskell's language
 (pullbacks lead to undecidable problems).  
 
@@ -15,16 +16,16 @@ These notes use the concept of pullback which is not directly expressible in Has
 >
 > module CTNotes.P3Ch15a_Spans where
 
-Span bicategory
----------------
+_Span_ bicategory
+-----------------
 
 > data Cell0 a = Cell0 a
 > data Cell1 x a b = Cell1 (x -> a) (x -> b)
-> data Cell2 x y = Cell2 (x -> y)
+> data Cell2 x y a b = Cell2 (x -> y)
 
 0-cells are Haskell types.  
-1-cells are spans consisting of 2 morphisms (legs) from a common object x (support object).
-2-cells are morphisms between support objects that result in commuting diagrams involving legs.
+1-cells are spans consisting of 2 morphisms (legs) from a common object x (support object/apex).
+2-cells are morphisms between apex objects that result in commuting diagrams involving legs.
 ```
              z
           /  |  \
@@ -32,8 +33,9 @@ Span bicategory
         a <- x -> b 
 ```
 Type `Cell1 x a b` represents a morphism between `Cell a` and `Cell0 b`.
-Type `Cell2 x y` represents natural transformation between `Cell1 x a b` and `Cell2 x a b`
+Type `Cell2 x y a b` represents a natural transformation between `Cell1 x a b` and `Cell2 x a b`
 where a and b are the same for both 1-cells.
+This note is focused on 1-cells.
 
 
 `Cell1`-s as morphisms of `Cell0`-s
