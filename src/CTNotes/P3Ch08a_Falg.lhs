@@ -8,7 +8,7 @@ Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 [P3 Ch8. F-Algebras](https://bartoszmilewski.com/2017/02/28/f-algebras/).
 
 
-> {-# LANGUAGE Rank2Types #-}
+> {-# LANGUAGE Rank2Types, ExistentialQuantification #-}
 >
 > module CTNotes.P3Ch08a_Falg where
 
@@ -174,3 +174,22 @@ Possible F-algebras `(o, m)` such that `m :: F o -> o`
 It is also interesting to note that for any functor `F`, F-algebra `F A -> A`
 is only possible if F A = A.  
 We have more choices for Fs that allow algebras `F B -> B` or `F C -> C`.
+
+
+Different Recursive Types
+-------------------------
+See package 
+[recursion-schemes](https://hackage.haskell.org/package/recursion-schemes-5.0.2/docs/Data-Functor-Foldable.html)  
+See also
+https://stackoverflow.com/questions/45580858/what-is-the-difference-between-fix-mu-and-nu-in-ed-kmetts-recursion-scheme-pac
+
+We have seen
+```
+newtype Fix f = Fix (f (Fix f))
+data LFix f = LFix (forall x. (f x -> x) -> x)
+```
+There is also existentially formed greatest fixpoint
+
+> data GFix f = forall a . GFix ((a -> f a) -> a)
+
+all are supposed to be isomorphic in Haskell.
