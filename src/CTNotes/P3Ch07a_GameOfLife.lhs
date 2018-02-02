@@ -1,6 +1,12 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch07a_GameOfLife
 
-__Work in progress__   
+Implementation of Conway's game of life 
+[wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
+using store comonad.
+This solves the challenge problem from 
+[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
+[P3 Ch7 Comonads](https://bartoszmilewski.com/2017/01/02/comonads/).
+  
 
 > module CTNotes.P3Ch07a_GameOfLife where
 > import Control.Comonad

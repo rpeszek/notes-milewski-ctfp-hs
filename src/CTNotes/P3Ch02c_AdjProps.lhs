@@ -3,6 +3,8 @@
 Notes about CTFP Part 3 Chapter 2. Adjunction properties 
 ========================================================
 
+Loose notes about some programming properties of adjunctions. 
+
 Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
           [Part 3. Ch.2 Adjunctions](https://bartoszmilewski.com/2016/04/18/adjunctions/)
 
@@ -27,6 +29,7 @@ Composition
          --------->     --------->  
             r2             r1
 ```
+Drawing a picture explains the code:
 
 > instance (Adjunction l1 r1, Adjunction l2 r2) =>
 >         Adjunction (Compose l2 l1) (Compose r1 r2) where
@@ -66,9 +69,11 @@ type Coproduct f g x  ~= Comp2 Either f g x
     C(a+b, c) ~= 
     (C x C)(<a, b>, Δ c)
 ```
+Again, drawing a picture explains the code!
+
 
 Free-Forgetful, Free Monad Adjunction
 --------------------------------------
-See also end of [N_P3Ch08a_Falg](N_P3Ch09a_Talg) for relationship between free-forgetful adjunctions 
-and algebras.
+See also the end of [N_P3Ch08a_Falg](N_P3Ch09a_Talg) note about relationship between 
+free-forgetful adjunctions and algebras.
  

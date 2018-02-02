@@ -1,8 +1,10 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch02a_CurryAdj
 
-Notes about CTFP Part 3 Chapter 2.  Exponential from Adjunction 
-===============================================================
+Notes about CTFP Part 3 Chapter 2.  Adjunctions. Exponential from Adjunction 
+============================================================================
 Currying yields exponential adjunction, `State`/`Store` construction.
+This note adds some Haskell code that follows the "Exponential from Adjunction" 
+section in the book. 
 
 Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
           [Part 3. Ch.2 Adjunctions](https://bartoszmilewski.com/2016/04/18/adjunctions/)
@@ -12,8 +14,8 @@ Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 > module CTNotes.P3Ch02a_CurryAdj where
 > import Data.Tuple (curry, uncurry, swap)
 
-Adjunction definition from the book with functional dependencies and representable constraint removed, 
-to keep it focused
+Adjunction definition from the book 
+(with functional dependencies and `Representable` constraint removed)
 
 > class (Functor l, Functor r) => Adjunction l r  where
 >     unit   :: d -> r (l d)
@@ -26,7 +28,7 @@ to keep it focused
 >     leftAdjunct f = fmap f . unit
 >     rightAdjunct f = counit . fmap f
 
-Implementation emphasizes that  
+The above implementation emphasizes that the adjunction  
   `(-, a) ⊣ a -> -`    
 is all about currying.   
 These diagrams use notations from the book
@@ -57,7 +59,8 @@ C((z,a),b)  |             | C(z,a->b)
                   /
             c  --    
 ```                
-In the instance implementation I need to have (z, a) flipped to (a,z)                
+In the instance implementation I need to have `(z, a)` flipped to `(a,z)` (because
+Haskell wants `((,) a)`)               
 
 > instance Adjunction ((,) a) ((->) a) where
 >     unit :: d -> a -> (a, d)
@@ -69,14 +72,15 @@ In the instance implementation I need to have (z, a) flipped to (a,z)
 >     rightAdjunct :: (z -> a -> b) -> (a, z) -> b
 >     rightAdjunct zab = uncurry $ flip zab     -- or zab ~(z,a) = zab a z
  
-Notice the need to use ugly `flip` and `swap` caused by using (a,-) and not (-,a) as the book does!
+Again, notice the need to use ugly `flip` and `swap` caused by using (a,-) and not (-,a) as the book does!
 
-Introduces two important types:
+This construction introduces two important types:
 ```
 type State s a = s -> (a, s)
 type Store s a = (s -> a, s)
 ```
+It is empowering to know that `State` and `Store` have such a foundational importance. 
 
-TODO: what are programming implication of this adjunction for non-Hask categories? 
-      Such category would need to be cartesian closed and that probably means close to Hask.
-      So most likely no interesting generalizations.
+Q: what are programming implication of this adjunction for non-Hask categories? 
+Such category would need to be cartesian closed and that probably means close to Hask.
+So most likely I will see no interesting generalizations.

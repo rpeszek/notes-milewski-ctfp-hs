@@ -1,7 +1,12 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch02b_AdjNonHask
 
-Notes about CTFP Part 3 Chapter 2. Product as adjunction, non-Hask generalizations 
-==================================================================================
+Notes about CTFP Part 3 Chapter 2. Adjunctions. Product as adjunction, non-Hask generalizations 
+===============================================================================================
+Many interesting adjunctions cannot be expressed using only Hask endofunctors (Using
+`Adjunction` defined in [CTNotes.P3Ch02a_CurryAdj](CTNotes.P3Ch02a_CurryAdj)). 
+This note explores coding adjunctions using general `CFunctor`-s.
+Coding for product adjunction is provided using a custom adjunction that works between a
+bifunctor and a functor.
 
 Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
           [Part 3. Ch.2 Adjunctions](https://bartoszmilewski.com/2016/04/18/adjunctions/)
@@ -25,10 +30,11 @@ Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 Adjunction generalized to non-Hask categories
 ---------------------------------------------
  
-General Functor instance follows [category-extras](https://hackage.haskell.org/package/category-extras-0.53.5).  
+I have defined `CFunctor` in [N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats).  
 I am redefining it to add back functional dependencies.
 (avoided before to simplify things and to solve problems with `Const` functor, 
-this definition matches `category-extras`),
+this definition matches 
+[category-extras](https://hackage.haskell.org/package/category-extras-0.53.5))
   
 > class (Category r, Category s) => CtFunctor f r s | f r -> s, f s -> r where
 >     cmap :: r a b -> s (f a) (f b)
@@ -58,16 +64,18 @@ naming conventions (using `catc` for category __C__ hom-set and `catd` for categ
 >     leftAdjunct f = cmap f . unit
 >     rightAdjunct f = counit . cmap f
   
-Proof that this is generalization or Hask endofunctor adjunctions
+This generalizes Hask endofunctor adjunction:
   
 > instance (CtFunctor l (->) (->), CtFunctor r (->) (->), AdjHask.Adjunction l r) => CtAdjunction l r (->) (->) where
 >    unit = AdjHask.unit
 >    counit = AdjHask.counit
      
 
+
 Adjunction between functor and bifunctor      
 ----------------------------------------     
-Since there are problems in defining `id` and creating instance of `Control.Category` for product __Hask x Hask__ (`(->) :**: (->)`),
+Since there are problems in defining `id` and creating instance of `Control.Category` 
+for product __Hask x Hask__ (`(->) :**: (->)`),
 this section defines adjunction between bifunctor and functor (__C = Hask x Hask__, __D = Hask__).    
 ```
             C=Hask x Hask         D=Hask
@@ -80,6 +88,7 @@ this section defines adjunction between bifunctor and functor (__C = Hask x Hask
              c1      c2  ------->  r c
                              r  
 ```
+I use `21` to indicate product category on the left and on the right.
      
 > class (Bifunctor r, Functor l1, Functor l2)  => Ct21Adjunction l1 l2 r | r -> l1, r -> l2, l1 l2 -> r where
 >     unit21 :: d -> r (l1 d) (l2 d)
@@ -93,7 +102,8 @@ this section defines adjunction between bifunctor and functor (__C = Hask x Hask
 >     counit21_2 = snd $ rightAdjunct21 id
 >     leftAdjunct21 f1 f2 = bimap f1 f2 . unit21
 >     rightAdjunct21 f = (counit21_1 . fmap f, counit21_2 . fmap f) 
-       
+  
+   
 Product as adjunction
 ---------------------
 ```
@@ -119,10 +129,10 @@ Product as adjunction
 >     rightAdjunct21 dc1c2 = (fst . dc1c2 . runIdentity, snd . dc1c2 . runIdentity)
 
 Bifunctor instance of `(,)` was defined in [N_P1Ch08a_BiFunctorAsFunctor](N_P1Ch08a_BiFunctorAsFunctor).   
-I use `21` to indicate product category __Hask x Hask__ on the left and __Hask__ 
+Again, `21` indicates product category __Hask x Hask__ on the left and __Hask__ 
 on the right.
 
-Coproduct by reversing arrows  
+Coproduct construction reverses arrows  
 ```
 C(a+b, c) ~= (C x C)(<a, b>, Δ c)
 

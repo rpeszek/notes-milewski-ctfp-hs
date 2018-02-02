@@ -1,6 +1,10 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch07b_Comonad
 
-__Work in progress__   
+My thinking and loose notes about commonads.
+
+Book reference:
+[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
+[P3 Ch7 Comonads](https://bartoszmilewski.com/2017/01/02/comonads/).
 
 > {-# LANGUAGE InstanceSigs, ScopedTypeVariables#-}
 > module CTNotes.P3Ch07b_Comonad where
@@ -131,7 +135,7 @@ More judicious Zipper based on finite lists:
 >             iterateRight (Zipper ls a []) = []
 >             iterateRight (Zipper ls a (r:rs)) = let nz = Zipper (a:ls) r rs in nz : iterateRight nz
 
-Duplicate returns a zipper where each element is itself a zipper focused on the corresponding element in the original zipper.
+`duplicate` returns a zipper where each element is itself a zipper focused on the corresponding element in the original zipper.
 `extend` is like a map only with access to all elements in the zipper, not just one. 
 Supposedly, every zipper is a comonad.
 
@@ -144,14 +148,12 @@ __Tree__
 >    extract (Node a _) = a
 >    duplicate n@(Node _ as) = Node n (map duplicate as)
 
-`extract` returns root label, duplicate replaces all labels with corresponding tree.
+`extract` returns root label, `duplicate` replaces all labels with corresponding tree.
 
 
 __Refs:__
 http://blog.functorial.com/posts/2016-08-07-Comonads-As-Spaces.html
 http://comonad.com/reader/2011/monads-from-comonads/  
-(These are more about pairing).  
-* Some Comonads that are also Monads: NonEmpty List, Tree, `(,) e`
 * CoFree is out of scope for this note
 
 
