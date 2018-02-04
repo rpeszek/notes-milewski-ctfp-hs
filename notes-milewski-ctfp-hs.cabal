@@ -40,7 +40,8 @@ library
                      , CTNotes.P3Ch07a_GameOfLife
                      , CTNotes.P3Ch07b_Comonad
                      , CTNotes.P3Ch08a_Falg
-                     , CTNotes.P3Ch09b_AlgebraAndFree
+                     , CTNotes.P3Ch08b_FalgFreeMonad
+                     , CTNotes.P3Ch09a_Talg
                      , CTNotes.P3Ch11a_KanExt
                      , CTNotes.P3Ch12a_HaskEnrich
                      , CTNotes.P3Ch12b_EnrichedPreorder

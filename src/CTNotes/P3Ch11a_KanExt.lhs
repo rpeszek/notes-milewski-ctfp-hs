@@ -23,7 +23,7 @@ http://comonad.com/reader/2008/kan-extension-iii/
 > #-}
 > module CTNotes.P3Ch11a_KanExt where
 > import Control.Monad
-> import CTNotes.P3Ch09b_AlgebraAndFree
+> import CTNotes.P3Ch09a_Talg
 
 
 Ran
@@ -139,7 +139,7 @@ instance MonadTrans Codensity where
    lift m = Codensity (m >>=)
 ``` 
 ContT and Codensity both yield a result in which all of the uses of the underlying monad's (>>=) are right associated.
-That makes Codensity useful in imporovig asymptotic complexity of Free monads. 
+That makes Codensity useful in improving asymptotic complexity of Free monads. 
 
 TODO `Codensity ((->) s) a` is isomorphic to `State s a`.
 
