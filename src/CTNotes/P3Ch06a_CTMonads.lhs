@@ -2,8 +2,8 @@
 
 __Work in progress__  
 
-Notes related to CTFP Part 3 Chapter 6.  Monads 
-===============================================
+Notes related to CTFP Part 3 Chapter 6. Monads 
+==============================================
 This is bunch of loose notes about things like Monad composability, distributive laws, etc.
 
 
@@ -17,11 +17,11 @@ This is bunch of loose notes about things like Monad composability, distributive
 Monad Laws in terms of return/join definition
 ---------------------------------------------
 
-Eta/return viewed as Identity :~> m, naturality condition: 
+Naturality condition for Eta/return: 
 ```
 return . f ≡ fmap f . return
 ```
-Mu/join viewed as m :.: m :~> m, naturality condition: 
+Naturality condition for Mu/join: 
 
 ```
 join . fmap (fmap f) ≡ fmap f . join
@@ -34,7 +34,7 @@ join . fmap return   ≡ join . return ≡ id
 ```
 
 Loose Notes (Products, distributive laws) 
------------------------------------
+-----------------------------------------
 
 Monads are closed with respect to functor product
 ```
@@ -55,10 +55,10 @@ or (same foldr idea) over simple products
 >      return (a, b, c)
 
 Functor composition is crucial in CT definition of Monad but composition of monads is not always a monad.
-I found a paper about Monad composition: [Jones, Duponcheel](http://web.cecs.pdx.edu/~mpj/pubs/RR-1004.pdf).
+I found old (1993, pre-MTL) paper about Monad composition: [Jones, Duponcheel](http://web.cecs.pdx.edu/~mpj/pubs/RR-1004.pdf).
 It shows several approaches to composing monads.
 
-I have played with composing monads using what is called distributive laws.
+I looked at composing monads using what is called distributive laws.
 Paper calls is swap construction, I based it on this [wikipedia](https://en.wikipedia.org/wiki/Distributive_law_between_monads) 
 
 It turns out that there is a natural monad structure on the composite functor m :. n 

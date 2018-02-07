@@ -1,7 +1,5 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch05b_YonedaNonHask
 
-__Work-in-progress__
-
 Notes about CTFP Part 2 Chapter 5. Yoneda Lemma for non-Hask categories
 =======================================================================
 This note explores Yoneda Lemma for Functors on non-Hask categories in Haskell. 
@@ -93,6 +91,7 @@ except the proof that `toYoneda . fromYoneda = id` uses naturality condition whi
 However, `fromYoneda . toYoneda = id` uses only functor laws which agrees with the intuition that
 there could be some extra polymorphic functions that fail the naturally test 
 (`CYoneda homset f a` is bigger and contains image of `f a`).
+
 
 Pattern Match Intuition for Yoneda
 ----------------------------------
