@@ -1,31 +1,35 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch06a_CTMonads
 
-__Work in progress__  
-
 Notes related to CTFP Part 3 Chapter 6. Monads 
 ==============================================
 This is bunch of loose notes about things like Monad composability, distributive laws, etc.
+I wrote these for myself and this note relates only loosely to the book.
 
-
-> {-# LANGUAGE InstanceSigs, TypeOperators, MultiParamTypeClasses, ScopedTypeVariables, FlexibleInstances #-}
+> {-# LANGUAGE InstanceSigs
+>  , MultiParamTypeClasses
+>  , ScopedTypeVariables
+>  , FlexibleInstances 
+> #-}
 >
 > module CTNotes.P3Ch06a_CTMonads where
 > import Control.Monad 
 > import Data.Functor.Compose (Compose(..))
 > import CTNotes.P1Ch07_Functors_Composition ((:.))
 
+
 Monad Laws in terms of return/join definition
 ---------------------------------------------
+I just list these for my own reference:
 
 Naturality condition for Eta/return: 
 ```
 return . f ≡ fmap f . return
 ```
 Naturality condition for Mu/join: 
-
 ```
 join . fmap (fmap f) ≡ fmap f . join
 ```
+Naturality conditions should be automatically satisfied due to parametricity.
 
 Laws:
 ```
@@ -35,13 +39,11 @@ join . fmap return   ≡ join . return ≡ id
 
 Loose Notes (Products, distributive laws) 
 -----------------------------------------
-
-Monads are closed with respect to functor product
+Monads are closed with respect to functor product (see [N_P1Ch08b_BiFunctorComposition](N_P1Ch08b_BiFunctorComposition))
 ```
 (Monad f, Monad g) => Monad (Product f g)
 ```
-
-We have convenient ways to distribute over traversables
+There is a convenient ways to distribute over traversables
 ```
 sequence :: (Traversable t, Monad m) => t (m a) -> m (t a)
 ```
@@ -54,15 +56,22 @@ or (same foldr idea) over simple products
 >      c <- mc
 >      return (a, b, c)
 
-Functor composition is crucial in CT definition of Monad but composition of monads is not always a monad.
+
+Functor composition is fundamental to the categorical definition of Monad but composition of monads is not always a monad.
+
+It is interesting to investigate monad composition closer.  Functors compose because fmaps compose. 
+Monad eta/return compose too,  but mu/join does not.  To compose monads some additional assumptions relating underlying 
+type constructors need to be made. 
+ 
 I found old (1993, pre-MTL) paper about Monad composition: [Jones, Duponcheel](http://web.cecs.pdx.edu/~mpj/pubs/RR-1004.pdf).
-It shows several approaches to composing monads.
+It shows several approaches to composing monads. Some look related to monad alebras (`prod` construction). 
+This TODO is to think and investigate that further.  
 
-I looked at composing monads using what is called distributive laws.
-Paper calls is swap construction, I based it on this [wikipedia](https://en.wikipedia.org/wiki/Distributive_law_between_monads) 
+I researched a bit composing monads using what is called distributive laws.
+Linked paper calls is swap construction, but this note is more I based on [wikipedia](https://en.wikipedia.org/wiki/Distributive_law_between_monads) 
 
-It turns out that there is a natural monad structure on the composite functor m :. n 
-if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . (n :. m) a -> (m :. n) a`
+It turns out that there is a natural monad structure on the composite functor m ∘ n 
+if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . n (m a) -> m (n a)`
 that satisfies certain conditions).  
 
 > class (Monad n, Monad m) => Dist m n where
@@ -84,7 +93,7 @@ Certain distributive laws (see below) need to be satisfied, otherwise compositio
 >    Compose mna >>= f = Compose $ joinComp (fmapComp (getCompose . f) mna)
 
 
-__Distribution Laws__ (again following [Wikipedia article](https://en.wikipedia.org/wiki/Distributive_law_between_monads)):
+__Distribution Laws__ (following [Wikipedia article](https://en.wikipedia.org/wiki/Distributive_law_between_monads)):
 ```
 joinM . fmapM dist . dist ≡ dist . fmapN joinM  (n (m (m a)) -> m (n a))
 fmapM joinN . dist . fmapN dist ≡ dist . joinN  (n (n (m a)) -> m (n a))
@@ -121,18 +130,18 @@ joinComp . fmapComp joinComp     ≡ joinComp . joinComp
 joinComp . fmapComp returnComp   ≡ joinComp . returnComp ≡ id
 ```
 
-TODO __Writer Example__:
+__Writer Example__:
 
-Writer monad (taken from the paper)
+Writer monad (taken from the above paper)
 
 > instance (Monoid s, Monad m) => Dist m ((,) s) where
 >    dist (s, m) = do 
 >             a <- m
 >             return (s, a)
 
-satisfies needed laws. 
+satisfies needed laws. (TODO would be good to attach proof) 
 
-TODO __List Example__:    
+__List Example__:    
 
 `sequence` can be used to implement Dist, but the required laws are not always satisfied.
 They ARE satisfied, however, with additional assumption
@@ -161,4 +170,7 @@ do
 
 
 TODO Other composition approaches from the paper
-TODO Monad composability relations to transformers
+
+TODO Monad composability is it related to transformers? 
+This categorical interpretation of transformers is based on adjunctions:
+https://oleksandrmanzyuk.files.wordpress.com/2012/02/calc-mts-with-cat-th1.pdf
