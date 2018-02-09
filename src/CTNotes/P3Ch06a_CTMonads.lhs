@@ -2,8 +2,11 @@
 
 Notes related to CTFP Part 3 Chapter 6. Monads 
 ==============================================
-This is bunch of loose notes about things like Monad composability, distributive laws, etc.
+This is a bunch of loose notes about things like Monad composability, distributive laws, etc.
 I wrote these for myself and this note relates only loosely to the book.
+
+Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
+[Ch. 6 Monads Categorically](https://bartoszmilewski.com/2016/12/27/monads-categorically/)
 
 > {-# LANGUAGE InstanceSigs
 >  , MultiParamTypeClasses

@@ -1,22 +1,35 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch06b_FiniteMonads
 
-__Work in progress__   
-This note is sure to change when I understand more.  
-It includes general thoughts about finite category monads and focuses on category `A->B=>C` introduced in N_P1Ch03b_FiniteCats
+Notes related to CTFP Part 3 Chapter 6. Monads on finite categories
+===================================================================
 
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE FlexibleInstances #-}
-> {-# LANGUAGE TypeFamilies #-}
+__Work in progress, this topic needs more research__  
+ 
+I am interested in modeling finite categories in Haskell, but I still do not know a lot about it. 
+This note includes general thoughts about finite category monads and focuses on category `A->B=>C` introduced in 
+[N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
+
+This note is only loosely related to the book
+[CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
+[Ch. 6 Monads Categorically](https://bartoszmilewski.com/2016/12/27/monads-categorically/)
+
+
+> {-# LANGUAGE DataKinds 
+>  , KindSignatures 
+>  , FlexibleInstances
+>  , TypeFamilies 
+> #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
 > module CTNotes.P3Ch06b_FiniteMonads where
 > import CTNotes.P1Ch03b_FiniteCats
 
 
-Finite categories lose parametricity and free theorems N_P1Ch10b_NTsNonHask.
-However, some automatic goodness seems to come back when examining endofunctors. 
-For example, if finite category has very few morphisms (maybe it is thin), then the naturality 
+It is about having enough arrows
+--------------------------------
+Parametricity is lost in finite categories (see [N_P1Ch10b_NTsNonHask](N_P1Ch10b_NTsNonHask)).
+However, some laws can be automatically satisfied for other reasons. 
+For example, if finite category has very few morphisms (for example when is thin), then the naturality 
 ```
                fmap_F f     
           F a  --------> F b
@@ -29,15 +42,20 @@ For example, if finite category has very few morphisms (maybe it is thin), then 
                   
    fmap_G f . alpha_a ≡ alpha_b . fmap_F f
 ```
-is automatic (because there at most one possible morphism F a -> G b).
-This is as long as there are enough many arrows to define that diagram (if functors and nt-ies are defined).
+is automatic (because there at most one possible morphism F a -> G b).  
+That is, if there are enough many arrows to define that diagram (if functors and natural transformations are defined)
+then the naturality condition has to hold.  
+Thus, the most interesting question for finite categories seems to be if there are enough many arrows.
 
-The most interesting question seems to be if there are enough many arrows.
-
-Since there is no point-wise aspect, eta becomes simply equivalent to the functor itself (as a function acting on objects).
+Monads
+------
+To talk about a monad I need endofunctor F and 2 natural transormations `eta :: Id -> F` and `mu :: F ∘ F -> F`.
+Both Functors and Natural Transformations on `A->B=>C` do not have any point-wise aspect and 
+are just mappings of objects A,B,C and enumerated morphisms.   
+When restricted to objects, eta becomes equivalent to the functor itself.
 
 __Monad Example__
-Consider these 2 endofunctors on `A->B=>C`
+Consider following endofunctor 
 ```
      A ->B => C
       \  |    |
@@ -45,15 +63,18 @@ F      \ |    |
         \ /  \ /
      A   B => C
 ``` 
-F collapses A -> B into B and is identity on B => C.
-By construction join (mu) F is identity and return (eta) F is also identity on B => C.
-Thus, monad laws (both required on the image of F which is B => C)
+F collapses A -> B into B and is identity on both morphisms B => C.
+Eta and mu need to be defined on the image of F only and both can be defined by selecting identity morphisms.  
+The monad laws (both required on the image of F which is B => C):
 ```
 join . fmap join     ≡ join . join         -- on the image of functor
 join . fmap return   ≡ join . return ≡ id  -- on the image of functor
 ```
-are trivially satisfied.  F is a monad.
-  
+are trivially satisfied (join=mu, return=eta). F is a monad.
+ 
+Haskell code representing F could look like 
+(strictly interpreting action on Objects to have kind signature `F :: Object -> Object)`:
+
 > type family F (a :: Object) :: Object where
 >   F 'A = 'B 
 >   F 'B = 'B 
@@ -77,8 +98,12 @@ are trivially satisfied.  F is a monad.
 > type family Mu (a:: Object) :: Object where
 >   Mu 'B = 'B 
 >   Mu 'C = 'C
+>
+> type family Eta (a:: Object) :: Object where
+>   Eta 'B = 'B 
+>   Eta 'C = 'C
 
-(Eta and F are the same)
+but I am sure that there is a better code representation of F.
 
 
 __Non-monad example__
