@@ -1,7 +1,7 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch03b_FiniteCats
 
-Note about CTFP Part 1 Chapter 3. Examples of categories.  Finite category construction in Haskell.
-===================================================================================================
+Note about CTFP Part 1 Chapter 3. Categories great and small.  Finite category construction in Haskell.
+======================================================================================================
 Haskell representation of categories created from simple directed graphs (finite enumeration of objects and morphisms).
 I use `DataKinds` to encode category objects as types (of a custom kind) and enumerate
 all possible morphisms using a GADT.  Using GADTs makes it simple to visualize what is going on because I use them
@@ -21,14 +21,15 @@ This approach is similar to [Natural Numbers note N_P1Ch03a_NatsCat](N_P1Ch03a_N
 This note supplements _Simple Graphs_ section of [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 3](https://bartoszmilewski.com/2014/12/05/categories-great-and-small/) with somewhat 'advanced' Haskell.
 
-> {-# LANGUAGE GADTs #-}
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE FlexibleInstances #-}
-> {-# LANGUAGE PolyKinds #-}
-> {-# LANGUAGE StandaloneDeriving #-}
-> {-# LANGUAGE MultiParamTypeClasses #-}
-> {-# LANGUAGE AllowAmbiguousTypes #-}  --needed for FinCategory instance only
+> {-# LANGUAGE GADTs 
+>  , DataKinds 
+>  , KindSignatures 
+>  , FlexibleInstances 
+>  , PolyKinds 
+>  , StandaloneDeriving 
+>  , MultiParamTypeClasses 
+>  , AllowAmbiguousTypes  --needed for FinCategory instance only
+> #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module CTNotes.P1Ch03b_FiniteCats where
@@ -42,7 +43,7 @@ All objects in `A->B=>C` are defined as data type
 > data Object = A | B | C deriving Show
 
 and promoted (`DataKinds` pragma) to a kind `Object` with types `A` `B` and  `C`.  
-Category objects will be the types `A` `B` and  `C`.
+Objects in `A->B=>C` are the types `A` `B`, and  `C`.
  
 All morphism in `A->B=>C` are defined using the following GADT 
 
@@ -71,17 +72,16 @@ Morphism composition:
 > compose MorphBC2 MorphAB = MorphAC2
 
 Cool! GHC knows that this pattern match is exhaustive, something that takes a minute to digest.
-When writing this, I just needed to think about free construction cases.
 
-_Note_: I have assume free construction approach, `MorphAC1` and `MorphAC2` are different.
+_Note_: I have assumed the free construction, `MorphAC1` and `MorphAC2` are different.
 If, instead, I created a GADT with one `MorphAC` and have defined 
 ```
 compose MorphBC1 MorphAB = MorphAC
 compose MorphBC2 MorphAB = MorphAC 
 ```
-This would have been an equalizer-like diagram and it would be very hard to functor it into Hask.  
+I would have gotten an equalizer-like diagram and it would be very hard to functor it into Hask.  
 Explicitly enumerating all possible morphisms in a GADT looks like redundant coding, but
-it provides flexibility to play with different category designs. 
+it provides flexibility to play with different categorical designs. 
 
 
 __`A->B=>C` is `Control.Category`:__  
@@ -101,6 +101,9 @@ the __Set__ category.  A better name would be 'Hom-Hask'.
 >   id = MorphId
 >   (.) = compose
 
+(_Side-note_: a cool way to think about this construction is as Object enriched over Hask, 
+see [N_P3Ch12a_HaskEnrich](N_P3Ch12a_HaskEnrich).)
+
 Expressions like  `MorphCB . MorphAB`  will not compile, but 'correct' compositions work fine:
 
 ```bash
@@ -112,7 +115,7 @@ MorphBC1 . MorphAB :: HomSet 'A 'C
 ```
 
 It is quite amazing that you can do stuff like this. 
-Generalizing use of categories instead of just hardcoding Hask everywhere seems like an interesting direction.
+Investigating non-Hask categories seems like an interesting direction.
 
 A Better Alternative
 --------------------
@@ -172,5 +175,3 @@ See [N_P1Ch10b_NTsNonHask](N_P1Ch10b_NTsNonHask)
 
 Possibly relevant:
 [Retricted Parametricity](https://www.cs.kent.ac.uk/people/staff/dao7/drafts/tfp-structures-orchard12.pdf)
-
-TODO should I add value level representation of this? Does not seem to be needed.

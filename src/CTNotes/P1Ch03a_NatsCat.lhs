@@ -15,17 +15,18 @@ and
 
 Interestingly, these categories can be implemented as instances of `Control.Category` `Category` class.
 This was not know to me until very recently.  `Category` class is kind polymorphic and works with 
-kinds other than `*`.  This note uses dependent types-like features available in Haskell.
+kinds other than `*`.  This note uses some dependently typed features available in Haskell.
 
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 3](https://bartoszmilewski.com/2014/12/05/categories-great-and-small/) defines
 monoid as a single object category so this note is a bit different.
 
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE TypeOperators #-}
-> {-# LANGUAGE FlexibleInstances #-}
-> {-# LANGUAGE PolyKinds #-}
+> {-# LANGUAGE DataKinds
+>  , KindSignatures
+>  , TypeOperators
+>  , FlexibleInstances 
+>  , PolyKinds 
+> #-}
 >
 > module CTNotes.P1Ch03a_NatsCat where 
 > import GHC.TypeLits
@@ -64,7 +65,7 @@ add2 :: NatHomSet 'NatPlus n (n + 2)
 λ> add2Test 3
 5
 ```
-(prettified the GHC output, GHC tends to use `GHC.TypeLits.+ 2` instead of `2`)
+(I have simplified the GHC output a bit, GHC printed `GHC.TypeLits.+ 2` instead of `2`)
 
 Composition is polymorphic in `t` (will work for both `NatPlus` and `NatMultiply` case):
   
@@ -140,8 +141,3 @@ ghci> morph mult4' $ 2
 ```
 
 Works!
-
-TODO:  Many CT goodies are very general.  Special casing 
-everything to Hask seems like missing out on generality that is already there.
-Learning more about non Hask categories and how different cats play with Hask 
-seems important and potentially useful.  
