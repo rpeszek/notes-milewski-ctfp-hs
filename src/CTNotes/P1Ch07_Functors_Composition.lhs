@@ -13,11 +13,12 @@ This is my attempt to use Haskell language to describe these concepts.
 What are the properties of types like `[Tree (Either Err [a])]`, `Either Err (Parser [a])` or 
 `(r -> [(s -> Maybe (t -> ))])`?   
 In my opinion, Functor Composition is foundational to understanding of even basic types like nested lists 
-`[[a]]` or something like a safeTail `Maybe [a]` to say nothing of CT stuff like monads and comonands.
+`[[a]]` or something like a safeTail `Maybe [a]`.
 
-> {-# LANGUAGE TypeOperators #-}
-> {-# LANGUAGE TypeFamilies #-}
-> {-# LANGUAGE LiberalTypeSynonyms #-}
+> {-# LANGUAGE TypeOperators 
+>  , TypeFamilies 
+>  , LiberalTypeSynonyms 
+>  #-}
 >
 > module CTNotes.P1Ch07_Functors_Composition where
 > import Data.Functor.Compose (Compose(..))
@@ -49,13 +50,13 @@ This way `Maybe :. []` becomes a functor that maps type `Int` into `Maybe [Int]`
 > safeTail (x:xs) = Compose $ Just xs 
 
 Well, it really maps `Int` to `Compose Maybe [Int]`, but that is that up-to isomorphisms limitation caused
-by using the `newtype`.
+by using `newtype`.
 
 
 Identity
 --------
 Identity functor is introduced in the book in Chapter 8.  I will use definition from the `base` package `Data.Functor.Identity` module. 
-Here is the definition (it is a quote not actual code since I am importing it):
+Here is the definition (it is a quote, not actual code, since I am importing it):
 
 ```
 newtype Identity a = Identity { runIdentity :: a }
@@ -140,25 +141,8 @@ Haskell `TypeFamilies` pragma allows me to define a constraint analogous to `Con
 >    type KId cat :: * -> *
 >    type KComp cat :: (* -> *) -> (* -> *) -> * -> *
 
-Notice that this is less typed then what we get with `Control.Category.Category` typeclass.
+Notice that this is less typed than what we get with `Control.Category.Category` typeclass.
 For example `id :: cat a a` guarantees that `a` is the same on both sides, we no longer have such a guarantee.
-
-
-Short recap to understand KCategory and kind system:
-----------------------------------------------------
-In Haskell, the term functor is almost synonymous with instances of `Data.Functor` typeclass 
-(and this is how I am using it). 
-This limits their use to just type constructors of kind `* -> *` (type constructors that have one type variable).  
-There are more functors, even in Haskell, than there are functors in Haskell ;). 
-For example bifunctors described in [Ch.8](https://bartoszmilewski.com/2015/02/03/functoriality/) 
-are functors and are composable with other functors including the 
-`Data.Functor` functors.
-Bifunctor type constructors have kind `* -> * -> *` and are not covered by my `KCategory` class.  
-I will need to remember that category theoretical properties of functor composition apply in general case, 
-not just to `Data.Functor` functors.
-
-(TODO need to include more info in the future note for 
-[Ch.8](https://bartoszmilewski.com/2015/02/03/functoriality/) )
 
 
 Monster Category we are looking for
@@ -186,7 +170,7 @@ For example, `Identity Bool` is not the same as `Bool`, but is isomorphic to `Bo
 >     isoLeft :: b -> a
 > }
 
-As usual, the proof obligation that `isoRight` and `isoLeft` are inverses of one another will be left to the programmer 
+As is to be expected, the proof obligation that `isoRight` and `isoLeft` are inverses of one another will be left to the programmer 
 but in our case that proof will be trivial.
 
 > class KCategory2 cat where
@@ -208,8 +192,8 @@ The proofs of isomorphisms are trivial and boil down to construction and deconst
 
 Notice that `KCategory` uses `type` keyword (is a type synonym family) and `KCategory2` uses a somewhat more tedious `data`
 (is a data family). This is because, for complex reasons, type synonym classes are more permissive and may be not injective.
-GHC compiler does not allow me to define the Iso constraints idIsoEvidence or compIsoEvidence using
-the type synonym approach.  (TODO I lack detailed understanding.)
+GHC compiler does not allow me to define the Iso constraints `idIsoEvidence` or `compIsoEvidence` using
+the type synonym approach.  (TODO I lack more detailed understanding.)
 
 
 Polymorphic Composition
@@ -261,16 +245,15 @@ or something crazy like this:
 
 I can write polymorphic code (here `fmap (+1)`) against nested types.  Even cooler!
 
-But it gets even better and more interesting.  `Compose` (`Data.Functor.Compose`) has instances of `Foldable`, 
+But it gets even better and more interesting.  `Compose` (from `Data.Functor.Compose`) has instances of `Foldable`, 
 `Traversable`, `Applicative` allowing for interesting polymorphic access when programming with nested types.
 
 
 Monad Limitation 
 ----------------
-Notice instance of `Applicative` and no instance of `Monad for `Data.Functor.Compose. 
+Notice instance of `Applicative` and no instance of `Monad` for `Data.Functor.Compose. 
 The composition of (applicative) functors is always (applicative) functor.
-Functor composition is essential in the categorical definition of Monad but, interestingly, 
-the composition of monads is not always a monad.  
+Functor composition is essential in the categorical definition of Monad but 
+the composition of monads is not always a monad (that is why we need that MTL library).  
 I will investigate this more in [N_P3Ch06a_CTMonads](N_P3Ch06a_CTMonads) 
 
-TODO related code examples when implementing notes about Monads.  The book does not talk about transformers.

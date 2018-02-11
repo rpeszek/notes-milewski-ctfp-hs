@@ -3,10 +3,7 @@
 Notes about CTFP Part 1 Chapter 8. BiFunctor composition as Functor composition
 ===============================================================================
 It is conceptually easier to think of bifunctor as simply a functor from a product category. 
-This note uses this approach for composition leading to concepts of Functor product
-and coproduct.
-
-__Work in progress__
+This note uses this approach to explain bifunctor composition.
 
 > {-# LANGUAGE TypeOperators #-}
 > module CTNotes.P1Ch08b_BiFunctorComposition where
@@ -21,11 +18,7 @@ Directly from the book
 >     bimap f1 f2 (BiComp x) = BiComp ((bimap (fmap f1) (fmap f2)) x)
 
 `Comp2` is a convenient type that subsumes binary operators on functors such as 
-`Data.Functor.Product` and `Data.Functor.Sum` in the base package.
-`Comp2` is a nominally typed version of (equivalent to):
-```
-type Comp2 bf fu gu a = BiComp bf fu gu a a
-```
+`Data.Functor.Product` and `Data.Functor.Sum` found in the base package.
 
 > newtype Comp2 bf fu gu a = Comp2 { runComp2 :: bf (fu a) (gu a) }
 >
@@ -37,11 +30,17 @@ type Comp2 bf fu gu a = BiComp bf fu gu a a
 > type (f :*: g) a  = Product f g a 
 > type (f :+: g) a  = Sum f g a 
 
-I need these in other notes.
-
-this diagram illustrates what happens
+Note that `Comp2` is a is equivalent to:
+```
+type Comp2 bf fu gu a = BiComp bf fu gu a a
+```
+this diagram illustrates what has just happened
 ```            
           Δ                   fu, gu                  bf
 Hask   ----->   Hask x Hask  -------->  Hask x Hask ----->  Hask 
  a                a x a               (fu a) x (gu a)       bf (fu a) (gu a)
 ```
+I find diagrams like this more intuitive than the code.  Being able to reason about code like this is, indeed, a nice
+incentive to study Category Theory.
+
+

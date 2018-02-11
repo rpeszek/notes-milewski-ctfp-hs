@@ -13,14 +13,15 @@ Book ref:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 7](https://bartoszmilewski.com/2015/01/20/functors/)
 
-> {-# LANGUAGE PolyKinds #-}
-> {-# LANGUAGE MultiParamTypeClasses #-}
-> {-# LANGUAGE FlexibleInstances #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE GADTs #-}
-> {-# LANGUAGE FlexibleContexts #-}
-> {-# LANGUAGE StandaloneDeriving #-}
+> {-# LANGUAGE PolyKinds
+>  , MultiParamTypeClasses 
+>  , FlexibleInstances
+>  , KindSignatures
+>  , DataKinds
+>  , GADTs
+>  , FlexibleContexts
+>  , StandaloneDeriving 
+>  #-}
 >
 > module CTNotes.P1Ch07b_Functors_AcrossCats where
 > import Data.Functor.Const (Const(..))
@@ -29,13 +30,13 @@ Book ref:
 > import qualified CTNotes.P1Ch03b_FiniteCats as FinCat
 
 
-`categories` (`Control.Categorical.Functor`) and `category-extras` (`Control.Functor.Categorical`) 
+Package `categories` (module `Control.Categorical.Functor`) and `category-extras` (module `Control.Functor.Categorical`) 
 define `CFunctor` (quoted code):
 ```
 class (Category r, Category s) => CFunctor f r s | f r -> s, f s -> r where
   cmap :: r a b -> s (f a) (f b)
 ```
-(Taken from `category-extras`, `categories` just call it `Functor`)
+(Taken from `category-extras`, `categories` just calls it `Functor`)
 
 Ignoring functional dependencies I define non-endofunctors as:
 
@@ -51,19 +52,19 @@ Here is one polymorphic instance:
 > instance (Category r) => CFunctor (Const a) r (->) where
 >   cmap _ (Const v) = Const v
 
-`Const` is defined (imported from `Data.Functor.Const` base package) as 
+`Const` is defined (in `Data.Functor.Const`, base package) as 
 ```
 newtype Const a b = Const { getConst :: a }
 
-λ> :k Const
+ghci> :k Const
 Const :: * -> k -> *
 ```
 
-`PolyKinds` keeps kind of `b` polymorphic but the destination category has to have objects of kind `*` 
+`PolyKinds` does not restrict kind of `b`, but the destination category has to have objects of kind `*` 
 (it does not need to be `(->)`).  
 
 I was able to define instance of `CFunctor` polymorphically (in `r`) because `Const` does not care about source category.
-I am using (->) for destination, because this is what the implementation `\Const v -> Const v` uses.
+I have to use (->) for destination, because this is what the implementation `\Const v -> Const v` is using.
 
 To show that this works, I use category defined in the imported notes [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
 
@@ -77,7 +78,9 @@ But this would not compile:
 test :: Const a (x :: FinCat.Object) -> Const a (x :: FinCat.Object)
 test = cmap FinCat.MorphAB
 ```
-For the sake of completeness
+
+__Contravariant functor__   
+Generalized contravariant functor just flips the morphism in `r`
 
 > class (Category r, Category s) => CContraFunctor f r s  where
 >    ccmap :: r b a -> s (f a) (f b)
@@ -91,9 +94,10 @@ __HomSet as Functor__
 >   cmap morph x = morph . x
 
 
-__Simple Example__
+__A Simple Example__
 
-This example splits object `FinCat.C` into 2 possible endings of the same type `Process1 'FinCat.C`
+Returning to the example category `A->B=>C`, 
+I can think of a Process that has steps `A`, `B`, and `C` and that has 2 different endings `C`
 
 > data Process1 (o :: FinCat.Object) where
 >     P1Start ::  Process1 'FinCat.A
@@ -102,7 +106,9 @@ This example splits object `FinCat.C` into 2 possible endings of the same type `
 >     P1End2  ::  Process1 'FinCat.B -> Process1 'FinCat.C
 >
 > deriving instance Show (Process1 o)
->
+
+`Process1` is a functor from `A->B=>C` to Hask
+
 > instance CFunctor Process1 FinCat.HomSet (->) where
 >    cmap FinCat.MorphId   = \x -> x
 >    cmap FinCat.MorphAB   = P1Mid 
@@ -112,7 +118,7 @@ This example splits object `FinCat.C` into 2 possible endings of the same type `
 >    cmap FinCat.MorphAC2  = P1End2 . P1Mid 
 
 
-__More complex Functor image, lack of `cmap` uniqueness__
+__A More complex Functor, lack of `cmap` uniqueness__
 
 The following type allows for all of these morphisms
 ```
@@ -182,9 +188,11 @@ or collapses all into one of the branches
   Start2     Mid2 ---> End2              
 ```
 
+So `Process2` can be a functor in many different ways!
+
 
 __Tree Example__ TODO this may need more thinking.   
-A more involved example of a Tree where leafs are marked with `FinCat.A`, single branches with `FinCat.B`, 
+A more involved example of a (candle-like) Tree where leafs are marked with `FinCat.A`, single branches with `FinCat.B`, 
 and double branches with `FinCat.A`. Branches can be of any type so, for example, `A -> B -> B -> B` is valid.
 The image in `Hask` is reacher allowing for more flexibility.
 
@@ -207,3 +215,8 @@ The image in `Hask` is reacher allowing for more flexibility.
 >          go FinCat.MorphBC2  = left
 >          go FinCat.MorphAC1  = right . Down 
 >          go FinCat.MorphAC2  = left . Down
+
+
+Endofunctors on `A->B=>C`
+------------------------
+I have played with monad construction on `A->B=>C` in [N_P3Ch06b_FiniteMonads](N_P3Ch06b_FiniteMonads).

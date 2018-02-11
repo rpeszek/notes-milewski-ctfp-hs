@@ -2,14 +2,17 @@
 
 Notes about CTFP Part 1 Chapter 8. BiFunctor as CFunctor and Product Category
 =============================================================================
-The book introduced CT concept of bifunctor as simply a functor from a product category __C x C -> D__.  
-This note expresses one side of this equivalence in Haskell as an exercise:
+In categorical terms, bifunctor is simply a functor from a product category __C x C -> D__.
+In Haskell, the standard bifunctor definition is separate from that of a functor. 
+But, if there was a way to express the product of categories `(:**:)`, 
+then there should be a way to replace `Bifunctor` typeclass with more generic `CFunctor` 
+(defined in [N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats)).  
+This note expresses one side of such equivalence:
 ```
 instance (CFunctor f ((->) :**: (->)) (->)) =>  Bifunctor (Curry f)
 ```
-The hard part is implementing product category so the code can express (->) :**: (->) or `Hask :**: Hask`.
-Unfortunately, presented `:**:` does not implement `Control.Category` `id` because of 
-a type arity strictness. 
+(I think of (->) :**: (->) as `Hask :**: Hask`)  
+The hard part is implementing the product category `(:**:)`. 
 
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 1. Ch.8 Functoriality](https://bartoszmilewski.com/2015/02/03/functoriality/).
@@ -27,9 +30,10 @@ I define product of categories (I am using a more relaxed kind signature) as:
 > data (:**:) :: (k -> k -> *) -> (k -> k -> *) -> * -> * -> * where
 >    (:**:) :: c1 a1 b1 -> c2 a2 b2 -> (:**:) c1 c2 (a1, a2) (b1, b2)
 
-(this is a GADT that defines type parametrized by pairs, this causes problems with implementation of `id`
-which wants to see `cat a a`, not `cat (a,b) (a,b)`).
-So instance of `Control.Category` is only partially implemented: 
+This is a GADT that defines a type parametrized by pairs, this approach causes problems with 
+implementing `id`. Expected type of `id` is `cat a a`, and not `cat (a,b) (a,b)`.
+
+So the instance of `Control.Category` is only partially implemented: 
 
 > instance (Category c1, Category c2) => Category (c1 :**: c2) where
 >    id = undefined -- id :**: id  
@@ -45,7 +49,7 @@ Definition of BiFunctor from the book:
 >      second :: (b -> d) -> f a b -> f a d
 >      second = bimap id
 
-with 2 examples copied for a reference:
+with 2 examples (just for reference):
  
 > instance Bifunctor (,) where
 >     bimap :: (a -> c) -> (b -> d) -> (a, b) -> (c, d)
@@ -64,7 +68,6 @@ And here we go:
 >     bimap ac bd (Curry fp) = Curry $ cmap (ac :**: bd) fp 
 
 __TODOs__
-TODO think about that `id` issue.   
 TODO Implement ProFunctor as CFunctor ((<-) :**: (->)) (->)
   
 

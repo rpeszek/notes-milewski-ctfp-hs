@@ -1,0 +1,195 @@
+
+__WORK IN PROGRESS__
+
+Why read CTFP?  Why study Category Theory?
+==========================================
+
+> module CTNotes.Introduction where
+
+I finished my second (I am sure not last) reading of Milewski's book.       
+This note is about what motivated me to read CTFP and why I think we need this book.  
+At my work, my group is working on a very serious refactoring and technology shift.  That change
+follows months of technical discussions.  These experiences at work have motivated writing of this note as well. 
+I cannot help but ask myself: how different would all of this have been if my coworkers have read CTFP? 
+ 
+We live in __stackoverflow__ times.  Only few read programming books. Deadlines are deadlines, there is just 
+no time for reading and linear learning. There are limits to google search learning. Books are needed!
+
+__Why this particular book?__  
+There are other books about category theory written for programmers. 
+In my opinion, CTFP is unique in 2 ways: 
+ * it covers lots of ground, more than any of the other books
+ * it manages to stay very intuitive and relevant to programming  
+Personally, I really appreciate the second bullet. 
+
+__Why learn Category Theory?__  
+Category Theory is not intuitive (not to me). It is different from ground-up. 
+It redefines everything starting with basic concepts like sum, product, exponent. 
+Being different is good. Think about a toolbox with only one type of screwdriver in it, I want more tools in my toolbox.
+
+Category Theory uncovers common structures in computations. These structures allows 
+us to understand computations in ways not possible otherwise. Category Theory allows to identify similarities between
+seemingly disparate concepts. It tells us that the code has properties (obeys laws) and what these properties (laws) are. 
+But it gets even more fundamental than this.
+ 
+
+Trinity of Computer Science, Practical trinitarianism
+-----------------------------------------------------
+The term was coined by Robert Harper ([post](https://existentialtype.wordpress.com/2011/03/27/the-holy-trinity/)) 
+and is relatively new (2011) but the concept is old (Curry-Howard-Lambek correspondence, 1970s).  
+At some point in the future trinitarianism will become 
+[quadrinitarianism](http://comonad.com/reader/2018/computational-quadrinitarianism-curious-correspondences-go-cubical/)
+but that is another story.  
+
+To me trinitarianism means that I have 3 tools when designing and developing programs:
+* Proof Theory
+* Type Theory
+* Category Theory
+
+They may all be equivalent, but as tool sets each offers a unique set of benefits.
+They are the three manifestations of the notion of computation.
+
+Phil Wadler distinguishes languages that were created (like one I use at work called Java) from languages that were
+discovered (like Lambda Calculus).  Other then the scope, this is equivalent to Harper's concept of the divine.  
+Software engineers love arguing which code is better (better than divine?). 
+Correspondence to logic is really the best measure is in such arguments.
+
+Divine computation sounds like something out of reach of a moral programmer. I disagree! 
+Remember, we live in the __stackoverflow__ times and we copy-paste programs. 
+Copy-paste of a divine is still divine.
+The only problem is how to recognize the divine aspect?  
+Hmm, only if there were books about it, or if there was some catalog of divine computations 
+(like something called Category Theory)...
+
+We can question many things, say, the use of Hibernate or even something like the Java language design.
+Similar question do not even make sense with respect to the Lambek correspondence.
+These 3 manifestations of code simply are. Questioning that correspondence is like questioning 
+Pythagorean Theorem.  
+What we can and often do, however, is to just ignore it!  
+This is what software engineers have been doing for years with reasonable (but limited) success. 
+
+Software engineering was founded on a belief that complex logical problems can be solved without 
+any training in logic. Despite being self-contradictory, this approach worked surprisingly well for many
+software products. The limitation of this approach is that it does not scale well with logical complexity. 
+Learning Category Theory is admitting to the existence of these limits and to the importance of logic.
+
+
+__Beginner Trinitarianist__  
+First steps are as simple as a change in the attitude: 
+When designing my app I look for soundness and strong theoretical properties. I want to use building blocks 
+that are battle tested in logic. I want to write code that is type-safe. 
+
+Take just type safety as an example and think about Java Object class with its lucky 13 methods.
+These methods can be invoked on any object, `"boo".equals(5)` compiles just fine, comparison between 
+String and Integer always returns `false`, 
+and there is a 99.9% chance that comparing String to Integer is an escaped bug! 
+
+In reality, any app has Monoids, Monads, Natural Transformations, etc, ignoring these is dangerous.
+Monoids, Monads, and Natural Transformations are categorical concepts that come with laws.
+Laws are important.  Consider this code that uses Java standard library
+```
+//using Groovy console as REPL replacement to see what Java will do
+TOOD
+```
+nothing good can possibly come out of equals being not symmetric!  
+(Exercise for Java coders: play with Java Comparators using Dates and Timestamps, 
+is `<` anti-symmetric for objects in Java standard library?)   
+Software engineers do not lose any slip over it. We all have a tendency to de-emphasize importance of things 
+we do not understand. Unfortunately, logic is not very forgiving, 
+not understanding electricity does not make us immune from getting electrocuted.  
+
+__Trust__.  I had tried to convey this at work but I have failed. As an engineer I do not need
+to understand monoids, monads, etc, to use them!  I only need to trust that they are important and learn their plumbing. 
+I still will rip the benefits of code that has better correspondence to logic, it will be less buggy and easier to maintain.
+This speaks to the very idea of good engineering. Engineering is about applying science and mathematics to solve practical problems. 
+Great engineers do not need the depth of mathematical knowledge. What they need is just trust in The Queen.  
+
+CTFP is a great companion here. It covers lots of ground while being intuitive and interesting to read. It delivers a list
+of useful concepts and helps building that _trust_.  CTFP replaces fear of formalism with curiosity. Curiosity is what writes 
+interesting programs.
+My goal in my first reading of CTFP was to get the concepts down and to start applying them (often blindly).
+ 
+__Intermediate Trinitarianist__  
+Next steps are as simple as defining app types and then thinking what kind of theorems 
+I can prove about these types.  Consider this very simple and incomplete example
+
+> data HTML = NeedsWork | NeedsImagination
+>
+> data FancyTree a = SomethingInteresting
+> 
+> class ToHTML a where
+>   toHTML :: a -> HTML
+>
+> instance ToHTML a => ToHTML (FancyTree a) where 
+>   toHTML = undefined
+>
+> fancyTreeToHTML :: (a -> HTML) -> FancyTree a -> HTML
+> fancyTreeToHTML = undefined
+
+As an engineer I can think that I am implementing HTML rendering leveraging on other work.
+As a trinitarianist I see theorems and proofs (well, not proofs because I was lazy and have used `undefined`).  
+`instance` definition is a theorem and so is the type signature of `fancyTreeToHTML`.
+For a trinitarianist, `->` and `=>` are the modus ponens!  
+Trinitarianist views code like this as proving ToHTML theorems about application types.
+
+That sounds like "this's just semantics".  Right on!  It is just semantics, but only for code that is close to logic.
+Pick some Java program at random and try to think about it as theorems and proofs.  That will not work so well, will it?
+
+A more advanced use of types allows me to use compiler to verify things for me. 
+Here are some examples I played with in this project:
+ * [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity) Compiler checks type cardinality [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity), 
+ * [N_P3Ch15b_CatsAsMonads](N_P3Ch15b_CatsAsMonads) compiler
+verifies that 2-cell `mu` in the bicategory of spans is the same as the arrow composition. 
+  
+There are limits to what compiler can do (especially true in a language like Haskell) 
+and pencil and paper proofs are still needed. Proofs are like unit tests that take no time to execute
+and are valid across all possible data scenarios.
+
+A lot of programming is about verifying that things are equivalent, isomorphic in some way.
+One big ticket item here is refactoring, where parts of code should typically work the same before and after. 
+_Equational reasoning_ is the go to technique here but Category Theory often provides a nice set of ready tools 
+for stuff like this (like the Yonada transformation). 
+
+More advanced use of Categories means that I
+ * Prove laws about my computations. 
+ * Use a toolbox of refactoring solutions.  
+ * Use Category Theory to come up with how to do stuff, for example program with diagrams! 
+ See [N_P1Ch08b_BiFunctorComposition](N_P1Ch08b_BiFunctorComposition), [N_P3Ch02a_CurryAdj](N_P3Ch02a_CurryAdj), or [N_P3Ch02c_AdjProps](N_P3Ch02c_AdjProps)
+ * Understand why some code looks so similar to other [N_P3Ch11a_KanExt](N_P3Ch11a_KanExt)
+ * Better understand computational structure, for example iso-recursion [N_P3Ch08a_Falg](N_P3Ch08a_Falg) 
+ * Use categories in defining business requirements (that is something I would like to research more.)
+
+and so on..
+
+Current industry and social bias against formalism and mathematics may prevent people from writing code that looks 
+anything like proofs. Category Theory offers a partial work-around here. It allows engineers to think of implementing 
+code using logically validated building blocks. Again that _trust_ idea I wrote about.
+
+CTFP is again a great companion. I can re-read parts of it, it builds base knowledge for me to
+do more research. I do not want to admit to how many times I re-read some of the chapters.
+
+
+Conclusions
+-----------
+There appear to be 2 very different parts to writing software:  programming and engineering.  
+
+Programming is about logic, proofs, types, categories.  
+Programming is about provable correctness.  
+Engineering is pragmatic, suspicious of formalism, and has deadlines.  
+Engineering is about correctness by a lot and lot of testing effort (often while ignoring provable incorrectness).  
+
+Programming is a very small share of the overall software development (looking at language usage statistics
+suggest about 1%). My personal interest and bias is clearly on the programming side but I do think of
+myself as an engineer too.  I think current balance point is just wrong, there needs to be more that 1% market share
+of programming in software!
+  
+Besides, that 1% just proves my point. Writing code is like skiing, driving a car, or anything else.
+Just look at what everyone else is doing, do exactly the opposite and you will be just fine.
+
+Category theory is one of the big three. If offers bullet proof... No! more than bullet proof, it offers logical 
+solutions to programming problems.
+It offers understanding of the code structure. 
+CTFP is currently the best book to learn it if you are a coder and not a working mathematician. It is not a very hard reading.
+What are you waiting for? 
+
+Would we be making different technology decisions after reading CTFP?  Yes, we would. 
