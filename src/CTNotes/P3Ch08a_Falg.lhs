@@ -78,7 +78,7 @@ It would be cool to understand how equi-recursion plays out using more CT approa
 On high level things are very similar, we have least and greatest fixpoints for example.  
 
 __Recap__   
-It is short of amazing that Category Theory aids in understanding of recursive types.
+It is short of amazing that category theory aids in understanding of recursive types.
 Lambek theorem says that among F-algerbras `F a -> a`, if there is an initial one, its carrier type will 
 be the fix point of `F` (`F i ~= i`).  This is exactly the iso-recursive take on `μ`. 
 
@@ -156,7 +156,7 @@ Functor example
   A   ---->   B  =====>  C
   |         /           /                    |
   |       /           /                      |
-  |     /           /             Functor F  |
+  |     /           /             functor F  |
   |   /           /                          |
   | /           /                           \ /
   A           B          C

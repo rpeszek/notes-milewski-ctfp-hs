@@ -2,16 +2,19 @@
 
 CTFP Part 1 Chapter 10. Natural Transformations
 ===============================================
-Natural Transformations (NTs for short) are building blocks to a lot of category theory and are ubiquitous in Haskell.
+Natural transformations (NTs for short) are building blocks to a lot of category theory and are ubiquitous in Haskell.
 They are also interesting if you like composable code. NTs can be composed in more than one way.
 
 These notes are about
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 10](https://bartoszmilewski.com/2015/04/07/natural-transformations/).
 
-> {-# LANGUAGE Rank2Types #-}
-> {-# LANGUAGE TypeOperators #-}
-> {-# LANGUAGE PolyKinds #-}  -- added to make (:~>) definition kind polymorphic
+The main goal of this note is to follow chapter 10 by writing conceptual code and doing equational reasoning on that code.
+
+> {-# LANGUAGE Rank2Types 
+>  , TypeOperators 
+>  , PolyKinds -- added to make (:~>) definition kind polymorphic
+>   #-}  
 >
 > module CTNotes.P1Ch10_NaturalTransformations where
 >
@@ -22,7 +25,7 @@ These notes are about
 > import Data.Functor.Const (Const(..))
 > import Control.Monad (join, return)
 
-Typically, Natural Transformations are defined using `~>` type operator.
+Typically, I see natural transformations defined using `~>` type operator.
 This is the case for Scalaz and Purescript. To keep with my convention of prefixing
 type operators with `:` I will define it as `:~>`.  Other than using type operator (`TypeOperators` pragma is required), 
 this definition matches the book.
@@ -30,10 +33,10 @@ this definition matches the book.
 > infixr 0 :~>
 > type f :~> g = forall x. f x -> g x
 
-This requires language to support universally quantified types (needing `Rank2Types` or `RankNTypes` pragma).  
-This type definition simply means all functions from type `f x` to type `g x` that are polymorphic in type parameter x.  
+This requires language support of universally quantified types (needing `Rank2Types` or `RankNTypes` pragma).  
+`(:~>)` simply means all functions from type `f x` to type `g x` that are polymorphic in type parameter x.  
 
-With type operators we could write, for example:
+Using `(:~>)` I can write, for example:
 
 > safeHead :: [] :~> Maybe  
 > safeHead [] = Nothing
@@ -43,7 +46,7 @@ instead of
 ```
 safeHead :: [a] -> Maybe a
 ```
-`:~>` definition is oriented towards `Data.Functor` functors, but it seems to be general enough.
+`(:~>)` definition targets `Data.Functor` functors, but it seems to be more general.
 For example, the following definition for bifunctors (which are functors too) is not interesting:
 
 > type f :~~> g = forall x y. f x y -> g x y
@@ -67,7 +70,7 @@ That works because composition of two functions that happen to be polymorphic mu
 Recap. Naturality condition
 ---------------------------
 We are interested in functions `f a -> g b`.
-Natural transformation allows as to move between functors `f` and `g`, function `a -> b` moves us between types.
+`f :~> g` moves between functors, `a -> b` moves between types.
 Combining these, allows to change both functor and type and move `f a -> g b`.  
 However, we can accomplish that in two different ways:
 
@@ -78,16 +81,17 @@ However, we can accomplish that in two different ways:
 > naturality2 alpha f = alpha . fmap f
 
 (Read this as: if I have an NT `f :~> g` and a function `(a -> b)`, I can change both: `f a -> g b`.)   
-Category Theoretical definition of Natural Transformation says that both approaches need to commute (yield the same result).
-What is amazing is that in programming you get this for FREE!  If both `f` and `g` are functors, 
-static code analysis can safely replace one code with the other if it feels like it will make thing better or faster. 
+Category theoretical definition of natural transformation says that both approaches need to commute (yield the same result).
+What is amazing is that in a language with parametricity (like Haskell) you get this for FREE!  
+If both `f` and `g` are functors, static code analysis can safely replace one code with the other if it feels like 
+it will make thing better or faster. 
 Interchange laws like this one are also very useful in equational reasoning on code.
 
-The actual formula in Category Theory repeated from the book is:
+The actual category theory formula repeated from the book is:
 ```
    fmap_G f . alpha_a == alpha_b . fmap_F f
 ```
-but because alpha is polymorphic we can drop underscored types `a` and `b`. Compiler can reconstruct/infer which functor 
+but because alpha is polymorphic we can drop underscored types `a` and `b`. GHC can reconstruct/infer which functor 
 type to use for `fmap` and the functor subscript can be dropped as well.
 
 
@@ -104,7 +108,6 @@ We can express this using `Category` typeclass defined in `Control.Category` mod
 
 (`id` in `NTVert id` is the polymorphic identity `id :: a -> a` function.)  
 Proving the category laws is trivial since the vertical composition reduces to function composition and id is the `id`.  
-(With similar iso vs equi discussion (plain `:~>` being equi and `NTVert` being iso).)
 
 
 Horizontal Composition
@@ -114,14 +117,14 @@ Horizontal composition of NTs is an NT between composed functors, repeating the 
  β :: G -> G'  
  β ∘ α :: G ∘ F -> G'∘ F'  
 
-In general we would have something like 
-    G'α_a ∘ β_Fa  == β_F'a ∘ G α_a
+In general we would have something like this, which follows from the natuality condition:
+    G' α_a ∘ β_Fa == β_F'a ∘ G α_a
 
 β ∘ α is sometimes called Godement product and the above isomorphism Godement interchange law.  
 I like to think that this composition is called horizontal because (vertical) NT is pushed 
 forward by a (horizontal) functor.
 
-Parametricity/polymorphism arguments make horizontal composition simpler in Haskell:
+Keeping everything polymorphic makes Haskell horizontal composition simpler:
 
 > horizontalComp1 :: Functor g =>
 >                     g :~> g' -> f :~> f' -> g :. f :~> g' :. f'
@@ -133,31 +136,34 @@ Parametricity/polymorphism arguments make horizontal composition simpler in Hask
 > horizontalComp2 beta alpha =
 >    (\(FComp.Compose x) -> FComp.Compose $ fmap alpha . beta $ x)
 
-Again, we get `horizontalComp1 '==' horizontalComp2` and static code analysis can swap one code for the other. 
+`horizontalComp1` has to produce the same result as `horizontalComp2` (this time because of general categorical arguments) 
+and static code analysis can swap one code for the other. 
 We have another tool for equational reasoning too.  
 This is really nice!
 
-Note 1: In the above formulas (from the CT point of view) (.) represents Hask morphism so it should be viewed as 
+_Note 1_: In the `horizontalComp` definitions `(.)` represents morphism in Hask so it should be viewed as 
 function composition, not vertical composition of NTs.   
-Note 2: all of these should be Functors but for the implementation we just need one.  
+_Note 2_: all `f, g, f', g'` should be `Functor` but for the implementation we just need one.    
 TODO: do we need all of them to be functors for the interchange law to hold in Haskell?  
-Note 3: a much simpler implementation of `horizontalComp1` given by `fmap (beta . fmap alpha)` does not compile.  
-GHC infers the same type on both sides (which makes sense):
+_Note 3_: a much simpler implementation of `horizontalComp1` given by `fmap (beta . fmap alpha)` does not compile.  
+GHC infers the same type on both sides:
 ```  
  Expected type: (:.) b1 a1 x -> (:.) b2 a2 x  
     Actual type: FComp.Compose b2 a2 (b1 (a1 x0))
                  -> FComp.Compose b2 a2 (b2 (a2 x0))
 ```
 Horizontal composition is essential in making endofunctor composition a bifunctor (tensor product).
+Something very much needed in categorical definition of monads.
+
 
 Interchange Law
 ---------------
 We have two types of compositions and they enjoy this nice distribution formula:  
      (β' ⋅ α') ∘ (β ⋅ α) = (β' ∘ β) ⋅ (α' ∘ α)
 
-In this formula (.) is vertical and (∘) is horizontal composition 
+In this formula, (.) is vertical and (∘) is horizontal composition 
 (not that it would look much different if the notation was swapped).   
-Another perfect tool to have for static analysis swaps or equational reasoning.
+This law provides yet another tool for static analysis swaps or equational reasoning.
 
 I will quote Milewski quoting Mac Lane:
 "I will quote Saunders Mac Lane here: The reader may enjoy writing down the evident diagrams needed to prove this fact."
@@ -209,13 +215,15 @@ Horizontal composition as morphisms between categories
 ------------------------------------------------------
 Horizontally composed NTs work on composed functors β ∘ α :: G ∘ F -> G'∘ F'.  
 In general case these do not need to be endofunctors so   
-if F :: C -> D and G :: D -> E, G ∘ F:: C -> E (rinse and repeat for primes),  
+if F :: C -> D and G :: D -> E, G ∘ F:: C -> E (rinse and repeat for F' and G'),  
 then we can neatly think of NTs mapping the same categories as the functors do:  
 α:: C -> D and β:: D -> E, β ∘ α:: C -> E. 
 
-In Haskell that all flattens out and we have
-F :: Hask -> Hask, G :: Hask -> Hask, G ∘ F:: Hask -> Hask and    
-α:: Hask -> Hask and β:: Hask -> Hask, β ∘ α:: Hask -> Hask is not interesting.  
+In Haskell that all flattens out and we have  
+F :: Hask -> Hask, G :: Hask -> Hask, G ∘ F:: Hask -> Hask  
+so   
+α:: Hask -> Hask and β:: Hask -> Hask, β ∘ α:: Hask -> Hask  
+is not interesting.  
 
 __Category laws__. Following the book the identity morphism is a natural transformation 
 of the type `Identity :~> Identity`.   
@@ -262,7 +270,7 @@ is not that interesting and I will not do it.
 
 Code examples
 -------------
-Natural Transformations are ubiquitous in Haskell as is the use of polymorphic functions. Even polymorphic functions 
+Natural transformations are ubiquitous in Haskell as is the use of polymorphic functions. Even polymorphic functions 
 that do not look like `f a -> g a` end up being NTs.  Book has this interesting example:
 
 > lengthIsNt :: [] :~> Const Int 
@@ -307,9 +315,9 @@ and more:
 NTs involving `Reader r` have very special importance (Yoneda) and deserve separate set of notes (as do monad 
 and comonad examples).
 
-I sometimes see natural transformations explicitly called out in the code (typically by using `~>`) to emphasize 
+I sometimes see the natural transformation explicitly called out in the code (typically by using `~>`) to emphasize 
 type transformation.  For example, DSL implementations that map abstract syntax instructions to interpreter, 
-or transformation of effects.
+or transformations of effects.
 
 __Composition__. Vertical composition of NTs reduces to `(.)` and is obviously used a lot.
 Horizontal composition hides in code patterns like `fmap f . g` used with composed types.  
@@ -324,9 +332,9 @@ and since `join` is a natural transformation:
 > reduceDoubleMaybe = join . FComp.getCompose
 
 Is that not nice! We just composed vertically and horizontally: `join . (safeHead ∘ safeHead)`.   
-TODO think about this example as I move forward in the book.
 
-TODO maybe isos should use ~= and for actual equals use == ?
+TODO think about this example as I move forward in the book.  
+TODO notational change: maybe isos should use ~= and for actual equals use == ?
 
 NTs as Ends
 -----------
@@ -337,7 +345,8 @@ This is similar to how bifunctors compose
 [N_P1Ch08b_BiFunctorComposition](N_P1Ch08b_BiFunctorComposition)).
 
 The end `∫_c C(F c, G c)` wedge condition is exactly the naturality condition.
-Ends are equivalent to NTs.  This provides additional motivation for Haskell
+Ends are equivalent to NTs.  Thinking about ends provides additional explanation why we use
 ```
 forall x. f x -> g x
 ```
+in Haskell.

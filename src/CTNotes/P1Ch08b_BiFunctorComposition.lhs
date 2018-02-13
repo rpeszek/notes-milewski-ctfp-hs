@@ -1,7 +1,7 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch08b_BiFunctorComposition
 
-Notes about CTFP Part 1 Chapter 8. BiFunctor composition as Functor composition
-===============================================================================
+Notes about CTFP Part 1 Chapter 8. Functoriality. BiFunctor composition as functor composition.
+===============================================================================================
 It is conceptually easier to think of bifunctor as simply a functor from a product category. 
 This note uses this approach to explain bifunctor composition.
 
@@ -41,6 +41,6 @@ Hask   ----->   Hask x Hask  -------->  Hask x Hask ----->  Hask
  a                a x a               (fu a) x (gu a)       bf (fu a) (gu a)
 ```
 I find diagrams like this more intuitive than the code.  Being able to reason about code like this is, indeed, a nice
-incentive to study Category Theory.
+incentive to study category theory.
 
 

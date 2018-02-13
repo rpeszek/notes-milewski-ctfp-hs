@@ -2,10 +2,10 @@
 
 Note about CTFP Part 1 Chapter 7. Functors on non-Hask categories 
 ==================================================================
-This note explores generalized definition of Functor typeclass that works with other categories
+This note explores generalized definition of `Functor` typeclass that works with other categories
 than Hask.  
 
-It also provides some example Functors for the category `A->B=>C` defined in 
+It also provides some example functors for the category `A->B=>C` defined in 
 [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats). The interesting bit is that a given type constructor can now
 have several possible functor instances. 
 
@@ -88,7 +88,7 @@ Generalized contravariant functor just flips the morphism in `r`
  
 Functor Examples
 ----------------
-__HomSet as Functor__
+__HomSet as functor__
 
 > instance CFunctor (FinCat.HomSet a) FinCat.HomSet (->) where
 >   cmap morph x = morph . x

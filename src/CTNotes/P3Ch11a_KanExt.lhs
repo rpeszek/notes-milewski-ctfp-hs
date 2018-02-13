@@ -6,7 +6,7 @@ Notes about CTFP Part 3 Chapter 11. Kan Extensions
 Haskell (simplified) derivations of Ran and Lan.  
 Similarities of Codensity, ContT, Yoneda.  
 Example of calculating adjunctions.  
-Yoneda creates Functors for Free by extending discrete category embedding over a data constructor.
+Yoneda creates functors for free by extending discrete category embedding over a data constructor.
 
 Book Ref: https://bartoszmilewski.com/2017/04/17/kan-extensions/
 

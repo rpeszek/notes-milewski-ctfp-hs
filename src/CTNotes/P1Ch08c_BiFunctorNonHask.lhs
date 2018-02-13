@@ -1,15 +1,21 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch08c_BiFunctorNonHask
 
-For my own future use (Monoidal Categories) I define more general version of BiFunctor that is similar in spirit to CFunctor.
+Notes about CTFP Part 1 Chapter 8. Functoriality. BiFunctor generalized to non-Hask categories.
+===============================================================================================
+
+In this note, I define more general version of bifunctor that is similar in spirit to CFunctor.
+This, more general bifunctor is needed for future use (monoidal categories [N_P3Ch06c_MonoidalCats](N_P3Ch06c_MonoidalCats)). 
 
 Refs: `category-extras`, `categories` packages
 
-> {-#LANGUAGE MultiParamTypeClasses, PolyKinds#-}
+> {-#LANGUAGE MultiParamTypeClasses
+>  , PolyKinds
+>  #-}
 > module CTNotes.P1Ch08c_BiFunctorNonHask where
 > import Control.Category
 > import Prelude hiding ((.), id)
 
-`category-extras` and `categories` define Monoidal in terms of more general type classes: `Associative`, `Bifunctor`, 
+`category-extras` and `categories` define `Monoidal` in terms of more general type classes: `Associative`, `Bifunctor`, 
 and `HasIdentity`.
 This note bundles all 3 into one and uses a less generic approach.
 

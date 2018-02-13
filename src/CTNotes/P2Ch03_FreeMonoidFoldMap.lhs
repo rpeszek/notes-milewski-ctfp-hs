@@ -89,7 +89,7 @@ Note 1: writing this code is a garden path walk too. We could have made some
 equivalent choices by using left associative `foldl` instead of right associative `foldr`
 but these end up superficial (`mappend` associativity).
  
-Note 2: Given generators, Free Monoid is unique up to isomorphism.  This follows directly
+Note 2: Given generators, free monoid is unique up to isomorphism.  This follows directly
 from uniqueness of the factorizing homomorphism.  
 
 
@@ -117,7 +117,7 @@ Counterexample:
 > traverseInorder :: TreeWithInorderTraversal a -> [a]
 > traverseInorder = undefined
 
-Deriving Functor and Foldable on this is straightforward 
+Deriving `Functor` and `Foldable` on this is straightforward 
 (Coproduct of foldables is foldable, Coproduct of functors is functor, etc).
 
 > instance Monoid (TreeWithInorderTraversal a) where
@@ -125,7 +125,7 @@ Deriving Functor and Foldable on this is straightforward
 >   tree1 `mappend` tree2 = Flat (traverseInorder tree1 ++ traverseInorder tree2) 
 
 monoid laws follow from the monoid properties of the list.  
-This structure is not a List and is not a Free Monoid, 
+This structure is not a List and is not a free monoid, 
 but it is an honest `Monoid` and it is an honest `Foldable`. 
 
 Adjunction

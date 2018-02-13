@@ -50,7 +50,7 @@ Thus, the most interesting question for finite categories seems to be if there a
 Monads
 ------
 To talk about a monad I need endofunctor F and 2 natural transormations `eta :: Id -> F` and `mu :: F ∘ F -> F`.
-Both Functors and Natural Transformations on `A->B=>C` do not have any point-wise aspect and 
+Both functors and natural transformations on `A->B=>C` do not have any point-wise aspect and 
 are just mappings of objects A,B,C and enumerated morphisms.   
 When restricted to objects, eta becomes equivalent to the functor itself.
 

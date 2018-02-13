@@ -12,7 +12,7 @@ This is my attempt to use Haskell language to describe these concepts.
 
 What are the properties of types like `[Tree (Either Err [a])]`, `Either Err (Parser [a])` or 
 `(r -> [(s -> Maybe (t -> ))])`?   
-In my opinion, Functor Composition is foundational to understanding of even basic types like nested lists 
+In my opinion, functor composition is foundational to understanding of even basic types like nested lists 
 `[[a]]` or something like a safeTail `Maybe [a]`.
 
 > {-# LANGUAGE TypeOperators 
@@ -24,7 +24,7 @@ In my opinion, Functor Composition is foundational to understanding of even basi
 > import Data.Functor.Compose (Compose(..))
 > import Data.Functor.Identity (Identity(..))
 
-Functor Composition
+Functor composition
 -------------------
 Expressing functor composition is surprisingly doable in Haskell. It is implemented in the
 imported `Data.Functor.Compose` module (`base` package).  I am quoting abbreviated definition for documentation purposes:

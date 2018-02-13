@@ -1,25 +1,24 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch10b_NTsNonHask
 
-__Work-in-progress__
-
-Notes about Natural Transformations on non-Hask categories
+Notes about natural transformations on non-Hask categories
 =========================================================
-Natural Transformation definition is kind polymorphic and it works just fine with 
-Functors from non-Hask categories.  However the naturality condition free theorem appears no longer true.
+Natural transformation definition is kind polymorphic and it works just fine with 
+Functors from non-Hask categories.  However the naturality condition free theorem is no longer true.
 
 Book ref:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 10. Natural Transformations](https://bartoszmilewski.com/2015/04/07/natural-transformations/).
 
-> {-# LANGUAGE GADTs #-}
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE FlexibleInstances #-}
-> {-# LANGUAGE PolyKinds #-}
-> {-# LANGUAGE MultiParamTypeClasses #-}
-> {-# LANGUAGE FlexibleContexts #-}
-> {-# LANGUAGE TypeOperators #-}
-> {-# LANGUAGE StandaloneDeriving #-}
+> {-# LANGUAGE GADTs
+>  , DataKinds
+>  , KindSignatures
+>  , FlexibleInstances
+>  , PolyKinds
+>  , MultiParamTypeClasses
+>  , FlexibleContexts
+>  , TypeOperators
+>  , StandaloneDeriving
+>  #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module CTNotes.P1Ch10b_NTsNonHask where
@@ -29,7 +28,7 @@ Book ref:
 > import CTNotes.P1Ch07b_Functors_AcrossCats (CFunctor, cmap, Process2(..))
 
 
-Example why Naturality is not for free
+Example why naturality is not for free
 --------------------------------------
 
 Natural transformations (:~>) defined in 
@@ -63,7 +62,7 @@ Consider very simple category `A -> B`.
 >   id = MorphId
 >   (.) = compose
 
-and a simple Functor which maps objects `A` to `Process 'A` and `B` to `Process 'B`
+and a simple functor which maps objects `A` to `Process 'A` and `B` to `Process 'B`
 
 > data Process (o :: Object) where
 >     PStart1 ::  Process 'A
@@ -118,7 +117,7 @@ How to think about this
 -----------------------
 For `forall (x::k). f x -> g x` to be a natural transformation for non-Hask source categories 
 requires additional proof obligation of naturality condition.  This type is now too permissive. 
-This requirement is a value level equality similar in nature to many other laws. 
+Naturality is a value level equality similar in nature to many other laws. 
 
 As indicated in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats) there could be several very different functor instances
 for a given type constructor.  This tells me that the type constructors `f :: k -> *` themselves do not 
@@ -135,5 +134,5 @@ Here is answer to my question form Bartosz Milewski:
 In simple words, parametricity means that we define a polymorphic function using a single 
 formula for all types. As soon as you allow pattern-matching on types, you lose parametricity."
 
-Some of this goodness can come back when dealing with Functors from finite categories to finite categories
+Some of this goodness can come back when dealing with functors from finite categories to finite categories
 ([N_P3Ch06b_FiniteMonads](N_P3Ch06b_FiniteMonads)).

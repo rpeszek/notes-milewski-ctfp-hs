@@ -2,20 +2,21 @@
 
 Note about CTFP Part 2 Chapter 2. Limits - Equalizer. 
 =====================================================
-Representing Equalizer in Haskell.  
+Note about representing equalizer in Haskell.  
 This is not going to end well. The goal is to see how far I can go with it before it breaks.  
-The exercise is to use Equalizer as an example and try to follow 
+The exercise is to try to follow 
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 3. Limit and Colimits](https://bartoszmilewski.com/2015/04/15/limits-and-colimits/).
-using Haskell code.
+using Equalizer and Haskell code.
 
-> {-# LANGUAGE GADTs #-}
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE FlexibleInstances #-}
-> {-# LANGUAGE PolyKinds #-}
-> {-# LANGUAGE MultiParamTypeClasses #-}
-> {-# LANGUAGE Rank2Types #-}
+> {-# LANGUAGE GADTs 
+>  , DataKinds 
+>  , KindSignatures 
+>  , FlexibleInstances 
+>  , PolyKinds 
+>  , MultiParamTypeClasses 
+>  , Rank2Types 
+>  #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module CTNotes.P2Ch02c_Equalizer where
@@ -26,7 +27,7 @@ using Haskell code.
 
 A => B Category
 ----------------
-This approach follows construction in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats). 
+This approach is constructed in a way similar to [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats). 
  
 > data Object = A | B
 >
@@ -41,7 +42,7 @@ This approach follows construction in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCat
 
 Cool! GHC knows that this pattern match is exhaustive.  I love it!
 
-__A => B Category is Haskell category__
+__A => B Category is Haskell category__  
 Similarly to [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats) I get:
 
 > instance Category HomSet where
@@ -96,7 +97,7 @@ Note, `getFirst` patter match is exhaustive.
 > applyF2 x =  let v = (f2 x) ((getFirst . value $ x)) in x { value = Second v }
 >
 > instance CFunctor (PickFun a b) HomSet (->) where
->   cmap MorphId  = \x -> x        -- Pick f1 f2
+>   cmap MorphId  = \x -> x        
 >   cmap MorphAB1 = applyF1 
 >   cmap MorphAB2 = applyF2 
 
@@ -104,7 +105,7 @@ Note, `getFirst` patter match is exhaustive.
 We have `Const` and `D` functors needed in the construction of the cone.
 
 
-Cone and Natural Transformations 
+Cone and natural transformations 
 --------------------------------
 Given two (fixed) functions `fn1 :: a -> b`, `fn2: a -> b`, cone is simply two functions from `c` to either end of `a -> b`:
 
@@ -118,13 +119,15 @@ natural transformation between `Const c` and `PickFun a b` as
 
 this type contains polymorphic functions that do not depend on `x :: Object`. 
 Instead, I want a product type one that knows which `x` is used
-(using poor man's singleton approach)
+(using poor a man's singleton approach)
 
 > data Sing (a:: Object) where
 >    IsA :: Sing 'A
 >    IsB :: Sing 'B
 >    
 > type NatTran a b c = forall (x::Object). Sing x -> Const c x -> PickFun a b x
+
+At this point I ignore the naturality condition.
 
 We know from the book that cones and natural transformations are isomorphic.  
 Here is how this plays out in this special case (showing only one iso):
@@ -135,13 +138,14 @@ Here is how this plays out in this special case (showing only one iso):
 
 (Read this as: given 2 fixed functions `f1`, `f2` we can establish iso from `Cone` to `NatTran`.)
 
-Type checking the code we just know that arrows point at correct objects. We do not know if diagrams
+Type checking the code we just know that arrows point at correct objects. We do not know if the cone diagrams
 actually commute
 ```
  fn1 . c1 = fn2 . c1 = c2  
 ```
+(or that the naturality condition is satisfied - which should be the same thing) 
 this would have to be a proof obligation left to the programmer and that obligation is the pudding.
-This is like having to check that `fmap (f . g) = fmap f . fmap g`, only this property is much harder.
+
 
 Dead stop
 ---------

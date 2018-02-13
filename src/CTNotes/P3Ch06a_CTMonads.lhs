@@ -74,7 +74,7 @@ I researched a bit composing monads using what is called distributive laws.
 Linked paper calls is swap construction, but this note is more I based on [wikipedia](https://en.wikipedia.org/wiki/Distributive_law_between_monads) 
 
 It turns out that there is a natural monad structure on the composite functor m ∘ n 
-if monad m distributes over the monad n (if there is a _Natural Transformation_ `forall a . n (m a) -> m (n a)`
+if monad m distributes over the monad n (if there is a _natural transformation_ `forall a . n (m a) -> m (n a)`
 that satisfies certain conditions).  
 
 > class (Monad n, Monad m) => Dist m n where

@@ -3,7 +3,7 @@
 Notes about CTFP Part 3 Chapter 8. F-Algebras. Free
 ===================================================
 
-Notes about F-algerbas the Free monad.
+Notes about F-algerbas the free monad.
 The book does not talk about Free but I decided to research this note about it. 
 
 Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
@@ -20,7 +20,7 @@ Refs: [Doel, schoolofhaskell](https://www.schoolofhaskell.com/user/dolio/many-ro
 
 Free Monad
 ----------
-Free functor (Free Monad):
+Free functor (free monad):
 
 > data Free f a = Pure a | MkFree (f (Free f a))
 > 
@@ -78,7 +78,7 @@ _End side note_.
 
 
 
-Free Monad adjunction and F-algebras
+Free Monad Adjunction and F-algebras
 ------------------------------------
 ```
 U:: F-Alg -> Hask

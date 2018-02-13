@@ -57,7 +57,7 @@ with the example in the book.
  
 
 __F-algebra vs T-algebra__
-Can be very different, for example F-algebra for List does not have Monoid structure.
+Can be very different, for example F-algebra for List does not have monoid structure.
 For example, List monad algebras are monoids, but functor algebras do not have to be. 
 For example, initial algebra of the List functor is isomorphic to:  
 

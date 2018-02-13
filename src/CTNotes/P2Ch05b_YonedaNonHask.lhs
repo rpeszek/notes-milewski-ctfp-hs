@@ -2,7 +2,7 @@
 
 Notes about CTFP Part 2 Chapter 5. Yoneda Lemma for non-Hask categories
 =======================================================================
-This note explores Yoneda Lemma for Functors on non-Hask categories in Haskell. 
+This note explores Yoneda Lemma for functors on non-Hask categories in Haskell. 
 
 I use a simple GADT construction (from [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats)) of finite category 
 that enumerates all possible morphisms.
@@ -61,7 +61,7 @@ Here is a generalized definition of Yoneda type constructor with explicit kind s
 Functor Instance
 ----------------
 As discussed in [N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats), Haskell
-can express Functors between different categories (a quote, not an actual code):
+can express functors between different categories (a quote, not an actual code):
 ```
 class (Category homset, Category s) => CFunctor f homset s  where
    cmap :: homset a b -> s (f a) (f b)

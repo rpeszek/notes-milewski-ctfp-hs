@@ -1,6 +1,6 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch06c_MonoidalCats
 
-Notes on Monoidal Categories in Haskell.  Mostly because I will need them later. 
+Notes on monoidal categories in Haskell.  Mostly because I will need them later. 
 __Very much work-in-progress__  
 
 Refs:: `category-extras`, `categories` packages
@@ -13,7 +13,7 @@ Refs:: `category-extras`, `categories` packages
 > import Data.Void
 > import Data.Kind (Type)
 
-`category-extras`, `categories` define Monoidal in terms of more general type classes: Associative Bifunctor, HasIdentity
+`category-extras`, `categories` define `Monoidal` in terms of more general type classes: Associative Bifunctor, HasIdentity
 This bundles the concept into one and uses less generic approach.  
 `i` plays the role of identity object, `bi` is the tensor product.
 

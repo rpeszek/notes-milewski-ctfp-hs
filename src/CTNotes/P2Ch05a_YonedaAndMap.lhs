@@ -74,9 +74,9 @@ I need to pass a function to it. The code writes itself giving me only one optio
 > fromYoneda' :: ((->) a :~> f) -> f a
 > fromYoneda' trans = trans id
 
-In Type Theoretical lambda terms, this applies type `a` to quantification `forall x`. This is like a function application 
+In type theoretical lambda terms, this applies type `a` to quantification `forall x`. This is like a function application 
 only at type level. In psedo-Haskell that would look like `(forall x) $ a` resulting in `a`.    
-In Category Theoretical terms, this picks the component of the natural transformation at object `a`. 
+In category theoretical terms, this picks the component of the natural transformation at object `a`. 
 That component starts at the hom-set `C(a,a)` (`a -> a` in Hask), 
 `id` is the point value on which that component operates.  
 A very helpful intuition from the book, for me, was that Yoneda allows me to pick any value of type `f a` 

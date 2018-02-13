@@ -1,7 +1,7 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P1Ch08a_BiFunctorAsFunctor
 
-Notes about CTFP Part 1 Chapter 8. BiFunctor as CFunctor and Product Category
-=============================================================================
+Notes about CTFP Part 1 Chapter 8. Functoriality. BiFunctor as CFunctor and Product Category
+============================================================================================
 In categorical terms, bifunctor is simply a functor from a product category __C x C -> D__.
 In Haskell, the standard bifunctor definition is separate from that of a functor. 
 But, if there was a way to express the product of categories `(:**:)`, 
@@ -17,7 +17,14 @@ The hard part is implementing the product category `(:**:)`.
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 1. Ch.8 Functoriality](https://bartoszmilewski.com/2015/02/03/functoriality/).
  
-> {-# LANGUAGE TypeFamilies, TypeOperators, GADTs, FlexibleContexts, PolyKinds, UndecidableInstances, InstanceSigs #-}
+> {-# LANGUAGE TypeFamilies
+>  , TypeOperators
+>  , GADTs
+>  , FlexibleContexts
+>  , PolyKinds
+>  , UndecidableInstances
+>  , InstanceSigs 
+>   #-}
 >
 > module CTNotes.P1Ch08a_BiFunctorAsFunctor where
 > import Control.Category

@@ -13,29 +13,30 @@ This note maps `category-extras` code definitions to the construction of limit a
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 2. Ch.1 Limits and Colimits](https://bartoszmilewski.com/2015/04/15/limits-and-colimits/).
 
-> {-# LANGUAGE RankNTypes #-}
-> {-# LANGUAGE ExistentialQuantification #-}
-> {-# LANGUAGE TypeOperators #-}
-
+> {-# LANGUAGE RankNTypes
+>  , ExistentialQuantification 
+>  , TypeOperators 
+>  #-}
+>
 > module CTNotes.P2Ch02a_LimitsColimitsExtras where
 > import CTNotes.P1Ch10_NaturalTransformations ((:~>))
 > import Data.Functor.Identity (Identity(..))
 > import Data.Functor.Const (Const(..))
 
-CTPF considers the general case of limits of functors D:: I -> C.  
-These define a lot of interesting commuting diagrams in D.  Even taking I to be 
-a very trivial (finite) category often generates quite interesting diagrams (pullback, equalizer, pushout). 
-Unfortunately, these diagrams do not map easily to Hask. For example, `MondadPlus` is 
-not a pullback of `Monad` and `Monoid`, instead it defines its own `mzero` and `mplus`.
-(Intuitively, I think that in nominally typed language this type of stuff is hard if not impossible).  
-My focus in these notes is on learning and understanding of more direct/polymorphic 
-applications of CT to the type system and programming. 
+CTPF considers the general case of limits of functors __D:: I -> C__.  
+These define a lot of interesting commuting diagrams in __D__.  Even if  __I__ is 
+a very trivial (finite) category, often generates quite interesting diagrams (pullback, equalizer, pushout). 
+Unfortunately, these diagrams do not map easily to Haskell. For example, `MondadPlus` is 
+not a pullback of `Monad` and `Monoid`, instead it defines its own `mzero` and `mplus`.  
+(I think that this type of stuff is hard, maybe impossible for a programming language to support).   
+This note focus is a more straightforward application of the limit concept, one that assumes `I = C = Hask`. 
 
-Data.Functor Limit
-------------------
+
+Data.Functor Limit and universal quantification
+----------------------------------------------
 Using notation from the book, if we take `I = C = Hask` and `D = f`, where `f` is a `Data.Functor` functor, 
 what would be the `Lim f`? (If one exists of course.)  
-By definition, that would be a type `LimitF`in Hask (a regular kind `*` type) that has a nice 
+By definition, that would be a type `LimitF` (a regular kind `*` type) that has a nice 
 natural transformation from `Const LimitF` to `f` 
 ```
 type LimitF = ...
@@ -50,7 +51,7 @@ Consider ADT that looks like
 The only way to get a polymorphic function from something not dependent on `x` to `FooBar` is to use `NoX` or 
 `AnotherNoX` data constructor.
 I need a way to transform `FooBar` to a type that keeps constructors that 'do not depend on x'. 
-For `FooBar`, that type would be (remember, this is a regular type, no type variables):  
+For `FooBar`, that type would be (this is a regular type with no type variables):  
 
 ```
 data LimitFooBar = NoX | AnotherNoX 
@@ -60,7 +61,10 @@ Fortunately, if type system supports universal quantification we can do just tha
 
 > type Limit f = forall a. f a 
 
-(I read it as _keep the data constructors that do not depend on_ `a`)  
+(I read it as _keep the data constructors that do not depend on_ `a`)
+
+What is cool about it is that `Limit` can be viewed as categorical formulation of universal quantification 
+(ignoring complexity of ranks). 
 
 __`Limit f` cone__  
 It is easy to see that `Limit f` is an apex of a cone based on `f`:
@@ -69,11 +73,13 @@ It is easy to see that `Limit f` is an apex of a cone based on `f`:
 > limitCone = id 
 
 (This code says that if we have `f x` for all `x` we also have if for fixed `x`.
-_That is the type application reduction rule in System F._)    
+_That is the type application reduction rule in System F._)  
+  
 _Note:_ Currently, GHC (8.x) has problem with higher-rank type inference or
 _impredicative polymorphism_ and this (more correct but isomorphic) declarations   
 `limitCone :: Const (Limit f) x -> f x` or   
 `limitCone :: Const (Limit f) :~> f` do not compile.  
+
 TODO it would be good to understand this limitation better.
 
 __Universality__:
@@ -101,27 +107,30 @@ you need to show that the type is inhabited.
 > instance HasLimit FooBar where
 >   limit = NoX
 
-In many cases, however,
-the limit type is inhabited by only single value:
+In many cases the limit type is inhabited by only single value:
 
 > instance HasLimit Maybe where
 >   limit = Nothing
 > instance HasLimit [] where
 >	  limit = []
 
+but this does not need to always be the case.
+
 Intuitively, I view `Limit` as `(* -> *) -> *` type operator that strips all constructors
-that depend to the parameter type.  A stricter view is that `Limit f` is regular `*` 
+that depend to the parameter type.  A stricter view is that `Limit f` is a regular `*` 
 type inhabited by values that all types `f a` have.
 
 
 Limit as a Natural Isomorphism
 ------------------------------
-Following the book (section with the title) existence of the following natural isomorphism can 
-be viewed as a defining formula for Lim D:
+Following the book (section with the same title)  
+"A functor D from I to C has a limit Lim D if and only if there is a natural isomorphism between the two 
+functors":
 
  C(b, Lim F) ≃ Nat(Δb, F)
 
-(This says that factorizing morphisms are equivalent to limit defining natural transformations.)  
+(This formula says that factorizing morphisms are equivalent to natural transformations that define the limit.)  
+
 I can use it to derive `Limit f`.
 Using pseudo Haskell:
 ```
@@ -146,16 +155,17 @@ Data constructor `Colimit` hides `a`:
 Colimit :: f a -> Colimit f
 ```
 
-If product was very restrictive effectively intersecting values across all types `f a`, 
-coproduct is very permissive allowing any value from any type `f a`. Still `Colimit f` is just a
-regular (not parametrized) type of kind `*`. That Permissiveness allows for hiding of 
+The Limit was very restrictive effectively intersecting values across all types `f a`, 
+CoLimit is very permissive allowing any value from any type `f a`. 
+Still `Colimit f` is just a
+regular (not parametrized) type of kind `*`. That permissiveness allows for hiding of 
 implementation details.   
 Permissiveness is in construction 
 
 > fooBar :: Colimit FooBar
 > fooBar = Colimit $ SomeX 15
 
-hiding in deconstruction
+hiding is in the deconstruction
 
 > inspect :: Colimit FooBar -> String
 > inspect (Colimit NoX) = "NoX"
