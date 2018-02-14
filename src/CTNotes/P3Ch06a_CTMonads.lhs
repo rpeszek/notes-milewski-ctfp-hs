@@ -67,11 +67,11 @@ Monad eta/return compose too,  but mu/join does not.  To compose monads some add
 type constructors need to be made. 
  
 I found old (1993, pre-MTL) paper about Monad composition: [Jones, Duponcheel](http://web.cecs.pdx.edu/~mpj/pubs/RR-1004.pdf).
-It shows several approaches to composing monads. Some look related to monad alebras (`prod` construction). 
+It shows several approaches to composing monads. Some look related to monad algebras (`prod` construction). 
 This TODO is to think and investigate that further.  
 
-I researched a bit composing monads using what is called distributive laws.
-Linked paper calls is swap construction, but this note is more I based on [wikipedia](https://en.wikipedia.org/wiki/Distributive_law_between_monads) 
+I have researched a bit composing monads using what is called distributive laws.
+Linked paper calls is swap construction, but this note I based on [wikipedia](https://en.wikipedia.org/wiki/Distributive_law_between_monads) 
 
 It turns out that there is a natural monad structure on the composite functor m ∘ n 
 if monad m distributes over the monad n (if there is a _natural transformation_ `forall a . n (m a) -> m (n a)`

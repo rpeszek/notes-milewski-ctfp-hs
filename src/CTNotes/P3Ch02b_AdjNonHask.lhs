@@ -3,10 +3,11 @@
 Notes about CTFP Part 3 Chapter 2. Adjunctions. Product as adjunction, non-Hask generalizations 
 ===============================================================================================
 Many interesting adjunctions cannot be expressed using only Hask endofunctors (Using
-`Adjunction` defined in [CTNotes.P3Ch02a_CurryAdj](CTNotes.P3Ch02a_CurryAdj)). 
-This note explores coding adjunctions using general `CFunctor`-s.
-Coding for product adjunction is provided using a custom adjunction that works between a
-bifunctor and a functor.
+`Adjunction` similar to one defined in [CTNotes.P3Ch02a_CurryAdj](CTNotes.P3Ch02a_CurryAdj)). 
+This note explores coding adjunctions using a more general `CFunctor`.
+One important adjunction that cannot be expressed in Hask is the product adjunction.
+In this note I implement the product adjunction using a custom adjunction typeclass that works between two functors and 
+a bifunctor.
 
 Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
           [Part 3. Ch.2 Adjunctions](https://bartoszmilewski.com/2016/04/18/adjunctions/)
@@ -53,7 +54,8 @@ naming conventions (using `catc` for category __C__ hom-set and `catd` for categ
                   r  
 ```
 
-> class (CtFunctor l catd catc, CtFunctor r catc catd) => CtAdjunction l r catc catd  where 
+> class (CtFunctor l catd catc, CtFunctor r catc catd) => 
+>     CtAdjunction l r catc catd  where 
 >     unit   :: catd d (r (l d))
 >     counit :: catc (l (r c)) c
 >     leftAdjunct  :: catc (l d) c -> catd d (r c)
@@ -66,14 +68,15 @@ naming conventions (using `catc` for category __C__ hom-set and `catd` for categ
   
 This generalizes Hask endofunctor adjunction:
   
-> instance (CtFunctor l (->) (->), CtFunctor r (->) (->), AdjHask.Adjunction l r) => CtAdjunction l r (->) (->) where
+> instance (CtFunctor l (->) (->), CtFunctor r (->) (->), AdjHask.Adjunction l r) => 
+>    CtAdjunction l r (->) (->) where
 >    unit = AdjHask.unit
 >    counit = AdjHask.counit
      
 
 
-Adjunction between functor and bifunctor      
-----------------------------------------     
+Adjunction between two functors and a bifunctor      
+-----------------------------------------------     
 Since there are problems in defining `id` and creating instance of `Control.Category` 
 for product __Hask x Hask__ (`(->) :**: (->)`),
 this section defines adjunction between bifunctor and functor (__C = Hask x Hask__, __D = Hask__).    
@@ -88,9 +91,10 @@ this section defines adjunction between bifunctor and functor (__C = Hask x Hask
              c1      c2  ------->  r c
                              r  
 ```
-I use `21` to indicate product category on the left and on the right.
+I use `21` to indicate __Hask x Hask__ on the left and single __Hask__ on the right.
      
-> class (Bifunctor r, Functor l1, Functor l2)  => Ct21Adjunction l1 l2 r | r -> l1, r -> l2, l1 l2 -> r where
+> class (Bifunctor r, Functor l1, Functor l2)  => 
+>     Ct21Adjunction l1 l2 r | r -> l1, r -> l2, l1 l2 -> r where
 >     unit21 :: d -> r (l1 d) (l2 d)
 >     counit21_1 :: l1 (r c1 c2) -> c1  -- 2 morphism in Hask x Hask representing counit21 component
 >     counit21_2 :: l2 (r c1 c2) -> c2
@@ -147,3 +151,4 @@ C(a+b, c) ~= (C x C)(<a, b>, Δ c)
              c   -----===>    c   c  
          Identity, Identity             
 ```
+And I would need a new (but similar) typeclass to play with it.

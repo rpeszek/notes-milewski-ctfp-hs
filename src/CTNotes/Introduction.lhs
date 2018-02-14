@@ -50,7 +50,7 @@ To me, trinitarianism means that I have 3 tools when designing and developing pr
 They may all be equivalent, but as tool sets each offers a unique set of benefits.
 They are the three manifestations of the notion of computation.
 
-Phil Wadler distinguishes languages that were created (like one I use at work called Java) from languages that were
+Philip Wadler distinguishes languages that were created (like one I use at work called Java) from languages that were
 discovered (like various Lambda Calculi).  Other then the scope, this is equivalent to Harper's concept of the divine.  
 Software engineers love arguing which code is better (can you get better than a divine?).
 These arguments involve a lot of hand-waving.
@@ -77,7 +77,7 @@ software products. The limitation of this approach is that it does not scale wel
 Learning category theory is admitting to the existence of that limitation and to the importance of logic.
 
 
-__Beginner Trinitarianist__  
+__Beginner Trinitarianist__      
 First steps are as simple as a change in the attitude. 
 When designing my app I look for soundness and strong theoretical properties. I want to use building blocks 
 that logically sound. I want to write code that is type-safe. 
@@ -102,24 +102,42 @@ groovy>  [t.equals(d), d.equals(t)]
 
 Result: [false, true]
 ```
-nothing good can possibly come out of equals not being symmetric!  
+nothing good can possibly come out of equals not being symmetric!   
 (Exercise for Java coders: play with Java comparators using Dates and Timestamps, 
-is `<` anti-symmetric for objects in Java standard library?)   
+is `<` antisymmetric for objects in Java standard library?
+Better Exercise: try to fix it (fix Java source for Date and Timestamp). Not so easy, is it!)  
+  
 Software engineers do not lose any slip over it. We all have a tendency to de-emphasize importance of things 
 we do not understand. Unfortunately, logic is not very forgiving. 
-A good analogy: not understanding electricity does not make us immune from getting electrocuted.  
+Analogy: not understanding electricity does not make us immune from getting electrocuted.  
 
-__Trust__.  I had tried to convey this at work but I have failed. As an engineer I do not need
+Here is a fun example violating requirements defined by 
+[java.util.Set.equals](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#equals-java.lang.Object-), 
+this time more Groovy (tested with Groovy v.2.4.10):  
+```Groovy
+groovy>  def x= [] as Set
+groovy>  def y= "".split(",") as Set
+groovy>  
+groovy>  [x == y, x, y]
+
+Result:  [false, [], []]  // ~~~buzz, buzz, bzzz, hair standing on end
+```
+Implementing equals in Java is far from trivial. You often need to consider a whole universe of subtypes to do it well. 
+This one at least appears to be symmetric, `y == x` prints `false`.
+There is more than one point here: the laws are important and Wadler is right, 
+some language environments are just not logic friendly.
+
+
+__Trust__.  I had tried to convey this idea at work but I have failed. As an engineer I do not need
 to understand monoids, monads, functors, etc, to use them!  I only need to trust that they are important and learn their plumbing. 
 I still will rip the benefits of code that has better correspondence to logic, it will be less buggy and easier to maintain.
 This speaks to the very idea of good engineering. Engineering is about applying science and mathematics to solve practical problems. 
-Great engineers do not need the depth of mathematical knowledge. What they need is just trust in The Queen.  
-The goal here is to build stuff on solid foundations, not on broken foundations.
+Great engineers do not need the depth of mathematical knowledge. What they need is the trust in The Queen.  
 
 CTFP is a great companion here. It covers lots of ground while being intuitive and interesting to read. It delivers a list
 of useful concepts and helps building that _trust_.  CTFP replaces fear of formalism with curiosity. Curiosity is what writes 
 interesting programs.
-My goal in my first reading of CTFP was to just get the concepts down and to start applying them (often blindly).
+My goal in my first reading of CTFP was to just get the concepts down and to start applying them to my code (often blindly).
  
  
 __Intermediate Trinitarianist__  
@@ -133,7 +151,7 @@ I can prove about these types.  Consider this very simple (and incomplete) examp
 > -- without typeclasses
 > fancyTreeToHTML :: (a -> HTML) -> FancyTree a -> HTML
 > fancyTreeToHTML = undefined
-
+>
 > -- with typeclasses
 > class ToHTML a where
 >   toHTML :: a -> HTML

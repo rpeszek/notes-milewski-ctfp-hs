@@ -4,10 +4,10 @@ Notes about CTFP Part 2 Chapter 5. Yoneda Lemma for non-Hask categories
 =======================================================================
 This note explores Yoneda Lemma for functors on non-Hask categories in Haskell. 
 
-I use a simple GADT construction (from [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats)) of finite category 
+I use a simple GADT construction (from [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats)) of the category `A->B=>C` 
 that enumerates all possible morphisms.
 As we know ([N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats)) functors from such categories are not unique. 
-We also know ([N_P2Ch10b_NTsNonHask](N_P2Ch10b_NTsNonHask)) that naturality condition is no longer automatically satisfied.
+We also know ([N_P2Ch10b_NTsNonHask](N_P2Ch10b_NTsNonHask)) that the naturality condition is no longer automatically satisfied.
 
 However, examining Yoneda on such categories does provides a nice intuition. 
 To implement functors on these simple GADT categories, I have to pattern match on all morphisms.
@@ -53,7 +53,8 @@ In Haskell, this can be used with `DataKinds` to create custom categories like I
 Here is a generalized definition of Yoneda type constructor with explicit kind signature 
 (I use `CYoneda` name to mimic `CFunctor`): 
 
-> newtype CYoneda (homset :: k -> k -> *) (f :: k -> *) a = CYoneda { runCYoneda :: forall x. (homset a x -> f x) } 
+> newtype CYoneda (homset :: k -> k -> *) (f :: k -> *) a = 
+>      CYoneda { runCYoneda :: forall x. (homset a x -> f x) } 
 
 (`x` is inferred as `x :: k`).
 
@@ -86,10 +87,10 @@ Again, the code is not any different than Hask ([N_P2Ch05a_YonedaAndMap](N_P2Ch0
 > fromCYoneda :: (Category homset) => CYoneda homset f a -> f a 
 > fromCYoneda y = (runCYoneda y) id
 
-except the proof that `toYoneda . fromYoneda = id` uses naturality condition which may not be true any more 
+except the proof that `toYoneda . fromYoneda = id` uses the naturality condition which may not be true any more 
 (and it looks like it typically is not, see [N_P1Ch10b_NTsNonHask](N_P1Ch10b_NTsNonHask)).
 However, `fromYoneda . toYoneda = id` uses only functor laws which agrees with the intuition that
-there could be some extra polymorphic functions that fail the naturally test 
+there could be some polymorphic functions that fail the naturally test 
 (`CYoneda homset f a` is bigger and contains image of `f a`).
 
 
@@ -126,7 +127,7 @@ CFunctor instance for Process2 maps `A -> B => C` to these transformations
 Clearly the type has more freedom of movement than the functor image. 
 There will be polymorphic functions that won't play nice with the functor 
 (see [N_P1Ch10b_NTsNonHask](N_P1Ch10b_NTsNonHask)).
-However we can still 'pick' only the good choices that satisfy naturality condition.    
+However we can still 'pick' only the good choices that satisfy the naturality condition.    
 
 Instead of proceeding with functor implementation from 
 [N_P1Ch07b_Functors_AcrossCats](N_P1Ch07b_Functors_AcrossCats)
@@ -144,7 +145,9 @@ instance CFunctor Process2 A_B__C.HomSet (->) where
 This pattern match is a polymorphic case expression of type `homset a x -> f x` defined for all `x`-s 
 (this time I offer a real type checked code to verify my claim):
 
-> cmapForP2Start1 :: Process2 'A_B__C.A -> forall (x :: A_B__C.Object) . A_B__C.HomSet 'A_B__C.A x -> Process2 x  
+> cmapForP2Start1 :: Process2 'A_B__C.A -> 
+>                    forall (x :: A_B__C.Object) . A_B__C.HomSet 'A_B__C.A x -> 
+>                    Process2 x  
 > cmapForP2Start1 P2Start1 morph = case morph of
 >                     A_B__C.MorphId  -> P2Start1
 >                     A_B__C.MorphAB  -> P2Mid1 P2Start1
@@ -156,7 +159,9 @@ Repeating what I already said, `forall (x :: A_B__C.Object) . A_B__C.HomSet 'A_B
 functions than I will use in my definition of `cmap`.  This is because there are some bad polymorphic functions that 
 do not play nice with my functor.  For example, the following is a perfectly polymorphic choice not consistent with the functor:
 
-> badChoice :: Process2 'A_B__C.A -> forall (x :: A_B__C.Object) . A_B__C.HomSet 'A_B__C.A x -> Process2 x  
+> badChoice :: Process2 'A_B__C.A -> 
+>              forall (x :: A_B__C.Object) . A_B__C.HomSet 'A_B__C.A x -> 
+>              Process2 x  
 > badChoice P2Start1 morph = case morph of
 >                     A_B__C.MorphId  -> P2Start1
 >                     A_B__C.MorphAB  -> P2Mid2 P2Start1  -- uses P2Mid2
@@ -193,13 +198,14 @@ also see notes on the strong relationship between Yoneda and map in
 [N_P2Ch05a_YonedaAndMap](N_P2Ch05a_YonedaAndMap).)
 
 
-Code examples
--------------
-(Compared to use in Hask [N_P2Ch05a_YonedaAndMap](N_P2Ch05a_YonedaAndMap))     
+Practical use?
+--------------
+Is questionable. 
+Compared to Hask [N_P2Ch05a_YonedaAndMap](N_P2Ch05a_YonedaAndMap):     
 
-* Since we not longer have strict type isomorphism the usefulness needs to be questioned
+* Since we no longer have strict type isomorphism the usefulness needs to be questioned
 * CoYoneda benefit of deferred `cmap` is the same as for Hask case 
 * Functor for free benefit is the same as in Hask.   
 * I do not know about any DSL construction with non-Hask categories at this moment. 
 
-TODO actual code examples.
+

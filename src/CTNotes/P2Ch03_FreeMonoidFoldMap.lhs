@@ -1,6 +1,6 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P2Ch03_FreeMonoidFoldMap
 
-This note explains factorization in free construction of monoid using Haskell. It is the `foldMap`! 
+This note explains factorization in the free construction of monoid using Haskell. It is the `foldMap`! 
 
 This note explores 
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
@@ -31,7 +31,7 @@ Note 1: Not so fast, the factorizing homomorphisms needs to be unique and, well,
 homomorphisms. These things are outside of what Haskell type system can express and are 
 proof obligations.  
 Note 2: The list type should really contain finite lists only, but I am ignoring it.  
-Note 3: Because `mappend` is associative left associative `foldl` would do too. 
+Note 3: Because `mappend` is associative, left associative `foldl` would do too. 
 
 Proof obligations
 -----------------
@@ -68,7 +68,7 @@ that factorizes `q`.
 We know that both need to act the same on single element lists 
 (This is the requirement of the free construction,
 notice that, what book calls, `p` is the obvious embedding `p :: a -> [a]` 
-that creates single element list, U is not needed types `X-ray` themselves)
+that creates single element list, U is the identity functor, types `X-ray` themselves)
 ```
 foldMap    q [ax] = q ax -- from implementation
 factorize' q [ax] = q ax -- from construction
@@ -85,12 +85,12 @@ foldMap q x:xs
 
 __square box__
 
-Note 1: writing this code is a garden path walk too. We could have made some 
+Note 1: writing this code is a garden path walk. We could have made some 
 equivalent choices by using left associative `foldl` instead of right associative `foldr`
 but these end up superficial (`mappend` associativity).
  
 Note 2: Given generators, free monoid is unique up to isomorphism.  This follows directly
-from uniqueness of the factorizing homomorphism.  
+from the uniqueness of the factorizing homomorphism.  
 
 
 Is List the only foldable that is also a monoid?
@@ -130,9 +130,11 @@ but it is an honest `Monoid` and it is an honest `Foldable`.
 
 Adjunction
 ----------
-foldMap `(a -> m) -> [a] -> m` is the not trivial side of natural isomorphism (`rightAdjunct`) needed to show
-adjunction between forgetful functor U (`Identity`) and the list free functor. (Not real code
-since Adjunction typeclass works on Hask endofunctors): 
+Free monoid is described by the free-forgetful adjunction between the (left adjoint) List functor and the 
+forgetful functor U (here `Identity`).
+`foldMap :: (a -> m) -> [a] -> m` is the not trivial natural isomorphism (`rightAdjunct`) in that adjunction. 
+
+Not a real code since the `Adjunction` typeclass works on Hask endofunctors: 
 ```
 instance Adjunction [] Identity where
    leftAdjunct  :: ([x] -> m) -> x -> Identity m

@@ -6,7 +6,7 @@ Notes related to CTFP Part 3 Chapter 6. Monads on finite categories
 __Work in progress, this topic needs more research__  
  
 I am interested in modeling finite categories in Haskell, but I still do not know a lot about it. 
-This note includes general thoughts about finite category monads and focuses on category `A->B=>C` introduced in 
+This note includes general thoughts about monads in a finite category and focuses on category `A->B=>C` introduced in 
 [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
 
 This note is only loosely related to the book
@@ -49,7 +49,7 @@ Thus, the most interesting question for finite categories seems to be if there a
 
 Monads
 ------
-To talk about a monad I need endofunctor F and 2 natural transormations `eta :: Id -> F` and `mu :: F ∘ F -> F`.
+To talk about a monad I need endofunctor F and 2 natural transformations `eta :: Id -> F` and `mu :: F ∘ F -> F`.
 Both functors and natural transformations on `A->B=>C` do not have any point-wise aspect and 
 are just mappings of objects A,B,C and enumerated morphisms.   
 When restricted to objects, eta becomes equivalent to the functor itself.

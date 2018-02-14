@@ -13,11 +13,12 @@ general, mathematical approach in the book.
 Book ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 2. Ch.5 Yoneda Lemma](https://bartoszmilewski.com/2015/09/01/the-yoneda-lemma/).
 
-> {-# LANGUAGE RankNTypes #-}
-> {-# LANGUAGE TypeOperators #-}
-> {-# LANGUAGE ScopedTypeVariables #-}
-> {-# LANGUAGE ExistentialQuantification #-}
-> {-# LANGUAGE GADTs #-}
+> {-# LANGUAGE RankNTypes 
+>  , TypeOperators
+>  , ScopedTypeVariables
+>  , ExistentialQuantification
+>  , GADTs 
+>  #-}
 >
 > module CTNotes.P2Ch05a_YonedaAndMap where
 > import CTNotes.P1Ch10_NaturalTransformations((:~>))
@@ -118,7 +119,8 @@ fmap f . trans == trans . fmap f
                 trans
 ```
 As stated in the book, Yoneda is not just isomorphism, it is also natural in both `f` and `a`.  
-TODO is naturality of Yoneda represented somehow in programming? 
+Naturality of Yoneda translates to polymorphism in programming.  But there could be something deeper
+about it too, I DUNNO.
 
 
 Co-Yoneda
@@ -181,12 +183,7 @@ what is interesting is that `(Co)Yoneda` type constructors get to be functors fo
 they also nicely preserve other properties like Monad or Applicative instances.
 
 There is a nice categorical explanation why (Co)Yoneda gives free `fmap` that is based on Kan extensions
-(see [N_P3Ch11a_KanExt](N_P3Ch11a_KanExt)).
-
-With non-Hask categories
-------------------------
-I have changed my mind on this, the answer is YES!
-See [N_P2Ch05b_YonedaNonHask](N_P2Ch05b_YonedaNonHask)
+(see [N_P3Ch11a_KanExt](N_P3Ch11a_KanExt) and the book [P3. Ch 11](https://bartoszmilewski.com/2017/04/17/kan-extensions/)).
 
 
 Code Examples
@@ -239,5 +236,5 @@ abstract DSL instruction set (on the DSL algebra).
 Ref Haskell: http://comonad.com/reader/2011/free-monads-for-less-2/  
 Ref Scala: http://blog.higher-order.com/blog/2013/11/01/free-and-yoneda/
   
-__CPS__ the simplified version of Yoneda `forall x. ((a -> x) -> x)` is the type of
+__CPS__. the simplified version of Yoneda `forall x. ((a -> x) -> x)` is the type of
 _Continuation Passing Style_ computation and that is obviously used a lot.

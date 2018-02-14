@@ -1,6 +1,9 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch07a_GameOfLife
 
-Implementation of Conway's game of life 
+Notes related to CTFP Part 3 Chapter 7. Comonads. Game of Life Example
+======================================================================
+
+Implementation of Conway's Game of life 
 [wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 using store comonad.
 This solves the challenge problem from 
@@ -36,7 +39,7 @@ Helpers
 > vAdd :: (Int, Int) -> (Int, Int) -> (Int, Int)
 > vAdd (x1,y1) (x2,y2) = (x1 + x2, y1 + y2)
 
-Stream and helpers loaded from Utils.Stream. 
+Standard Stream implementation and helper `streamIterate` function is loaded from Utils.Stream. 
 
 Implementation
 --------------

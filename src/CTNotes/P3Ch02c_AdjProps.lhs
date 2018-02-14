@@ -9,7 +9,9 @@ Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
           [Part 3. Ch.2 Adjunctions](https://bartoszmilewski.com/2016/04/18/adjunctions/)
 
 
-> {-# LANGUAGE  MultiParamTypeClasses, FlexibleInstances #-}
+> {-# LANGUAGE  MultiParamTypeClasses
+>  , FlexibleInstances 
+>  #-}
 >
 > module CTNotes.P3Ch02c_AdjProps where
 > import CTNotes.P3Ch02a_CurryAdj
@@ -29,7 +31,7 @@ Composition
          --------->     --------->  
             r2             r1
 ```
-Drawing a picture explains the code:
+Drawing the above picture explains this code:
 
 > instance (Adjunction l1 r1, Adjunction l2 r2) =>
 >         Adjunction (Compose l2 l1) (Compose r1 r2) where
@@ -74,6 +76,6 @@ Again, drawing a picture explains the code!
 
 Free-Forgetful, Free Monad Adjunction
 --------------------------------------
-See also the end of [N_P3Ch08a_Falg](N_P3Ch09a_Talg) note about relationship between 
+See the end of [N_P3Ch08a_Falg](N_P3Ch09a_Talg) note about relationship between 
 free-forgetful adjunctions and algebras.
  

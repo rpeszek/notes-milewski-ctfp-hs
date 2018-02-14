@@ -1,12 +1,18 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch07b_Comonad
 
-My thinking and loose notes about commonads.
+Notes related to CTFP Part 3 Chapter 7. Comonads
+================================================
+
+Loose notes about commonads focused on the focus intuition and code examples.
 
 Book reference:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
 [P3 Ch7 Comonads](https://bartoszmilewski.com/2017/01/02/comonads/).
 
-> {-# LANGUAGE InstanceSigs, ScopedTypeVariables#-}
+> {-# LANGUAGE InstanceSigs
+>  , ScopedTypeVariables
+>  #-}
+>
 > module CTNotes.P3Ch07b_Comonad where
 > import Control.Comonad
 > import Utils.Stream
@@ -96,7 +102,7 @@ and Stream is isomorphic to
 >     in HalfLine $ f stream
 
 and both `BiDiLine` `HalfLine` look like Store without a focus point.
-Both could be used as well to define comonad instance.
+Both could can easily implement Comonad instance.
 
 Interesting Comonads 
 --------------------
@@ -115,7 +121,7 @@ interesting twist:
 >    duplicate (Traced f) = Traced (\m1 -> Traced (\m2 -> f (m2 `mappend` m1))) 
 
 Traced uses monoid m to point to (focus on) information what can be retrieved using it.
-Traced extends to a transformer, defined in `comonad` package. 
+Traced extends to a comonad transformer (defined in the `comonad` package). 
 
 __Zipper__  
 My implementation `BidiStream` is sometimes referred to as Zipper comonad.
@@ -148,7 +154,7 @@ __Tree__
 >    extract (Node a _) = a
 >    duplicate n@(Node _ as) = Node n (map duplicate as)
 
-`extract` returns root label, `duplicate` replaces all labels with corresponding tree.
+`extract` returns root label, `duplicate` replaces all labels with a corresponding tree.
 
 
 __Refs:__
@@ -160,6 +166,6 @@ http://comonad.com/reader/2011/monads-from-comonads/
 Notes
 -----
 Monads preserve product, comonads coproduct.
-'''
+```
 (Comonad f, Comonad g) => Comonad (Sum f g)
-'''
+```

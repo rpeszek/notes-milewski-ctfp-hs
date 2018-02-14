@@ -13,7 +13,7 @@ This is my attempt to use Haskell language to describe these concepts.
 What are the properties of types like `[Tree (Either Err [a])]`, `Either Err (Parser [a])` or 
 `(r -> [(s -> Maybe (t -> ))])`?   
 In my opinion, functor composition is foundational to understanding of even basic types like nested lists 
-`[[a]]` or something like a safeTail `Maybe [a]`.
+`[[a]]` or something like `safeTail::`Maybe [a]`.
 
 > {-# LANGUAGE TypeOperators 
 >  , TypeFamilies 

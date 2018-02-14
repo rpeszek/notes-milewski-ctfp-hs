@@ -31,7 +31,7 @@ Adjunction definition from the book
 The above implementation emphasizes that the adjunction  
   `(-, a) ⊣ a -> -`    
 is all about currying.   
-These diagrams use notations from the book
+These diagrams use the notation from the book
 ```
                    L
          (z, a) <------   z
@@ -73,6 +73,11 @@ Haskell wants `((,) a)`)
 >     rightAdjunct zab = uncurry $ flip zab     -- or zab ~(z,a) = zab a z
  
 Again, notice the need to use ugly `flip` and `swap` caused by using (a,-) and not (-,a) as the book does!
+Without it we would just say:
+```
+leftAdjunct = curry
+rightAdjunct = uncurry
+```
 
 This construction introduces two important types:
 ```
