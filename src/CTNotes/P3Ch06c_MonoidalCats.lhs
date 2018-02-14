@@ -10,7 +10,7 @@ Refs:: `category-extras`, `categories` packages
 >  , PolyKinds
 >  , TypeFamilies
 >  , TypeOperators
->  , TypeInType #-}
+>  , TypeInType 
 >  , AllowAmbiguousTypes -- needed for NonHaskMonoidal nhassociator
 >  #-} 
 >
