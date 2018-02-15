@@ -3,10 +3,11 @@
 Notes about CTFP Part 3 Chapter 11. Kan Extensions
 ==================================================
 
-Haskell (simplified) derivations of Ran and Lan.  
-Similarities of Codensity, ContT, Yoneda.  
-Example of calculating adjunctions.  
-Yoneda creates functors for free by extending discrete category embedding over a data constructor.
+This note covers:
+* Haskell (simplified) derivations of Ran and Lan.  
+* Similarities of Codensity, ContT, Yoneda.  
+* Example of calculating adjunctions.  
+* That beautiful argument about how Yoneda creates functors for free using Haskell code.
 
 Book Ref: https://bartoszmilewski.com/2017/04/17/kan-extensions/
 
@@ -73,7 +74,8 @@ So, Haskell Ran is basically Ran adjunction specialized to the hom functor with 
 Q: For non-Hask categories (as in [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats)) it makes sense to consider 
 (assuming homsetA implementing Control.Category, `I` is non-Hask, `A` is non-Hask, and `C` = Hask))
 
-> newtype CRan (homsetA:: ka -> ka -> *) (k:: ki -> ka) (d::ki -> *) (a:: ka) = CRan (forall i. (a `homsetA` (k i)) -> d i)
+> newtype CRan (homsetA:: ka -> ka -> *) (k:: ki -> ka) (d::ki -> *) (a:: ka) = 
+>    CRan (forall i. (a `homsetA` (k i)) -> d i)
 
 A: there are 2 problems, first: Yoneda lemma is no longer
 that simple ([N_P2Ch05b_YonedaNonHask](N_P2Ch05b_YonedaNonHask)), 
@@ -85,7 +87,7 @@ So the above derivation no longer holds.
 Lan, Haskell derivation
 -----------------------
 
-Lan psedo Haskell derivation as an exercise.
+Haskell formula for Lan.
 
 > data Lan k d a = forall i. Lan (k i -> a) (d i)
 
@@ -147,7 +149,6 @@ and to (see [N_P2Ch05a_YonedaAndMap](N_P2Ch05a_YonedaAndMap))
 ```
 newtype Yoneda d a = Yoneda (forall i. (a -> i) -> d i) 
 ```
--- TODO Yoneda
 
 Codensity is equivalent to `Ran d d`, `Yoneda d` is `Ran id d`.  
 Similarly to `ContT`

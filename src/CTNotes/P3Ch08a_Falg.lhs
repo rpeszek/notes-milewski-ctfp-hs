@@ -8,7 +8,9 @@ Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-prog
 [P3 Ch8. F-Algebras](https://bartoszmilewski.com/2017/02/28/f-algebras/).
 
 
-> {-# LANGUAGE Rank2Types, ExistentialQuantification #-}
+> {-# LANGUAGE Rank2Types
+>  , ExistentialQuantification 
+>  #-}
 >
 > module CTNotes.P3Ch08a_Falg where
 
@@ -75,7 +77,7 @@ Two forces of programming: construction and deconstruction (patter matching) are
 
 __Long term TODO__:  TAPL implements equi-recursion using co-induction based on monotone functions.  
 It would be cool to understand how equi-recursion plays out using more CT approach. 
-On high level things are very similar, we have least and greatest fixpoints for example.  
+On high level things are very similar, we have the least and greatest fixpoints for example.  
 
 __Recap__   
 It is short of amazing that category theory aids in understanding of recursive types.
@@ -83,12 +85,13 @@ Lambek theorem says that among F-algerbras `F a -> a`, if there is an initial on
 be the fix point of `F` (`F i ~= i`).  This is exactly the iso-recursive take on `μ`. 
 
 
-Existence of initial algebra, uniqueness
-----------------------------------------
+Interesting non-recursive approach. Existence of initial algebra.
+-----------------------------------------------------------------
 Ref: [Wadler, Recursive Types for Free](http://homepages.inf.ed.ac.uk/wadler/papers/free-rectypes/free-rectypes.txt) 
 
-Considering type constructors F x containing x in positive position only (as it should for covariant functor),
-the least fixpoint of F can, actually, be expressed in System F (without recursion).
+Considering type constructors __F x__ containing __x__ in positive position only 
+(as it should for covariant functor),
+the least fixpoint of F can be expressed in System F (without recursion).
 Using Haskell this maps to:
 
 > data LFix f = LFix (forall x. (f x -> x) -> x)
@@ -104,7 +107,7 @@ These functions
 form commuting diagram
 ```
 T = LFix F
-	                     in            
+	               in            
                F T ----------> T   
                 |              |    
                 |              |    
@@ -112,14 +115,15 @@ T = LFix F
                 |              |
                 |              |
                F X ----------> X
-	                      k
+	                k
 ```
-And it turns out that uniqueness is a consequence of parametricity.  
-Using generic CT arguments, uniqueness (the fact that (T, in) is initial) is equivalent to following
-2 conditions (using ref numbers 3 and 4 to match the paper):
+__T__ is carrier and `in` is evaluator of an F-algebra from which there is a map, `fold X k`, to every other F-algebra.  
+But is it really initial (is that map to any other object unique)? 
+And it turns out that this uniqueness (the fact that __(T,in)__ is initial) is a consequence of parametricity.  
+Using generic CT arguments, this is equivalent to following 2 conditions (using ref numbers 3 and 4 to match the paper):
 
 ```
-	            k                                fold X k
+             k                                 fold X k
       F X ----------> X                    T -----------> X
        |              |                    |              |
        |              |                    |              |
@@ -127,7 +131,7 @@ Using generic CT arguments, uniqueness (the fact that (T, in) is initial) is equ
        |              |                    |              |
        |              |                    |              |
       F X' ---------> X'                   T -----------> X' .
-	            k'                              fold X' k'
+             k'                               fold X' k'
 --and 
 
 fold T in  =  id.                                                (#4)
@@ -146,7 +150,7 @@ law."
 Finite Cats Example
 -------------------
 Considering the `A -> B => C` example from [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
-Since not trivial morphisms are never invertible, Lambek theorem says
+Since not trivial morphisms in this category are not invertible, Lambek theorem says
 that initial F-algerbra in this category (if exists) will need to always be based 
 on `id` morphism.
 
@@ -176,8 +180,8 @@ is only possible if F A = A.
 We have more choices for Fs that allow algebras `F B -> B` or `F C -> C`.
 
 
-Different Recursive Types
--------------------------
+More about Recursive Types
+--------------------------
 See package 
 [recursion-schemes](https://hackage.haskell.org/package/recursion-schemes-5.0.2/docs/Data-Functor-Foldable.html)  
 See also

@@ -3,7 +3,7 @@
 Notes about CTFP Part 3 Chapter 9. Algebras for monads
 ======================================================
 
-A side note about structure of the category of monad algebras for the monad obtained from 
+A side note about the structure of the category of monad algebras for the monad obtained from 
 any free-forgetful adjunction.  This generalizes the List monad algebra example in the book. 
 
 > module CTNotes.P3Ch09a_Talg where
@@ -18,8 +18,8 @@ Some interesting facts about monad algebra
 ------------------------------------------
 __Recap__ Monad algebras (T-algebras) differ from F-algebras in that they assume additional 
 coherence conditions between the eval function 
-`T a -> a` and the two natural transformations defining monad ``η :: a -> T a`
-``μ :: T (T a) -> T a`.  
+`T a -> a` and the two natural transformations defining monad `η :: a -> T a` (or `return`)
+`μ :: T (T a) -> T a` (or `join`).  
 ```
 eval . return = id
 a . join = eval . fmap eval
@@ -51,7 +51,8 @@ The schoolofhaskell post links free-forgetful adjunction and T-algebra.
 In free-forgetful adjunction F -| U where U : C -> D 
 the category of monad algebras of the functor UF (we know UF is a Monad) is equivalent to the category C!
 
-In the case of List monad, we get D=Set, C=_Mon_ so the category of monad algebras is equivalent to `Mon`.
+In the case of List monad, we get D=Set, C=__Mon__ so the category of monad algebras is equivalent to __Mon__ 
+(the category of monoids).
 That suggest that monad algebras for the List functor have monoid structure, which is consistent
 with the example in the book.
  
@@ -62,6 +63,8 @@ For example, List monad algebras are monoids, but functor algebras do not have t
 For example, initial algebra of the List functor is isomorphic to:  
 
 > data RoseTree = Node [RoseTree]
+
+and that is not a monoid. 
 
 Recall:
 ```

@@ -1,27 +1,31 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch12b_EnrichedPreorder
 
-Notes about CTFP Part 3 Chapter 12. Preorder example of enhanced category
-=========================================================================
+Notes about CTFP Part 3 Chapter 12. Enhanced Categories. Preorder Example.
+==========================================================================
 
-Notes about Preorder example as enriched category.
+Notes about Preorder example as an enriched category.
 See how far I can get implementing it in Haskell.
-The goal here is to practice enhanced categories trying to write Haskell. 
+The goal here is to internalize enhanced categories trying to write Haskell. 
 I also think that this approach could go places when dependent types become 
 easier and better supported. 
 
 Book Ref: [Part 3 Chapter 12, enhanced categories](https://bartoszmilewski.com/2017/05/13/enriched-categories)
 
-> {-# LANGUAGE GADTs #-}
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE TypeOperators #-}
-> {-# LANGUAGE TypeFamilies #-}
-> {-# LANGUAGE FlexibleInstances #-}
-> {-# LANGUAGE PolyKinds #-}
-> {-# LANGUAGE AllowAmbiguousTypes #-} -- needed in bitmap signature
-> {-# LANGUAGE UndecidableInstances #-} -- needed in type level If
-> -- {-# LANGUAGE TypeFamilyDependencies #-} -- attempt to allow associator signature
-> {-# LANGUAGE InstanceSigs, MultiParamTypeClasses, TypeInType, ScopedTypeVariables #-}
+> {-# LANGUAGE GADTs 
+>   ,  DataKinds 
+>   ,  KindSignatures 
+>   ,  TypeOperators 
+>   ,  TypeFamilies 
+>   ,  FlexibleInstances 
+>   ,  PolyKinds 
+>   ,  AllowAmbiguousTypes  -- needed in bitmap signature
+>   ,  UndecidableInstances  -- needed in type level If
+>  --  , TypeFamilyDependencies  -- attempt to allow associator signature
+>   ,  InstanceSigs
+>   ,  MultiParamTypeClasses
+>   ,  TypeInType
+>   ,  ScopedTypeVariables 
+>  #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 > module CTNotes.P3Ch12b_EnrichedPreorder where
 > import GHC.TypeLits
@@ -79,7 +83,7 @@ ghci> :k VObj
 VObj :: V -> *
 ```
 I find that GHC likes code that uses `Type` more than some exotic kind like `V`.
-So to make things work, I assume a representation of elements of kind `k` as regular types. 
+So to make things work, need some representation of elements of kind `k` as regular types. 
 `VObj` serves as such representation.
 
 > class HaskEnrichedCategory (obj:: k -> Type) (homset:: k -> k -> Type) where
@@ -127,7 +131,10 @@ which is exactly the transitivity law we need."
 
 This translates to this code!:
 
-> eComp0 :: VObj (Preorder b c) -> VObj (Preorder a b) -> VObj (Preorder a c) -> VHomSet ((Preorder b c) :**: (Preorder a b)) (Preorder a c) 
+> eComp0 :: VObj (Preorder b c) -> 
+>           VObj (Preorder a b) -> 
+>           VObj (Preorder a c) -> 
+>           VHomSet ((Preorder b c) :**: (Preorder a b)) (Preorder a c) 
 > eComp0 TrueRep TrueRep TrueRep = MorphIdT
 > eComp0 TrueRep TrueRep FalseRep = undefined  -- this condition should never happen because if f a <= b and b <= c then a <= c
 > eComp0 _ FalseRep FalseRep = MorphIdF
@@ -156,7 +163,7 @@ however, this seems not easy
       from the context: a ~ (n + 1)
 ```  
     
-However, it is simpler to move forward with the `eComp1` approach, and this is what
+However, it is simpler for me to move forward with the `eComp1` approach, and this is what
 I will do.
    
    
@@ -164,12 +171,13 @@ I will do.
 Generalization attempt and CT details
 -------------------------------------
 
-Using NonHaskMonoidal class from [N_P1Ch08c_BiFunctorNonHask](N_P1Ch08c_BiFunctorNonHask) is hard 
+Using `NonHaskMonoidal` class from [N_P1Ch08c_BiFunctorNonHask](N_P1Ch08c_BiFunctorNonHask) is hard 
 for reasons similar to why it is hard to implement `id` in `instance Category VHomSet`.
 
-The trick is to add `obj :: k -> Type` evidence to the `associator` and unitor methods.
+The trick is to add `obj :: k -> Type` evidence to the _associator_ and _unitor_ methods.
 
-> class HaskEnrichedCategory obj cat => Monoidal (obj :: k -> Type) (cat :: k -> k -> Type) where
+> class HaskEnrichedCategory obj cat => 
+>       Monoidal (obj :: k -> Type) (cat :: k -> k -> Type) where
 >    type Tensor (a :: k) (b :: k) :: k
 >    type I :: k
 >    bimap :: cat a c -> cat b d -> cat ( Tensor a b) (Tensor c d)
@@ -177,14 +185,15 @@ The trick is to add `obj :: k -> Type` evidence to the `associator` and unitor m
 >    lunitor :: obj a -> cat (Tensor (I) a) a
 >    runitor :: obj a -> cat (Tensor a I) a
 
-moving forward with this approach I can define enhanced category class.  
+moving forward with this approach I can define typeclass for enhanced categories.  
 (Note `C` matches the book notation of `C(a,b)`):
 
-> class (Monoidal vobj vcat) => Enhanced (cobj :: kc -> Type)  (vobj :: kv -> Type) (vcat :: kv -> kv -> Type) where
+> class (Monoidal vobj vcat) => 
+>       Enhanced (cobj :: kc -> Type)  (vobj :: kv -> Type) (vcat :: kv -> kv -> Type) where
 >    type C (a :: kc) (b :: kc) :: kv
 >    ecomp :: cobj a -> cobj b -> cobj c -> vcat (Tensor (C b c) (C a b)) (C a c)
 
-The above construction of preorder category and `Nat` enhanced using `V` satifies
+The above construction of preorder category and `Nat` enhanced using `V` satisfies
 these constraints!
 
 > instance Monoidal VObj VHomSet where
@@ -244,4 +253,4 @@ Finally, I have:
 >   ecomp = eComp1
 
 I think that, with increasing support for dependent typing, enhanced categories could become 
-practical and sound way of writing code! 
+a practical and sound way of writing code! 

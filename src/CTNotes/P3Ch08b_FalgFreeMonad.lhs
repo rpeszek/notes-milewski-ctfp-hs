@@ -3,8 +3,8 @@
 Notes about CTFP Part 3 Chapter 8. F-Algebras. Free
 ===================================================
 
-Notes about F-algerbas the free monad.
-The book does not talk about Free but I decided to research this note about it. 
+Notes about F-algerbas and the free monad.
+The book does not talk about Free but I decided to research it and I wrote this note about it. 
 
 Book Ref: [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
 [P3 Ch8. F-Algebras](https://bartoszmilewski.com/2017/02/28/f-algebras/).
@@ -40,7 +40,7 @@ There is category _Mnd_ where objects are monads and morphisms are natural trans
 that play nice with the monadic structure. This category can also be viewed as category of monoids in 
 monoidal category of endofunctors with composition.  
 _Endo_ is standard category of endofunctors.
-(See [nlab free monad](https://ncatlab.org/nlab/show/free+monad).)
+(See [nlab free monad](https://ncatlab.org/nlab/show/free+monad) for more information.)
 
 Forgetful functor:
 ```
@@ -80,6 +80,7 @@ _End side note_.
 
 Free Monad Adjunction and F-algebras
 ------------------------------------
+For a fixed functor `f`, in pseudo-Haskell:
 ```
 U:: F-Alg -> Hask
 U (f, a, ev) = a  
@@ -89,7 +90,9 @@ F a = (f, Free f a, MkFree)
 
 Hom ((f, Free f a, MkFree), (f, b, evb) ~=  a -> b
 ```
-Each function `a -> b` has a corresponding F-alg morphism from `Free f a` to `b`.
+
+This adjunction viewed as isomorphism of homsets means that
+each function `a -> b` has a corresponding F-alg morphism from `Free f a` to `b`.
 This is done by using  `evb` to collapse all layers in Free f.
 
 > type FAlgebra f a = f a -> a
@@ -107,4 +110,4 @@ Following method is the essential part of isomorphism in the reverse direction
 > iso0 f = f . Pure
 
 __More about Free__  
-The comonad post linked above continues as a 3 part sequel, [N_P3Ch11a_KanExt](N_P3Ch11a_KanExt) has all linked.
+The comonad post linked above continues as a 3 part sequel, [N_P3Ch11a_KanExt](N_P3Ch11a_KanExt) has all of these posts linked.

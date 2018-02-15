@@ -9,9 +9,10 @@ Why read CTFP?  Why study category theory?
 
 I finished my second (I am sure not last) reading of Milewski's book.       
 This note is about what motivated me to read CTFP and why I think we need this book.  
-At work, my group is working on a very serious refactoring and a technology shift.  That change
+At work, my group is in the midst of a very serious refactoring and a technology shift.  That change
 follows months of technical discussions.  My experiences at work have motivated this note as well. 
 I cannot help but ask myself: how different would all of this have been if my coworkers have read CTFP? 
+And, since we use Java at work, I will use Java ecosystem as a source of examples.
  
 We live in the __stackoverflow__ times.  Only very few read programming books. Deadlines are deadlines, there is just 
 no time for reading and linear learning. Yet, there are limits to google search learning. Books are needed!
@@ -56,31 +57,32 @@ Software engineers love arguing which code is better (can you get better than a 
 These arguments involve a lot of hand-waving.
 Correspondence to logic is really the best comparator is in such arguments.
 
-Divine computation sounds like something out of reach of a moral programmer. It is not! 
+We can question many things, say, the use of Hibernate (a library in the Java ecosystem) or even something like 
+the Java language design itself.
+Similar question do not even make sense with respect to the Lambek correspondence.
+These 3 manifestations of code simply are. Questioning that correspondence is like questioning 
+Pythagorean Theorem. 
+What we can and often do, however, is to just ignore it!  
+
+Software engineering is founded on a belief that logical problems can be solved without 
+any training in logic. Despite being self-contradictory, this approach works surprisingly well for many
+software products. The limitation of this approach is that it does not scale well with logical complexity. 
+Majority of software engineers do not acknowledge this limitation. 
+We all have a tendency to de-emphasize importance of things we do not understand. 
+Learning category theory is admitting to the existence of that limitation and to the importance of logic.
+
+Divine computation sounds like something very academic and out of reach of a moral programmer. It is not! 
 Remember, we live in the _stackoverflow_ times and we copy-paste programs. 
 Copy-paste of a divine is still divine.
 The only problem is how to recognize that divine aspect?  
 Hmm, only if there were books about it, or if there was some catalog of divine computations 
 (like something called a category theory)...
 
-We can question many things, say, the use of Hibernate (a library in the Java ecosystem) or even something like 
-the Java language design itself.
-Similar question do not even make sense with respect to the Lambek correspondence.
-These 3 manifestations of code simply are. Questioning that correspondence is like questioning 
-Pythagorean Theorem. 
-What we can and often do, however, is just ignore it!  
-This is what software engineers have been doing for years. 
-
-Software engineering was founded on a belief that complex logical problems can be solved without 
-any training in logic. Despite being self-contradictory, this approach worked surprisingly well for many
-software products. The limitation of this approach is that it does not scale well with logical complexity. 
-Learning category theory is admitting to the existence of that limitation and to the importance of logic.
-
 
 __Beginner Trinitarianist__      
 First steps are as simple as a change in the attitude. 
 When designing my app I look for soundness and strong theoretical properties. I want to use building blocks 
-that logically sound. I want to write code that is type-safe. 
+that are logically sound. I want to write code that is type-safe. 
 
 Take just type safety as an example and think about Java Object class with its lucky 13? methods.
 These methods can be invoked on any object, `"boo".equals(5)` compiles just fine, comparison between 
@@ -89,8 +91,8 @@ and there is a 99.9% chance that comparing String to Integer is an escaped bug!
 
 In reality, any app has monoids, monads, natural transformations, etc, ignoring these is dangerous.
 Monoids, monads, and natural transformations are categorical concepts that come with laws.
-Laws are important.  Consider this code that uses Java standard library (notice, I am not indicating the Java version, 
-I am quite sure this will never get fixed)
+Laws are what is important.  Consider this code that uses Java standard library 
+(I am not indicating the Java version, I am quite sure this will never get fixed)
 ```Groovy
 groovy>  //using Groovy console as a replacement for REPL to see what Java will do
 groovy>  import java.sql.Timestamp
@@ -103,30 +105,30 @@ groovy>  [t.equals(d), d.equals(t)]
 Result: [false, true]
 ```
 nothing good can possibly come out of equals not being symmetric!   
-(Exercise for Java coders: play with Java comparators using Dates and Timestamps, 
-is `<` antisymmetric for objects in Java standard library?
-Better Exercise: try to fix it (fix Java source for Date and Timestamp). Not so easy, is it!)  
+Exercise for Java coders: play with Java comparators using Dates and Timestamps, 
+is `<` antisymmetric for objects in Java standard library?  
+Better Exercise: try to fix it (fix Java source for Date and Timestamp). 
+It is not easy, is it!  
   
-Software engineers do not lose any slip over it. We all have a tendency to de-emphasize importance of things 
-we do not understand. Unfortunately, logic is not very forgiving. 
-Analogy: not understanding electricity does not make us immune from getting electrocuted.  
-
 Here is a fun example violating requirements defined by 
 [java.util.Set.equals](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#equals-java.lang.Object-), 
-this time more Groovy (tested with Groovy v.2.4.10):  
+this time using Groovy (tested with Groovy v.2.4.10):  
 ```Groovy
 groovy>  def x= [] as Set
 groovy>  def y= "".split(",") as Set
 groovy>  
 groovy>  [x == y, x, y]
 
-Result:  [false, [], []]  // ~~~buzz, buzz, bzzz, hair standing on end
+Result:  [false, [], []]  
 ```
-Implementing equals in Java is far from trivial. You often need to consider a whole universe of subtypes to do it well. 
-This one at least appears to be symmetric, `y == x` prints `false`.
-There is more than one point here: the laws are important and Wadler is right, 
-some language environments are just not logic friendly.
+Implementing equals in Java is far from trivial. Java makes it way harder than it needs to be.  
+Bugs like this impact thousands (Groovy) to millions (Java) of software engineers, 
+the economic cost must be significant. 
 
+There is more than one point here: 
+ * laws are important and so it proving/certifying them
+ * Wadler was right 
+One way to spot a trinitarianist is by his/her selection of the computing language environment.
 
 __Trust__.  I had tried to convey this idea at work but I have failed. As an engineer I do not need
 to understand monoids, monads, functors, etc, to use them!  I only need to trust that they are important and learn their plumbing. 
@@ -159,20 +161,21 @@ I can prove about these types.  Consider this very simple (and incomplete) examp
 > instance ToHTML a => ToHTML (FancyTree a) where 
 >   toHTML = undefined
 
-As an engineer I can think that I am implementing HTML rendering leveraging other code.
+As an engineer I can think that I am implementing HTML rendering using polymorphism and leveraging other code.
 As a trinitarianist I see theorems and proofs (well, not proofs because I was lazy and have used `undefined`).  
 `instance` definition is a theorem and so is the type signature of `fancyTreeToHTML`.
 For a trinitarianist, `->` and `=>` are the modus ponens!  
 Trinitarianist views code like this as proving ToHTML theorems about the application types.
 
 That sounds like "this's just semantics".  Right on!  It is just semantics, but only for code that is close to logic.
-Pick some Java program at random and try to think about it as theorems and proofs.  That will not work so well, will it?
+Pick some Java program at random and try to think about it as theorems and proofs.
+That will not work so well, will it?
 
-A more advanced use of types allows me to use compiler to verify things for me. 
+A more advanced use of types allows me to use compiler to verify things. 
 Here are some examples I have played with in this project:
  * [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity) Compiler checks type cardinality [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity), 
  * [N_P3Ch15b_CatsAsMonads](N_P3Ch15b_CatsAsMonads) compiler verifies that 2-cell `mu` in the bicategory of spans is 
- the same as the arrow composition. 
+ the same as the composition in the underlying category. 
   
 There are limits to what compiler can do (especially true in a language like Haskell) 
 and pencil and paper proofs are still needed. Proofs are often like unit tests that take no time to execute
@@ -213,13 +216,13 @@ Conclusions
 There appear to be 2 very different parts to writing software:  programming and engineering.  
 
 Programming is about logic, proofs, types, categories.  
-Programming is about provable correctness.  
+Programming is about certifiable software and provable correctness.  
 Engineering is pragmatic, suspicious of formalism, and has deadlines.  
 Engineering is about correctness by a lot and lot of testing effort (and, often, ignoring provable incorrectness).  
 
 Programming is a very small share of the overall software development (looking at language usage statistics
 suggest about 1%). My personal interest and bias is clearly on the programming side but I do think of
-myself as an engineer too.  I think current balance point is just wrong, there needs to be more that 1% market share
+myself as an engineer too. I think current balance point is just wrong, there needs to be more that 1% market share
 of programming in software!
   
 Besides, that 1% just proves my point. Writing code is like skiing, driving a car, or anything else.

@@ -3,10 +3,10 @@
 Notes about CTFP Part 3 Chapter 12. Span bicategory
 ===================================================
 
-Note about the Category of Spans described in [chapter 15](https://bartoszmilewski.com/2017/09/06/monads-monoids-and-categories/).
+Note about the category of spans described in [chapter 15](https://bartoszmilewski.com/2017/09/06/monads-monoids-and-categories/).
 It provides supporting conceptual code in Haskell. 
-These notes use the concept of pullback which is not directly expressible in Haskell's language
-(pullbacks lead to undecidable problems).  
+These notes use the concept of pullback which is not directly expressible in Haskell's language (and, probably, lead to undecidable
+problems).  
 
 > {-# LANGUAGE MultiParamTypeClasses
 >   , ExistentialQuantification
@@ -24,8 +24,8 @@ _Span_ bicategory
 > data Cell2 x y a b = Cell2 (x -> y)
 
 0-cells are Haskell types.  
-1-cells are spans consisting of 2 morphisms (legs) from a common object x (support object/apex).
-2-cells are morphisms between apex objects that result in commuting diagrams involving legs.
+1-cells are spans consisting of 2 morphisms (legs) from a common object x (support object/apex).  
+2-cells are morphisms between apex objects that result in commuting diagrams involving legs.  
 ```
              z
           /  |  \
@@ -85,7 +85,7 @@ The composition of 1-cells can be defined in Haskell as:
 Proofs of Category Laws
 -----------------------
 
-Notice the concept of a pullback is missing from the above implementation of `comp`. 
+Notice that other than the type itself, pullback is not used in the above implementation of `comp`. 
 However, pullbacks are needed in verifying category laws. 
 For the category of spans these laws hold only up to isomorphism.   
 (In following diagrams vertical arrows are implicitly pointing down.)
@@ -134,10 +134,10 @@ Take `h = p1`.  The following diagram commutes proving the factorization.
            
 ```
 
-__Left Identity__  follows from the same arguments due to symmetry.
+__Left Identity__  follows from similar arguments due to symmetry.
 
 __Associativity__  
-Using `z = x ×a y` to represent pullback 
+Using `z = x ×a y` to represent following pullback
 (names of morphisms are ignored in the notation and in this proof).
 ```
   z --> y 

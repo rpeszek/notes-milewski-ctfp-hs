@@ -41,15 +41,8 @@ ghci> :k Monoidal
 Monoidal :: (k -> k -> *) -> (k -> k -> k) -> k -> Constraint
 ```
 
-Coherence conditions:
-```
-TODO
-```
+TODO: Add note about categorical coherence condition and show them in Haskell.
 
-in Haskell:
-```
-TODO
-```
 
 Instances
 ---------
@@ -73,9 +66,9 @@ and `Identity` is the identity functor.
 
 Non-Hask generalization
 -----------------------
-This is conceptual code and I have hard time implementing instances
+This is just a conceptual code and I have hard time implementing instances
 but it conveys the message 
-(a more implementable version is in [N_P3Ch12a_EnrichedPreorder](N_P3Ch12a_EnrichedPreorder))
+(a more implementable version is in [N_P3Ch12b_EnrichedPreorder](N_P3Ch12b_EnrichedPreorder))
 
 > class NonHaskMonoidal (cat :: k -> k -> Type) where
 >    type (a :: k) :*: (b :: k) :: k
@@ -85,4 +78,4 @@ but it conveys the message
 >    nhlunitor :: cat (IdT :*: a) a
 >    nhrunitor :: cat (a :*: IdT) a
 
-([N_P3Ch12a_EnrichedPreorder](N_P3Ch12a_EnrichedPreorder) notes provide more examples).
+([N_P3Ch12b_EnrichedPreorder](N_P3Ch12b_EnrichedPreorder) notes provide more examples).

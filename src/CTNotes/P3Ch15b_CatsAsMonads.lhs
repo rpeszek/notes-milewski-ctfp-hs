@@ -4,9 +4,10 @@
 This note traces that statement using simple category `A->B=>C` from [N_P1Ch03b_FiniteCats (FC)](N_P1Ch03b_FiniteCats)
 and Haskell.
 
-> {-# LANGUAGE DataKinds #-}
-> {-# LANGUAGE KindSignatures #-}
-> {-# LANGUAGE GADTs #-}
+> {-# LANGUAGE DataKinds 
+>  , KindSignatures 
+>  , GADTs 
+>  #-}
 > {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 >
 > module CTNotes.P3Ch15b_CatsAsMonads where
@@ -62,7 +63,7 @@ For `t` to be a monad I need to define two 2-cells
 η :: I -> T
 μ :: T ∘ T -> T 
 ```
-Translating this to `data Cell2 x y a b = Cell2 (x -> y)` language from [N_P3Ch15a_Spans](N_P3Ch15a_Spans)
+Translating this to the `data Cell2 x y a b = Cell2 (x -> y)` from [N_P3Ch15a_Spans](N_P3Ch15a_Spans)
 
 ```
 η :: I -> T
@@ -87,7 +88,7 @@ Translating this to `data Cell2 x y a b = Cell2 (x -> y)` language from [N_P3Ch1
 ```
 mu :: Pullback Ar Ar Ob -> Ar
 ```
-Due to complexity in describing pullback in a programming language, [N_P3Ch15a_Spans](N_P3Ch15a_Spans) 
+Due to complexity of describing pullback in a programming language, [N_P3Ch15a_Spans](N_P3Ch15a_Spans) 
 has used existential type 
 ```
 data Pullback x y a = forall z . Pullback z (z -> x) (z -> y)
@@ -101,8 +102,8 @@ That type should consist of composable pairs of 1-cells.
 >    OnB :: FC.HS  a 'B -> FC.HS 'B c -> PullbackForAr
 >    OnC :: FC.HS  a 'C -> FC.HS 'C 'C -> PullbackForAr
 
-`mu :: PullbackForAr -> Ar` can be defines by repeating the definition of `FC.comp`.  
-I can do better than that and use GHC to check that `mu` is just the composition 
+`mu :: PullbackForAr -> Ar` can be defined by repeating the definition of `FC.comp`.  
+However, I can do better and use GHC to check that `mu` is just the composition 
 in disguise:
 
 > data HomSetFlat where
