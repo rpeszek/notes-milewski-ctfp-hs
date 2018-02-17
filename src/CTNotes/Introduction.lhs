@@ -188,10 +188,17 @@ That sounds like "this's just semantics".  Right on!  It is just semantics, but 
 Pick some Java program at random and try to think about it as theorems and proofs.
 That will not work so well, will it?
 
-Remember, the end goal are more correct or even certifiable programs.  
-A more advanced use of types allows me to use compiler to verify all kinds of things. 
+Since logic and programming is one and the same, it would be nice if programming languages supported
+logical constructions such as universal or existential quantification 
+(the forall and exists quantifiers in logic). 
+These are the System F type constructions that also have important categorical representations 
+(for example, see [(co)limits, N_P2Ch02a_LimitsColimitsExtras](N_P2Ch02a_LimitsColimitsExtras)).  
+Trinity complements each other.
+ 
+Remember, the end goal is to have more correct or even certifiable programs.  
+More advanced uses of types allow compiler to verify all kinds of things. 
 Here are some examples I have played with in this project:
- * [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity) Compiler checks type cardinality [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity), 
+ * [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity) compiler checks type cardinality [N_P2Ch02b_Continuity](N_P2Ch02b_Continuity), 
  * [N_P3Ch15b_CatsAsMonads](N_P3Ch15b_CatsAsMonads) compiler helps me verify that 2-cell `mu` in the bicategory of spans is 
  the same as the composition in the underlying category. 
   
@@ -199,22 +206,23 @@ There are limits to what compiler can do (especially true in a language like Has
 and pencil and paper proofs are still needed. 
 
 A lot of programming is about verifying that programs are equivalent, replaceable.
-Proving that given two lambda expressions are equivalent is known to be undecidable, 
-static analysis tools (AI or not) will not easily automate this.
+Finding if given 2 lambda expressions are equivalent is undecidable. 
+Static analysis tools (AI or not) are unlikely to automate this.
 One big ticket item here is the task of _refactoring_ where, typically, things 
 should work the same before and after (think performance refactoring). 
 A trinitarianist will use tools like equational reasoning, or maybe some form of structural induction
-to certify refactoring correctness.
+to certify correctness of refactoring.
 Category theory augments this with a nice set of ready refactoring tools (like the Yonada transformation).
 
 Or, instead of me refactoring, the compiler could rewrite the code and optimize it.
 This idea extends nicely to fusion/code rewrite optimizations available in Haskell's Core (Haskell
 compiles to an intermediate language which is a lambda calculus and is programmable). 
-Tools like Yonada transformation are especially important in languages where this is not an option.
+Respect for logic == high performance!
+Tools like Yonada transformation are especially important in languages where fusion is not an option.
 
 Any trinitarianist will be interested in the language design. Designing domain specific languages 
-allows programmers to define their own semantic rules. These are the rules for formal reasoning on the code!
-Again, category theory comes with DSL creating tools such as free monad and cofree comonad. 
+allows programmers to define their own semantic rules. These are the rules for formal reasoning on the code.
+Category theory supplies DSL creating tools such as free monad and cofree comonad. 
 The power of trinity is in combining all of the 3! 
 
 More advanced use of categories means that I
@@ -231,8 +239,8 @@ More advanced use of categories means that I
 and so on..
 
 Current industry and social bias against formalism and mathematics may prevent people from writing code that looks 
-anything like proofs. At the same time, I am very convinced that anyone capable of learning how to program can learn 
-how to write proofs. The hardest part about either task is being able to survive confinement of 
+like proofs. At the same time, I am very convinced that anyone capable of learning how to program can learn 
+how to write proofs. The hardest part about either task is being able to survive the confinement of 
 removed ambiguity (no hand-waving). Unfortunately, can does not mean will. 
 Category theory offers a partial work-around here. It allows engineers to implement 
 code using logically solid building blocks while someone else has certified the correctness. 
@@ -261,13 +269,13 @@ of programming in software!
 Besides, that 1% just proves my point. Writing code is like skiing, driving a car, or anything else.
 Just look at what everyone is doing, do exactly the opposite and you will be just fine.
 
-Many software engineers feel personally offended by all of this. 
-If anywhere, the blame should be on education. I wish I had something like CTFP when I started learning
+Many software engineers feel personally offended by some of this. 
+If anywhere, the blame should be placed on education. I wish I had something like CTFP when I started learning
 how to program. I was a 3rd year student immersed in theoretical mathematics. The instruction made
 no use of anything I knew already. Not even mid school/high school algebra. Think about 
 `(a ^ b) ^ c = a ^ (c * a)` or `a ^ (b + c) = a^b * a^c` we know as currying and pattern match, nope.
-The opportunity to leverage concepts I knew very well was lost.
-I think CS education has failed me and most of us. 
+The opportunity to leverage concepts I knew well was lost.
+I think CS education has failed me and has failed most of us. 
 Hopefully this situation will change 
 ([CMU new curriculum](https://www.cmu.edu/news/archive/2011/May/may2_introcompsci.shtml)).
 For us old-timers, there are some good books that connect the dots, books like CTFP. 
