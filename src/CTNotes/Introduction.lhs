@@ -188,9 +188,8 @@ That sounds like "this's just semantics".  Right on!  It is just semantics, but 
 Pick some Java program at random and try to think about it as theorems and proofs.
 That will not work so well, will it?
 
-Since logic and programming is one and the same, it would be nice if programming languages supported
-logical constructions such as universal or existential quantification 
-(the forall and exists quantifiers in logic). 
+Since logic and programming are one and the same, it is nice when the programming language supports
+logical concepts such as universal or existential quantification (the forall and exists quantifiers in logic). 
 These are the System F type constructions that also have important categorical representations 
 (for example, see [(co)limits, N_P2Ch02a_LimitsColimitsExtras](N_P2Ch02a_LimitsColimitsExtras)).  
 Trinity complements each other.
