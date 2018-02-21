@@ -160,7 +160,8 @@ __Tree__
 __Refs:__
 http://blog.functorial.com/posts/2016-08-07-Comonads-As-Spaces.html
 http://comonad.com/reader/2011/monads-from-comonads/  
-* CoFree is out of scope for this note
+* CoFree is out of scope for this note. I will add notes about Cofree in 
+[N_P3Ch08b_FalgFreeMonad](N_P3Ch08b_FalgFreeMonad).
 
 
 Notes

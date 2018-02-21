@@ -71,7 +71,7 @@ In `Free` join is not renormalizing!
 
 > joinF :: Functor f => Free f (Free f a) -> Free f a
 > joinF (Pure a) = a
-> joinF (MkFree as) = MkFree (fmap join as)
+> joinF (MkFree as) = MkFree (fmap joinF as)
 
 "free monad is purely defined in terms of substitution".  
 _End side note_.
@@ -111,3 +111,12 @@ Following method is the essential part of isomorphism in the reverse direction
 
 __More about Free__  
 The comonad post linked above continues as a 3 part sequel, [N_P3Ch11a_KanExt](N_P3Ch11a_KanExt) has all of these posts linked.
+
+Cofree
+------
+This section is mostly a TODO.
+Documentation in `free` package has good short description of Cofree.   
+https://hackage.haskell.org/package/free-5/docs/Control-Comonad-Cofree.html
+
+Cofree and Free work together well (TODO)  
+See http://blog.sigfpe.com/2014/05/cofree-meets-free.html
