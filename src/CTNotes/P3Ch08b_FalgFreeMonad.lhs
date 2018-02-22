@@ -56,7 +56,7 @@ form an adjunction F -| U.
 
 The adjunction says that monad morphisms (in _Mnd_) from `Free F A` to some other monad `M` correspond to 
 natural transformations from `F` to `M`.  Natural transformations are used in implementing 
-interpreters for Free DSLs, this provides a nice theoretical backing for that approach!
+interpreters for Free DSLs. TODO Is this a theoretical backing for that DSL approach?
 
 
 __Side note:__ As pointed out by the above [comonad post](http://comonad.com/reader/2011/free-monads-for-less/)  
@@ -118,5 +118,7 @@ This section is mostly a TODO.
 Documentation in `free` package has good short description of Cofree.   
 https://hackage.haskell.org/package/free-5/docs/Control-Comonad-Cofree.html
 
-Cofree and Free work together well (TODO)  
+Cofree and Free work together well.
+I have used it in my GraphPlay project. 
+(TODO find good writeup)  
 See http://blog.sigfpe.com/2014/05/cofree-meets-free.html

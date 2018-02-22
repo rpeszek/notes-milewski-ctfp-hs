@@ -142,7 +142,8 @@ Writer monad (taken from the above paper)
 >             a <- m
 >             return (s, a)
 
-satisfies needed laws. (TODO would be good to attach proof) 
+satisfies needed laws. (TODO would be good to attach proof)   
+I found that this is the same as `distributive` package `Data.Distributive` type class. 
 
 __List Example__:    
 
