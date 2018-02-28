@@ -1,5 +1,5 @@
-
-__Draft__  
+_I posted a pandoc copy of this document on my [blog](http://rpeszek.blogspot.com/2018/02/why-read-ctfp-why-study-category-theory.html). 
+If you would like to leave a comment please do so on that page._
 
 Why read CTFP?  Why study category theory?
 ==========================================
@@ -11,7 +11,7 @@ This note is about what motivated me to read CTFP and why I think we need this b
 At work, my group is in the midst of a very serious refactoring and a technology shift.  That change
 follows months of technical discussions.  My experiences at work have motivated this note as well. 
 I cannot help but ask myself: how different would all of this have been if my coworkers have read CTFP? 
-And, since we use Java at work, I will use Java ecosystem as a source of examples.
+And, since we use Java at work, I will use the Java ecosystem as a source of examples.
  
 We live in the google and stackoverflow times.  Only very few read programming books. Deadlines are deadlines, there is just 
 no time for reading and linear learning. Yet, there are limits to google search learning. Books are needed!
@@ -19,8 +19,9 @@ no time for reading and linear learning. Yet, there are limits to google search 
 __Why this particular book?__  
 There are other books about category theory written for programmers. 
 In my opinion, CTFP is unique in 2 ways: 
- * it covers lots of ground, more than any of the other books
- * it manages to stay very intuitive and relevant to programming  
+
+* it covers lots of ground, more than any of the other books
+* it manages to stay very intuitive and relevant to programming  
 
 Personally, I really appreciate the second bullet. 
 
@@ -46,6 +47,7 @@ At some point in the future (when we discover and understand more) trinitarianis
 but that is another story.  
 
 To me, trinitarianism means that I have 3 tools when designing and developing programs:
+
 * Proof Theory
 * Type Theory
 * Category Theory
@@ -134,8 +136,9 @@ _Side-note: in the last example `x` and `y` are two different implementations of
 _I am exploiting a common pattern, binary relations and object inheritance do not mix well._
 
 There is more than one point here: 
- * Laws are important and so is proving/certifying them
- * Wadler was right and one way to spot a trinitarianist is by his/her selection of the computing language environment.
+
+* Laws are important and so is proving/certifying them
+* Wadler was right and one way to spot a trinitarianist is by his/her selection of the computing language environment.
 
 __Trust__.  I had tried to convey this idea with a limited success. As an engineer I do not need
 to understand monoids, monads, functors, etc, to use them!  I only need to trust that they are important and learn their plumbing. 
@@ -173,8 +176,10 @@ As an engineer I can think that I am implementing HTML rendering using polymorph
 As a trinitarianist I see theorems and proofs (well, not proofs because I was lazy and have used `undefined`).  
 `instance` definition is a theorem and so is the type signature of `fancyTreeToHTML`.
 For a trinitarianist, `->` and `=>` are the modus ponens!  
-Trinitarianist views code like this as proving ToHTML theorems about the application types.
-The slogan is: types are theorems and programs are proofs.
+Trinitarianist views code like this as proving ToHTML theorems about the application types.  
+The above code may differ or go beyond the straightforward mapping in the Curry-Howard correspondence, 
+but from a pragmatic standpoint, the mapping to logical derivation remains clear and effective.  
+The slogan is: types are theorems and programs are proofs, and this code reflects the slogan well.
 
 Continuing with the equals saga: not everything can be compared with everything, being able to compare 
 elements of type `a` is a theorem `Eq a`. For simple types (called _ADT_) that theorem is a simple boilerplate
@@ -225,6 +230,7 @@ Category theory supplies DSL creating tools such as free monad and cofree comona
 The power of trinity is in combining all of the 3! 
 
 More advanced use of categories means that I
+
  * Prove laws about my computations. 
  * Use a toolbox of certified refactoring solutions.  
  * Have certified tools for creating DSLs.  
