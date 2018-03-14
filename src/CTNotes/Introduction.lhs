@@ -263,6 +263,7 @@ They are different because programming has a direct correspondence to logic, sof
 
 Programming is about logic, proofs, types, categories.  
 Programming is about certifiable software and provable correctness.  
+Programming is about audacity of using logic when solving logical problems.   
 Software engineering is pragmatic, suspicious of formalism, and has deadlines.  
 Software engineering is about correctness by a lot and lot of testing effort (and, often, ignoring provable incorrectness).  
 
@@ -276,7 +277,7 @@ Just look at what everyone is doing, do exactly the opposite and you will be jus
 
 Many software engineers feel personally offended by some of this. 
 If anywhere, the blame should be placed on education. I wish I had something like CTFP when I started learning
-how to program. I was a 3rd year student immersed in theoretical mathematics. The instruction made
+how to program. I was a 3rd year student immersed in pure mathematics. The instruction made
 no use of anything I knew already. Not even mid school/high school algebra. Think about 
 `(a ^ b) ^ c = a ^ (c * a)` or `a ^ (b + c) = a^b * a^c` we know as currying and pattern match, nope.
 The opportunity to leverage concepts I knew well was lost.
