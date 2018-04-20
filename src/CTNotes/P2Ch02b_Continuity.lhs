@@ -7,7 +7,7 @@ This note explores last section of
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Part 2. Ch.1 Limits and Colimits](https://bartoszmilewski.com/2015/04/15/limits-and-colimits/).
 
-Continuity condition is appears to be super strong. It requiremes that all kinds of diagrams commute.
+Continuity condition is appears to be super strong. It requires that all kinds of diagrams commute.
 This note shows that functors are mostly not continuous.
 
 > {-# LANGUAGE GADTs 
@@ -69,7 +69,7 @@ type level numbers)
 > pairCard :: TypeCardinality a n -> TypeCardinality b m -> TypeCardinality (a, b) (n * m)
 > pairCard _ _ = TypeCardinality
 >
-> maybeCard :: TypeCardinality a n -> TypeCardinality (Maybe a) (n + 1)
+> maybeCard :: TypeCardinality a n -> TypeCardinality (Maybe a) (1 + n)
 > maybeCard _ = TypeCardinality
 >
 > eitherCard :: TypeCardinality b n -> TypeCardinality a m -> TypeCardinality (Either b a) (n + m)
@@ -84,7 +84,7 @@ integration with `DataKinds`, and typeclass constraints
 Existential quantification is perfect for writing counter examples.  I can just pick a type that has mismatch.  
 
 > data NotContinuousEv (f :: * -> *) where 
->    CardinalityMismatch :: (n1 + 1 <= n2) => 
+>    CardinalityMismatch :: (1 + n1 <= n2) => 
 >            TypeCardinality (f (a,b)) n1 -> 
 >            TypeCardinality (f a, f b) n2 -> 
 >            NotContinuousEv f
@@ -113,5 +113,5 @@ and we can expect the same for `Either` since `Either ()` is isomorphic to `Mayb
 >                        (eitherCard unitCard $ pairCard unitCard unitCard) 
 >                        (pairCard (eitherCard unitCard unitCard) (eitherCard unitCard unitCard)) 
 
-GHC type checker knows that 2 < 4 (2 + 1 <= 4 to be exact).  This is far from being a proof assistant but I still 
+GHC type checker knows that 2 < 4 (1 + 2 <= 4 to be exact).  This is far from being a proof assistant but I still 
 find it amazing. 

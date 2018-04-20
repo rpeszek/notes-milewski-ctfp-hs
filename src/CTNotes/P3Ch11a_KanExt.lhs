@@ -45,7 +45,7 @@ Here is this how this formula is derived from the right Kan adjunction
         
                  [I, C]          [A, C]
                           - ∘ K
-                  F ∘ K <--------  F
+                 F' ∘ K <--------  F'
                     |              |
   [I, C](F' ∘ K, D) |              |  [A, C](F', Ran_K D)
                    \ /            \ /

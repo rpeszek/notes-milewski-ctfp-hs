@@ -32,7 +32,7 @@ _Span_ bicategory
          /   |   \
         a <- x -> b 
 ```
-Type `Cell1 x a b` represents a morphism between `Cell a` and `Cell0 b`.
+Type `Cell1 x a b` represents a morphism between `Cell0 a` and `Cell0 b`.
 Type `Cell2 x y a b` represents a natural transformation between `Cell1 x a b` and `Cell2 x a b`
 where a and b are the same for both 1-cells.
 This note is focused on 1-cells.

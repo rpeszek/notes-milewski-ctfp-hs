@@ -146,21 +146,21 @@ A more interesting approach would be to use evidence of kind `Nat -> Type` simil
 
 > data SNat (n :: Nat) where
 >    SZero :: SNat 0
->    SSucc :: SNat n -> SNat (n + 1)
+>    SSucc :: SNat n -> SNat (1 + n)
 
 however, this seems not easy
 
 > eComp1 :: SNat a -> SNat b -> SNat c -> VHomSet ((Preorder b c) :**: (Preorder a b)) (Preorder a c) 
 > eComp1 SZero SZero SZero = MorphIdT -- compiles
-> -- eComp (SSucc _) SZero SZero = MorphIdF -- (eComp1 fails)
+> -- eComp1 (SSucc _) SZero SZero = MorphIdF -- (eComp1 fails)
 > eComp1 _ _ _ = undefined
 
-(eComp1 fails) - even this simple pattern match does not compile
+(eComp1 fails) - even this simple pattern match does not compile (TODO - rethink this)
 ```
       Could not deduce: ('TrueV :**: If (a <=? 0) 'TrueV 'FalseV)
                         ~
                         'FalseV
-      from the context: a ~ (n + 1)
+      from the context: a ~ (1 + n)
 ```  
     
 However, it is simpler for me to move forward with the `eComp1` approach, and this is what
