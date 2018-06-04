@@ -206,8 +206,12 @@ Here are some examples I have played with in this project:
  * [N_P3Ch15b_CatsAsMonads](N_P3Ch15b_CatsAsMonads) compiler helps me verify that 2-cell `mu` in the bicategory of spans is 
  the same as the composition in the underlying category. 
   
-There are limits to what compiler can do (especially true in a language like Haskell) 
-and pencil and paper proofs are still needed. 
+There are limits to what compiler can do and pencil and paper proofs are still needed. 
+However, this situation is changing, see this blog about
+[proofs of laws](https://blog.jle.im/entry/verified-instances-in-haskell.html),  
+or this example in my IdrisTddNotes project
+[Functor laws, Idris vs Haskell](https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Play_FunctorLaws). 
+ 
 
 A lot of programming is about verifying that programs are equivalent, replaceable.
 Finding if given 2 lambda expressions are equivalent is undecidable. 
