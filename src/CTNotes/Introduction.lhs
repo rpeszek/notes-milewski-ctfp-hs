@@ -210,7 +210,7 @@ There are limits to what compiler can do and pencil and paper proofs are still n
 However, this situation is changing, see this blog about
 [proofs of laws](https://blog.jle.im/entry/verified-instances-in-haskell.html),  
 or this example in my IdrisTddNotes project
-[Functor laws, Idris vs Haskell](https://github.com/rpeszek/IdrisTddNotes/wiki/idrVsHs_Play_FunctorLaws). 
+[Functor laws, Idris vs Haskell](https://github.com/rpeszek/IdrisTddNotes/wiki/Play_FunctorLaws). 
  
 
 A lot of programming is about verifying that programs are equivalent, replaceable.
