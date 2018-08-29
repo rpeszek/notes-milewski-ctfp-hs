@@ -95,6 +95,17 @@ Certain distributive laws (see below) need to be satisfied, otherwise compositio
 >    return  = Compose . returnComp  
 >    Compose mna >>= f = Compose $ joinComp (fmapComp (getCompose . f) mna)
 
+One useful case of distribution which can often simplify code without using 
+monad transformers is the Either monad case 
+
+> distributeEither :: Monad m => Either a (m b) -> m (Either a b)
+> distributeEither x = case x of
+>    Left a -> pure (Left a)
+>    Right mx -> Right <$> mx
+>
+> instance Monad m => Dist m (Either a) where
+>    dist = distributeEither
+
 
 __Distribution Laws__ (following [Wikipedia article](https://en.wikipedia.org/wiki/Distributive_law_between_monads)):
 ```
