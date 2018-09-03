@@ -95,18 +95,6 @@ Certain distributive laws (see below) need to be satisfied, otherwise compositio
 >    return  = Compose . returnComp  
 >    Compose mna >>= f = Compose $ joinComp (fmapComp (getCompose . f) mna)
 
-One useful case of distribution which can often simplify code without using 
-monad transformers is the Either monad case 
-
-> distributeEither :: Monad m => Either a (m b) -> m (Either a b)
-> distributeEither x = case x of
->    Left a -> pure (Left a)
->    Right mx -> Right <$> mx
->
-> instance Monad m => Dist m (Either a) where
->    dist = distributeEither
-
-
 __Distribution Laws__ (following [Wikipedia article](https://en.wikipedia.org/wiki/Distributive_law_between_monads)):
 ```
 joinM . fmapM dist . dist ≡ dist . fmapN joinM  (n (m (m a)) -> m (n a))
@@ -182,6 +170,31 @@ do
 (If order of effects does not matter, things can be done concurrently.) 
 (Reader has it, State does not, some monads have it if we exclude `_|_`).
 [see also this](https://github.com/basvandijk/monad-control/issues/28)
+
+__Distributing is convenient, Either Example__:
+
+I have not checked the above laws (TODO).  
+
+> distributeEither :: Monad m => Either a (m b) -> m (Either a b)
+> distributeEither x = case x of
+>    Left a -> pure (Left a)
+>    Right mx -> Right <$> mx
+>
+> instance Monad m => Dist m (Either a) where
+>    dist = distributeEither
+
+Distributing over a monad (just using the `dist`) can often can be used instead 
+of transformers. Consider this example:
+
+> data MyErr = CannotFindIt | ShouldNotBeUsed 
+>
+> retrieveSomething :: Monad eff => key -> eff (Either MyErr val)
+> retrieveSomething = undefined
+>
+> withSomething :: Monad eff => key -> (val -> eff a) -> eff (Either MyErr a)
+> withSomething key f = do
+>          foundOrErr <- retrieveSomething key
+>          distributeEither . fmap f $ foundOrErr
 
 
 TODO Other composition approaches from the paper
