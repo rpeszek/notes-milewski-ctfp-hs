@@ -1,0 +1,28 @@
+sudo: false
+language: generic
+
+#addons:
+#  apt:
+#    packages:
+#      - libgmp-dev
+
+ 
+install:
+  # stack
+  - mkdir -p ~/.local/bin
+  - travis_retry curl -L https://github.com/commercialhaskell/stack/releases/download/v1.7.1/stack-1.7.1-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  - export PATH=~/.local/bin:$PATH
+
+before_script:
+  - stack setup
+
+script:
+  - stack build
+
+cache:
+  # timeout: 6000
+  directories:
+  - $HOME/.cabal
+  - $HOME/.ghc
+  - $HOME/.stack
+  - .stack-work/
