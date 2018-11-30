@@ -52,7 +52,7 @@ For example, the following definition for bifunctors (which are functors too) is
 > type f :~~> g = forall x y. f x y -> g x y
 
 It amounts to establishing NT for each type variable separately. 
-For example, `type f :~~> g` is equivalent to `forall x . f x :~> g x` as shown here:
+For example:
 
 > rep :: f :~~> g -> forall x . f x :~> g x
 > rep = id

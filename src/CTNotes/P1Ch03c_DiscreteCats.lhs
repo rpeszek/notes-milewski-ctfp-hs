@@ -76,7 +76,7 @@ ghc output:
 ```
 
 `:~:` has instance of Category from Control.Category which is identical to the above
-instance of `Discrete`.
+instance of `Discrete`.  (See my `IdrisTddNotes` for some fun proofs about `Nat` type)
 
 
 

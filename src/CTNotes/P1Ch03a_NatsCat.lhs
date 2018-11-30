@@ -62,7 +62,7 @@ here is the ghci output:
 ghci> :t add2 
 add2 :: NatHomSet 'NatPlus n (n + 2)
 
-λ> add2Test 3
+ghci> add2Test 3
 5
 ```
 (I have simplified the GHC output a bit, GHC printed `GHC.TypeLits.+ 2` instead of `2`)

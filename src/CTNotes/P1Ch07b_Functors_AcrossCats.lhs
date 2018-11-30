@@ -68,8 +68,11 @@ I have to use (->) for destination, because this is what the implementation `\Co
 
 To show that this works, I use category defined in the imported notes [N_P1Ch03b_FiniteCats](N_P1Ch03b_FiniteCats).
 
-> test :: Const a (x :: FinCat.Object) -> Const a (x :: FinCat.Object)
-> test = cmap FinCat.MorphId
+> test1 :: Const a (x :: FinCat.Object) -> Const a (x :: FinCat.Object)
+> test1 = cmap FinCat.MorphId
+>
+> test2 :: Const a FinCat.A -> Const a FinCat.B
+> test2 = cmap FinCat.MorphAB
 
 But this would not compile:
 
