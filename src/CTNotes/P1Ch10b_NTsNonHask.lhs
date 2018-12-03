@@ -2,9 +2,16 @@
 
 Notes about natural transformations on non-Hask categories
 =========================================================
-Natural transformation definition is kind polymorphic and it works just fine with 
-Functors from non-Hask categories.  However the naturality condition free theorem is no longer true.
+Natural transformation definition 
+(`type f :~> g = forall x. f x -> g x`) is kind polymorphic and is applicable to 
+Functors from non-Hask categories.  
+This formula assumes that the destination category is Hask `(->)`.
+This note shows that the naturality condition free theorem is no longer true.
 
+There is another formula worth studying, for a general category `cat` the natural transformation
+could be defined as `type NatTran cat f g = forall x. cat (f x) (g x)` following the Ends formula
+(see previous note).  Investigation of this definition is a TODO.
+ 
 Book ref:
 [CTFP](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/) 
 [Ch 10. Natural Transformations](https://bartoszmilewski.com/2015/04/07/natural-transformations/).
@@ -133,6 +140,11 @@ Here is answer to my question form Bartosz Milewski:
 "Free theorems are the result of parametricity, which is a property of the language rather than a category. 
 In simple words, parametricity means that we define a polymorphic function using a single 
 formula for all types. As soon as you allow pattern-matching on types, you lose parametricity."
+
+And here is quote from the book chapter itself:  
+"The reason it works in Haskell is because naturality follows from parametricity. 
+Outside of Haskell, though, not all diagonal sections across such hom-sets 
+will yield natural transformations."
 
 Some of this goodness can come back when dealing with functors from finite categories to finite categories
 ([N_P3Ch06b_FiniteMonads](N_P3Ch06b_FiniteMonads)).

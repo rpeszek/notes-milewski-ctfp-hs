@@ -196,7 +196,7 @@ Equational reasoning that shows lhs == rhs is somewhat complex, starting at `rhs
                      -- definition of horizontalComp
   (\ Compose x -> Compose $ beta2 . fmap beta1 $ x) . 
                                (\ Compose x -> Compose $ fmap alpha1 . alpha2 $ x)== 
-                     -- Compose is a simple constructor with trivial patter match
+                     -- Compose is a simple constructor with trivial pattern match
   (\ Compose x -> Compose $ beta2 . fmap beta1 $ fmap alpha1 . alpha2 $ x)        ==  
                      -- fmap commutes with (.)
   (\ Compose x -> Compose $ beta2 . fmap (beta1 . alpha1) . alpha2 $ x)           ==    
@@ -219,7 +219,7 @@ if F :: C -> D and G :: D -> E, G ∘ F:: C -> E (rinse and repeat for F' and G'
 then we can neatly think of NTs mapping the same categories as the functors do:  
 α:: C -> D and β:: D -> E, β ∘ α:: C -> E. 
 
-In Haskell that all flattens out and we have  
+In Haskell (Hask `(->)` category) all that flattens out and we have  
 F :: Hask -> Hask, G :: Hask -> Hask, G ∘ F:: Hask -> Hask  
 so   
 α:: Hask -> Hask and β:: Hask -> Hask, β ∘ α:: Hask -> Hask  
@@ -339,7 +339,7 @@ TODO notational change: maybe isos should use ~= and for actual equals use == ?
 NTs as Ends
 -----------
 This note is fast-forward to [Part 3 Ch 10 Ends and Coends](https://bartoszmilewski.com/2017/03/29/ends-and-coends/).
-`C (-, =)` is a profunctor.  If F and G are functors then `C (F -, G =)` is profunctor too.
+Homset `C (-, =)` is a profunctor.  If F and G are functors (`C -> C`) then `C (F -, G =)` is profunctor too.
 This is similar to how bifunctors compose 
 (see [Part 1 Chapter 8](https://bartoszmilewski.com/2015/02/03/functoriality/) and 
 [N_P1Ch08b_BiFunctorComposition](N_P1Ch08b_BiFunctorComposition)).
@@ -349,4 +349,4 @@ Ends are equivalent to NTs.  Thinking about ends provides additional explanation
 ```
 forall x. f x -> g x
 ```
-in Haskell.
+in Haskell (in Hask `(->)`).
