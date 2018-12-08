@@ -25,9 +25,9 @@ This note maps `category-extras` code definitions to the construction of limit a
 
 CTPF considers the general case of limits of functors __D:: I -> C__.  
 These define a lot of interesting commuting diagrams in __D__.  Even if  __I__ is 
-a very trivial (finite) category, often generates quite interesting diagrams (pullback, equalizer, pushout). 
+a very trivial (finite) category, this often generates quite interesting diagrams (pullback, equalizer, pushout). 
 Unfortunately, these diagrams do not map easily to Haskell. For example, `MondadPlus` is 
-not a pullback of `Monad` and `Monoid`, instead it defines its own `mzero` and `mplus`.  
+not a pullback of `Monad` and `Alternative`, instead it defines its own `mzero` and `mplus`.  
 (I think that this type of stuff is hard, maybe impossible for a programming language to support).   
 This note focus is a more straightforward application of the limit concept, one that assumes `I = C = Hask`. 
 
@@ -129,18 +129,31 @@ functors":
 
  C(b, Lim F) ≃ Nat(Δb, F)
 
-(This formula says that factorizing morphisms are equivalent to natural transformations that define the limit.)  
+(This formula says that factorizing morphisms are equivalent to
+natural transformations that define the limit candidate `b`.)  
+(Δb is constant functor maps all objects into b and all morphisms into id_b)
 
 I can use it to derive `Limit f`.
 Using pseudo Haskell:
 ```
 Nat(Δb, F)  ==  --Haskell def on Natural Transformation
-forall a . Const b a -> f a ~= -- def of Const and getConst isomorphism 
-forall a . b -> f a ~= -- b does not depend on a
+forall a . Const b a -> f a ~= -- def of Const and getConst isomorphism (see iso1a, iso1b)
+forall a . b -> f a ~= -- b does not depend on a (see iso2a, iso2b)
 b -> forall a . f a == -- def of Limit f
 b -> Limit f  ==
 C(b, Lim F)
 ```
+Here are the isomorphisms from the above equational reasoning spelled out in Haskell:
+
+> iso1a :: (forall a. Const b a -> f a) ->  (forall a. b -> f a)
+> iso1a f = f . Const 
+> iso1b :: (forall a. b -> f a) -> (forall a . Const b a -> f a)
+> iso1b f = f . getConst
+>
+> iso2a :: (forall a . b -> f a) -> (b -> forall a . f a)
+> iso2a = id
+> iso2b :: (b -> forall a . f a) -> (forall a . b -> f a)
+> iso2b = id
 
 Functor Colimit
 ---------------
