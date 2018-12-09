@@ -50,7 +50,7 @@ The following functors apparently are not continuous because we simply can count
 - `Either Err`
 
 This provides a perfect excuse to do some type level programming. I will prove this using Haskell type checker!  
-First, I need to develop ability to calculate type cardinalities (count values that inhabitant the type).   
+First, I need to develop ability to calculate type cardinalities (count values that inhabit the type).   
 (`KindSignatures` allows to define type level variables of kind `Nat`, 
 `GHC.TypeLits` allow to use type level number literals, `<=`, `+`, `*` are type families that work on 
 type level numbers)  

@@ -15,7 +15,7 @@ This note maps `category-extras` code definitions to the construction of limit a
 
 > {-# LANGUAGE RankNTypes
 >  , ExistentialQuantification 
->  , TypeOperators 
+>  , TypeOperators
 >  #-}
 >
 > module CTNotes.P2Ch02a_LimitsColimitsExtras where
@@ -83,11 +83,11 @@ _impredicative polymorphism_ and this (more correct but isomorphic) declarations
 TODO it would be good to understand this limitation better.
 
 __Universality__:
-Assume another type `C` with natural transformation 
-`cone :: Const C :~> f`. This is equivalent to having a polymorphic function
-`cone :: forall a . C' -> f a`.  We can easily factorize this (pseudo code of course):
+Assume another type `c` with natural transformation 
+`cone :: Const c :~> f`. This is equivalent to having a polymorphic function
+`cone :: forall a . c' -> f a`.  We can easily factorize this (pseudo code of course):
 ```
-factor :: C' -> Limit f
+factor :: c' -> Limit f
 factor = cone
 ```
 Parametricity enforces commutativity conditions, so indeed `Limit f` is the 
@@ -154,6 +154,54 @@ Here are the isomorphisms from the above equational reasoning spelled out in Has
 > iso2a = id
 > iso2b :: (b -> forall a . f a) -> (forall a . b -> f a)
 > iso2b = id
+
+
+Non-Hask Categories, `Control.Arrow`
+-----------------------------------
+Seems that (at least morally) the above `Limit` definition 
+```
+type Limit f = forall a. f a
+```
+works for some non-Hask categories, in particular arrows (as defined in `Control.Arrow`,
+see CTNotes.P1Ch08c_BiFunctorNonHask note).  
+We would take `I = (->)`, `C = ar` (where `ar` represents arrow or some other non-`(->)` category defined on `*` types).
+
+For arrows, as functor `f` we could consider `arr` itself 
+(arrow laws require that `arr` is a functor) 
+or `arr` composed with some functor `fa` `CFunctor ar ar fa` (see N_P1Ch07b_Functors_AcrossCats).
+
+The problem is with writing expressions like (impredicative polymorphism limitations):
+```
+coneA :: ar (forall a . f a) f a
+```
+however if these were possible I would expect the arrowized versions of the above logic 
+to work 
+```
+limitConeA :: Arrow ar => ar (forall a . f a) f x
+limitConeA = id
+```
+given `coneA :: forall a . ar c (f a)` or `coneA :: forall a . ar (Const c x) (f x)` 
+I should be able to write it as
+`coneA :: ar c (forall a . f a)` which is the universal construction factorization I need.
+To do stuff like this, there is a need to move between expressions `ar (Const c x) (f x)`
+and `ar c (f a)`.  This is exactly the `iso1a`, `iso1b` above and is part of 
+equational reasoning needed to show `C(b, Lim F) ≃ Nat(Δb, F)`.
+
+This seems doable if the `ar :: * -> *` category satisfies some weak profunctor 
+properties:
+
+> class WeakProfunctor p where 
+>   lmap :: (a -> b) -> p b c -> p a c
+>
+> iso1'a :: WeakProfunctor ar => (forall a. ar (Const b a) (f a)) -> (forall a. ar b (f a))
+> iso1'a f = lmap Const f 
+> iso1b' :: WeakProfunctor ar => (forall a. ar b (f a)) -> (forall a . ar (Const b a) (f a))
+> iso1b' f = lmap getConst f 
+
+So I believe, at least morally, the definition of `Limit` for Hask endofuntors 
+extends to more general functors from Hask to some more exotic categories.
+
+TODO this thinking could be expanded.
 
 Functor Colimit
 ---------------
