@@ -99,13 +99,14 @@ Answer: __NO__
 `foldMap` is what defines Foldable also `foldMap` embodies the free construction of monoid. 
 That would suggest that if we impose additional constraint 
 ```
-factorizeFoldable :: (Monoid m, Monoid (t a), Functor t) => (a -> m) -> [a] -> m
+factorizeFoldable :: (Monoid m, Monoid (t a), Functor t) => (a -> m) -> t a -> m
 factorizeFoldable q = foldr mappend mempty . fmap q
 ```
-the resulting morphism `[a] -> m` would be a homomorphism and we would satisfy free construction.
+the resulting morphism `t a -> m` would be a homomorphism and we would satisfy free construction.
 Because of uniqueness of free construction, `t` would have to be isomorphic to `[]`. 
 
-What breaks in this argument is that we cannot prove uniqueness of factorization. 
+What breaks in this argument is that we cannot prove uniqueness of factorization 
+for a non-list `t`. 
 Types are sometimes not everything. 
 
 Counterexample: 
@@ -132,7 +133,7 @@ Adjunction
 ----------
 Free monoid is described by the free-forgetful adjunction between the (left adjoint) List functor and the 
 forgetful functor U (here `Identity`).
-`foldMap :: (a -> m) -> [a] -> m` is the not trivial natural isomorphism (`rightAdjunct`) in that adjunction. 
+`foldMap :: (a -> m) -> [a] -> m` is the non trivial natural isomorphism (`rightAdjunct`) in that adjunction. 
 
 Not a real code since the `Adjunction` typeclass works on Hask endofunctors: 
 ```

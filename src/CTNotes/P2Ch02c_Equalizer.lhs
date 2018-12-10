@@ -119,7 +119,7 @@ natural transformation between `Const c` and `PickFun a b` as
 
 this type contains polymorphic functions that do not depend on `x :: Object`. 
 Instead, I want a product type one that knows which `x` is used
-(using poor a man's singleton approach)
+(using a poor man's singleton approach)
 
 > data Sing (a:: Object) where
 >    IsA :: Sing 'A
@@ -154,7 +154,7 @@ Even if Haskell provided ability for me to supply proof that diagrams commute,
 finding the limit would be next step where, again, I would have no clue how to proceed.  
 With `Hask -> Hask` endofunctors limit is 'guessed' and constructed using  
 universal quantification.  There is a higher rank type that does the trick. 
-There does not seem to be a good uniform guess like this here. 
+It does not seem to be a good uniform guess like this here. 
 
 I read that an equalizer problem called 'Post Correspondence Problem' is undecidable. 
 It is about checking if equalizer of 2 group homomorphisms is not empty.
