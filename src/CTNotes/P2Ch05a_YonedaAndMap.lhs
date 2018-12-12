@@ -89,7 +89,7 @@ Equational reasoning in pseudo-Haskell shows that these are indeed isomorphic
 (fromYoneda . toYoneda) :: Functor f => f a -> f a
 
 (fromYoneda . toYoneda) fa 
-== (\t -> t id) . (flip fmap $ fa)
+== (\t -> t id) (flip fmap $ fa)
 == (flip fmap $ fa) id 
 == fmap id fa 
 == id -- because f is functor
@@ -107,7 +107,8 @@ Equational reasoning in pseudo-Haskell shows that these are indeed isomorphic
 ```
 Equality marked with `*` is the naturality condition applied to `id :: a -> a` 
 ```
-fmap f . trans == trans . fmap f
+fmap f . trans == trans . fmap f  
+f :: a -> x
    
                 trans
       (a -> x) ------->  f x

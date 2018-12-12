@@ -28,9 +28,9 @@ Adjunction definition from the book
 >     leftAdjunct f = fmap f . unit
 >     rightAdjunct f = counit . fmap f
 
-The above implementation emphasizes that the adjunction  
+This note emphasizes the intuition behind adjunction  
   `(-, a) ⊣ a -> -`    
-is all about currying.   
+It is is all about currying.   
 These diagrams use the notation from the book
 ```
                    L
@@ -45,19 +45,19 @@ C((z,a),b)  |             | C(z,a->b)
                 --- d    
               /     |
             \/      |
-       (d,a)        | unit = x -> a -> (x, a)
-            /\      |
+       (d,a)        | unit :: x -> a -> (x, a)
+             \      |
               \    \ /
-                --- a -> (d,a)
+                --> a -> (d,a)
                 R
  
-      (a->c,a) --
-                  \
-                   \/
-                     a -> c
-                   /\
-                  /
-            c  --    
+            (a->c,a) <--
+                  |      \
+    counit ::     |       \
+    (a->c,a) -> c |       a -> c
+                  |      /\
+                 \ /    /
+                  c  --    
 ```                
 In the instance implementation I need to have `(z, a)` flipped to `(a,z)` (because
 Haskell wants `((,) a)`)               
@@ -88,4 +88,4 @@ It is empowering to know that `State` and `Store` have such a foundational impor
 
 Q: what are programming implication of this adjunction for non-Hask categories? 
 Such category would need to be cartesian closed and that probably means close to Hask.
-So most likely I will see no interesting generalizations.
+Arrow - like categories may need some thought. 
