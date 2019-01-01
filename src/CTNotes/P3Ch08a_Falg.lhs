@@ -168,6 +168,13 @@ Functor example
 F MorphAB = ID_A
 F MorphBCi = MorphAB
 ```
+To keep consistent with the book, in this section, I use `(->)` as morphism in `A -> B => C`,
+as if it was pseudo-defined like so:
+```
+type (->) = P1Ch03b_FiniteCats.HomeSet
+```
+(TODO makes sense to disambiguate)
+
 Possible F-algebras `(o, m)` such that `m :: F o -> o`
 ```
 (A, ID) - Initial
