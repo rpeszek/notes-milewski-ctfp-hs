@@ -1,6 +1,16 @@
 |Markdown version of this file: https://github.com/rpeszek/notes-milewski-ctfp-hs/wiki/N_P3Ch06c_MonoidalCats
 
-__Very much work-in-progress with lots of TODOs__  
+Greg Pfeil gave a great presentation at Boulder Haskell Meetup about monoids, 
+monoidal categories expressed in Haskell, including
+expressing Monad as a Functor Monoid:
+
+https://github.com/sellout/category-parametric-talk/tree/master/monoiad  
+https://github.com/sellout/category-parametric-talk/blob/master/monoiad/haskell.org  
+https://github.com/sellout/category-parametric-talk/blob/c97d89f7dc4ebb4158682435adc1baaf3ff88142/monoiad/haskell.org
+
+I will not do a better job here. This note has been superseded by Greg's work. 
+
+__My notes from before Greg's talk:__  
 Notes on monoidal categories in Haskell.  Mostly because I will need them later. 
 
 Refs:: `category-extras`, `categories` packages
